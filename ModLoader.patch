@@ -1,0 +1,34 @@
+--- GnomoriaSDK.il	2016-12-19 23:10:19.696770400 +0100
++++ GnoMod.il	2016-12-19 23:14:55.267532200 +0100
+@@ -70,6 +70,11 @@
+ {
+   .ver 0:64:4510:27485
+ }
++// ModLoader: Add reference to assembly
++.assembly extern ModLoader
++{
++  .ver 1:0:0:0
++}
+ .assembly Gnomoria
+ {
+   .custom instance void A.AssemblyInfoAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+@@ -126244,6 +126249,8 @@
+     // Code size       25 (0x19)
+     .maxstack  1
+     .locals init (class Game.GnomanEmpire V_0)
++    // ModLoader: Call app init hook
++    call void [ModLoader]ModLoader.ModLoaderMain::HookInit()
+     IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
+     IL_0005:  stloc.0
+     .try
+@@ -346018,6 +346025,10 @@
+     IL_01ba:  ldfld      class Game.GUI.Controls.Panel Game.GUI.MainMenuWindow::panel_0
+     IL_01bf:  ldloc.s    V_4
+     IL_01c1:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
++    // ModLoader: Hook Main Menu GUI initialization
++    ldarg.0
++    ldarg.1
++    call void [ModLoader]ModLoader.ModLoaderMain::HookMainMenuGuiInit(class Game.GUI.MainMenuWindow, class Game.GUI.Controls.Manager)
+     IL_01c6:  ldarg.0
+     IL_01c7:  ldarg.1
+     IL_01c8:  ldstr      "Exit"
