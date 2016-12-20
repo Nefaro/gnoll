@@ -19,6 +19,7 @@ namespace ModLoader
 
         public void LoadMod(string path)
         {
+            Console.WriteLine("-- loading " + path);
             Assembly assembly = Assembly.LoadFrom(path);
 
             Type type = assembly.GetType("Mod.ModMain");

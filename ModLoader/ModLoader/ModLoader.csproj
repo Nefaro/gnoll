@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\MessageDialog.cs" />
     <Compile Include="GUI\AboutModLoaderDialog.cs" />
     <Compile Include="HookManager.cs" />
     <Compile Include="IMod.cs" />

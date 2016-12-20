@@ -19,18 +19,28 @@
      IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
      IL_0005:  stloc.0
      .try
-@@ -230346,6 +230353,10 @@
-     IL_017f:  ldfld      class Game.GUI.Controls.Panel Game.GUI.ImportExportMenu::panel_0
-     IL_0184:  ldloc.1
-     IL_0185:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
+@@ -230208,7 +230215,7 @@
+           instance void  .ctor(class Game.GUI.Controls.Manager manager) cil managed
+   {
+     // Code size       614 (0x266)
+-    .maxstack  3
++    .maxstack  4
+     .locals init (class Game.GUI.Controls.Button V_0,
+              class Game.GUI.Controls.Button V_1,
+              class Game.GUI.Controls.Button V_2,
+@@ -230365,6 +230372,11 @@
+     IL_01b6:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
+     IL_01bb:  ldfld      int32 Game.GUI.Controls.Margins::Bottom
+     IL_01c0:  add
 +    // ModLoader: Hook Import/Export Menu GUI initialization
++    // (button2.Top + button2.Height + button2.Margins.Bottom) is now on top of the stack, we hijack it for our hook
 +    ldarg.0
 +    ldarg.1
-+    call void [ModLoader]ModLoader.HookManager::HookImportExportMenuGuiInit(class Game.GUI.ImportExportMenu, class Game.GUI.Controls.Manager)
-     IL_018a:  ldarg.0
-     IL_018b:  callvirt   instance class Game.GUI.Controls.Manager Game.GUI.Controls.Component::get_Manager()
-     IL_0190:  newobj     instance void Game.GUI.Controls.Button::.ctor(class Game.GUI.Controls.Manager)
-@@ -346018,6 +346029,10 @@
++    call int32 [ModLoader]ModLoader.HookManager::HookImportExportListInit(int32, class Game.GUI.ImportExportMenu, class Game.GUI.Controls.Manager)
+     IL_01c1:  ldloc.2
+     IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
+     IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
+@@ -346018,6 +346030,10 @@
      IL_01ba:  ldfld      class Game.GUI.Controls.Panel Game.GUI.MainMenuWindow::panel_0
      IL_01bf:  ldloc.s    V_4
      IL_01c1:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
