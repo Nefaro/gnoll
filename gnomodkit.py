@@ -84,6 +84,12 @@ def get_dotnetfx_dir():
 def get_game_dir():
     return config.get('game_dir', 'Path to game directory? (e.g. C:\\Gnomoria)')
 
+def get_game_mod_dir():
+    game_dir = get_game_dir()
+    mod_dir = os.path.join(game_dir, "ModLoader")
+    os.makedirs(mod_dir, exist_ok=True)
+    return mod_dir
+
 def get_ilasm_path():
     return os.path.join(get_dotnetfx_dir(), 'ilasm.exe')
 
@@ -448,11 +454,25 @@ class TaskMakeAllFieldsPublic(Task):
                 print(line, end='', file=output)
 
 class TaskMakeMod(Task):
+    def __init__(self, solution_dir):
+        super().__init__()
+        self.name = os.path.basename(os.path.normpath(solution_dir))
+        self.solution_dir = solution_dir
+        self.project_dir = os.path.join(self.solution_dir, self.name)
+        self.dll_name = self.name + ".dll"
+
     def __str__(self):
-        return 'make mod'
+        return 'make ' + self.name
 
     def discover_dependencies(self):
+        # make SDK
         self.add_dependency(TaskMakeSDK())
+
+        # build mod
+        self.add_dependency(TaskMsbuild(os.path.join(self.solution_dir, self.name + ".sln")))
+
+        # install into game directory
+        self.add_dependency(TaskCopyFile(os.path.join(self.project_dir, 'bin\\Debug', self.dll_name), os.path.join(get_game_mod_dir(), self.dll_name)))
 
 class TaskMakeModLoader(Task):
     def __str__(self):
@@ -540,8 +560,8 @@ targets = args.targets if len(args.targets) else args.targets
 for target in targets:
     if target == 'clean':
         tr.add_dependency(TaskClean())
-    elif target == 'mod':
-        tr.add_dependency(TaskMakeMod())
+    elif target.startswith('mod:'):
+        tr.add_dependency(TaskMakeMod(target[4:]))
     elif target == 'modloader':
         tr.add_dependency(TaskMakeModLoader())
     elif target == 'run':

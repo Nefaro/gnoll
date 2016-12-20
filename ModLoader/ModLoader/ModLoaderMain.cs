@@ -12,11 +12,23 @@ namespace ModLoader
         public const string versionString = "v1.0";
         public const string url = "https://github.com/minexew/gnomodkit";
 
+        static HookManager hookManager;
+        static ModManager modManager;
+
+        private ModLoaderMain()
+        {
+        }
+
         public static void HookInit()
         {
             ConsoleWindow.ShowConsoleWindow();
 
             Console.WriteLine(String.Format("gnomodkit {0} {1}", name, versionString));
+
+            hookManager = new HookManager();
+
+            modManager = new ModManager(hookManager);
+            modManager.ScanDirectory("ModLoader");
         }
 
         public static void HookMainMenuGuiInit(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager)
