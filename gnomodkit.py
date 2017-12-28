@@ -3,30 +3,6 @@
 print('gnomodkit v1 -- https://github.com/minexew/gnomodkit')
 print()
 
-'''
-
-# Prerequisites:
-
-  - Gnomoria v1.0
-  - Python 3.2+
-  - .NET SDK 4.0 or newer
-
-# Usage examples
-
-```
-./gnomodkit.py sdk
-```
-
-```
-./gnomodkit.py mod:ExampleHelloWorld
-```
-
-```
-./gnomodkit.py sdk mod:ExampleHelloWorld run
-```
-
-'''
-
 import argparse
 import hashlib
 import json
@@ -54,6 +30,8 @@ DISASSEMBLED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.il')
 
 SDK_IL_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaSDK.il')
 SDK_DLL_FILENAME = os.path.join(SDK_DIR, 'GnomoriaSDK.dll')
+
+SDK_GNOMORIALIB_DLL_FILENAME = os.path.join(SDK_DIR, 'gnomorialib.dll')
 
 # for ModLoader
 WORKING_FILENAME = os.path.join(BUILD_DIR, 'GnoMod.il')
@@ -514,8 +492,11 @@ class TaskMakeSDK(Task):
         # make all fields & methods public
         self.add_dependency(TaskMakeAllFieldsPublic(DISASSEMBLED_FILENAME, SDK_IL_FILENAME))
 
-        # build GnomoriaSDL.dll
+        # build GnomoriaSDK.dll
         self.add_dependency(TaskAssemble(SDK_IL_FILENAME, SDK_DLL_FILENAME))
+
+        # copy gnomorialib.dll
+        self.add_dependency(TaskCopyFile(os.path.join(get_game_dir(), 'gnomorialib.dll'), SDK_GNOMORIALIB_DLL_FILENAME))
 
     def is_up_to_date(self):
         return is_up_to_date(SDK_DLL_FILENAME, self.exe.path)

@@ -24,10 +24,14 @@ namespace ModLoader
 
             Type type = assembly.GetType("Mod.ModMain");
 
-            IMod mod = (IMod) Activator.CreateInstance(type);
-            mods.Add(mod);
+            if (type != null)
+            {
+                Console.WriteLine("-- instanciating " + path);
+                IMod mod = (IMod)Activator.CreateInstance(type);
+                mods.Add(mod);
 
-            mod.OnLoad(hookManager);
+                mod.OnLoad(hookManager);
+            }
         }
 
         public void ScanDirectory(string dir)

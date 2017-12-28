@@ -2,3 +2,4 @@
 /cache/
 /sdk/
 *.config.json
+*.csproj.user
