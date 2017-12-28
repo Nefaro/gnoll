@@ -11,6 +11,7 @@ namespace ModLoader
 
         public delegate void ExportMenuListInitHandler(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, AddButton context);
         public delegate void InGameHUDInitHandler(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager);
+        public delegate void UpdateInGameHandler(float realTimeDelta, float gameTimeDelta);
 
         public HookManager()
         {
@@ -44,8 +45,18 @@ namespace ModLoader
                 instance.InGameHUDInit(inGameHUD, manager);
         }
 
+        public static void HookUpdateInGame(float realTimeDelta, float gameTimeDelta)
+        {
+            if (instance.UpdateInGame != null)
+            {
+                float timeElapsedInGame = Game.GnomanEmpire.Instance.world_0.Paused ? 0.0f : gameTimeDelta;
+                instance.UpdateInGame(realTimeDelta, timeElapsedInGame);
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
+        public event UpdateInGameHandler UpdateInGame;
 
         private static HookManager instance;
     }

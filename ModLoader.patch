@@ -42,7 +42,18 @@
      IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
      IL_0005:  stloc.0
      .try
-@@ -230208,7 +230223,7 @@
+@@ -201299,6 +201314,10 @@
+     IL_005a:  ldfld      class Game.Camera Game.GnomanEmpire::camera_0
+     IL_005f:  ldarg.1
+     IL_0060:  callvirt   instance void Game.Camera::Update(float32)
++    // ModLoader: Hook per-frame update
++    ldarg.1
++    ldloc.0
++    call void [ModLoader]ModLoader.HookManager::HookUpdateInGame(float32, float32)
+     IL_0065:  ret
+   } // end of method GnomanEmpire::method_2
+ 
+@@ -230208,7 +230227,7 @@
            instance void  .ctor(class Game.GUI.Controls.Manager manager) cil managed
    {
      // Code size       614 (0x266)
@@ -51,7 +62,7 @@
      .locals init (class Game.GUI.Controls.Button V_0,
               class Game.GUI.Controls.Button V_1,
               class Game.GUI.Controls.Button V_2,
-@@ -230365,6 +230380,11 @@
+@@ -230365,6 +230384,11 @@
      IL_01b6:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01bb:  ldfld      int32 Game.GUI.Controls.Margins::Bottom
      IL_01c0:  add
@@ -63,7 +74,7 @@
      IL_01c1:  ldloc.2
      IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
-@@ -346018,6 +346038,10 @@
+@@ -346018,6 +346042,10 @@
      IL_01ba:  ldfld      class Game.GUI.Controls.Panel Game.GUI.MainMenuWindow::panel_0
      IL_01bf:  ldloc.s    V_4
      IL_01c1:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
