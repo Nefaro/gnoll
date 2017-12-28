@@ -10,7 +10,30 @@
  .assembly Gnomoria
  {
    .custom instance void A.AssemblyInfoAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
-@@ -126244,6 +126249,8 @@
+@@ -25349,6 +25354,7 @@
+   {
+     // Code size       30 (0x1e)
+     .maxstack  8
++    .locals init (class Game.GUI.InGameHUD V_0)
+     IL_0000:  ldarg.0
+     IL_0001:  ldfld      class Game.GUI.Controls.Window Game.GUI.GuiManager::window_0
+     IL_0006:  ldc.i4.0
+@@ -25357,7 +25363,14 @@
+     IL_000d:  call       instance void Game.GUI.GuiManager::method_2()
+     IL_0012:  ldarg.0
+     IL_0013:  newobj     instance void Game.GUI.InGameHUD::.ctor()
++    stloc.0
++    ldloc.0
+     IL_0018:  call       instance void Game.GUI.GuiManager::method_1(class Game.GUI.MenuStack)
++    // ModLoader: Hook In-game HUD initialization
++    ldloc.0
++    ldarg.0
++    ldfld class Game.GUI.Controls.Manager Game.GUI.GuiManager::manager_0
++    call void [ModLoader]ModLoader.HookManager::HookInGameHUDInit(class Game.GUI.InGameHUD, class Game.GUI.Controls.Manager)
+     IL_001d:  ret
+   } // end of method GuiManager::CreateInGameHUD
+ 
+@@ -126244,6 +126257,8 @@
      // Code size       25 (0x19)
      .maxstack  1
      .locals init (class Game.GnomanEmpire V_0)
@@ -19,7 +42,7 @@
      IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
      IL_0005:  stloc.0
      .try
-@@ -230208,7 +230215,7 @@
+@@ -230208,7 +230223,7 @@
            instance void  .ctor(class Game.GUI.Controls.Manager manager) cil managed
    {
      // Code size       614 (0x266)
@@ -28,7 +51,7 @@
      .locals init (class Game.GUI.Controls.Button V_0,
               class Game.GUI.Controls.Button V_1,
               class Game.GUI.Controls.Button V_2,
-@@ -230365,6 +230372,11 @@
+@@ -230365,6 +230380,11 @@
      IL_01b6:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01bb:  ldfld      int32 Game.GUI.Controls.Margins::Bottom
      IL_01c0:  add
@@ -40,7 +63,7 @@
      IL_01c1:  ldloc.2
      IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
-@@ -346018,6 +346030,10 @@
+@@ -346018,6 +346038,10 @@
      IL_01ba:  ldfld      class Game.GUI.Controls.Panel Game.GUI.MainMenuWindow::panel_0
      IL_01bf:  ldloc.s    V_4
      IL_01c1:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)

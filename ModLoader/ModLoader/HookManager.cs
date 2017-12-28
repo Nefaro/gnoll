@@ -10,6 +10,7 @@ namespace ModLoader
         public delegate Game.GUI.Controls.Button AddButton(string label);
 
         public delegate void ExportMenuListInitHandler(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, AddButton context);
+        public delegate void InGameHUDInitHandler(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager);
 
         public HookManager()
         {
@@ -37,7 +38,14 @@ namespace ModLoader
             return Y;
         }
 
+        public static void HookInGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
+        {
+            if (instance.InGameHUDInit != null)
+                instance.InGameHUDInit(inGameHUD, manager);
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
+        public event InGameHUDInitHandler InGameHUDInit;
 
         private static HookManager instance;
     }
