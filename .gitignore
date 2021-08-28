@@ -3,3 +3,6 @@
 /sdk/
 *.config.json
 *.csproj.user
+**/.vs/
+**/bin/
+**/obj/

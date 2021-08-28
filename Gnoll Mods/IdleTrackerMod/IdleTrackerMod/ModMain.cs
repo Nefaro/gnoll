@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 
-using ModLoader;
+using GnollModLoader;
 using Game;
 using Game.GUI;
+using Game.GUI.Controls;
 
 namespace Mod
 {
@@ -10,11 +11,14 @@ namespace Mod
     {
         public static ModMain instance;
 
-        private const string name = "IdleTrackerMod";
-        private const float updatePeriod = 1.0f;
-        private GClass0 hudPanel;
-        private IdleTrackerPanel idleTrackerPanel;
-        private float timeSinceLastUpdate = 0.0f;
+        private const float _updatePeriod = 1.0f;
+        private GClass0 _hudPanel;
+        private IdleTrackerPanel _idleTrackerPanel;
+        private float _timeSinceLastUpdate = 0.0f;
+
+        public string Name { get { return "IdleTrackerMod"; } }
+
+        public string Description { get { return "Tracks idling workers and makes them visible"; } }
 
         public ModMain()
         {
@@ -27,13 +31,15 @@ namespace Mod
             hookManager.UpdateInGame += HookManager_UpdateInGame;
         }
 
+        
+
         private void HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
         {
-            timeSinceLastUpdate += gameTimeDelta;
+            _timeSinceLastUpdate += gameTimeDelta;
 
-            while (timeSinceLastUpdate > updatePeriod)
+            while (_timeSinceLastUpdate > _updatePeriod)
             {
-                timeSinceLastUpdate -= updatePeriod;
+                _timeSinceLastUpdate -= _updatePeriod;
 
                 Update();
             }
@@ -41,11 +47,10 @@ namespace Mod
 
         private void HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
-            this.hudPanel = inGameHUD.gclass0_0;
-
-            this.idleTrackerPanel = new IdleTrackerPanel(manager);
-            idleTrackerPanel.Visible = false;
-            hudPanel.Add(idleTrackerPanel);
+            this._hudPanel = inGameHUD.gclass0_0;            
+            this._idleTrackerPanel = new IdleTrackerPanel(manager);
+            _idleTrackerPanel.Visible = false;
+            _hudPanel.Add(_idleTrackerPanel);
         }
 
         private void Update()
@@ -54,7 +59,7 @@ namespace Mod
 
             int numIdle = 0;
 
-            idleTrackerPanel.ClearContents();
+            _idleTrackerPanel.ClearContents();
 
             foreach (KeyValuePair<uint, Character> gnome in playerFaction.Members)
             {
@@ -63,7 +68,7 @@ namespace Mod
                 {
                     numIdle++;
 
-                    var button = idleTrackerPanel.AddButton(gnome.Value.NameAndTitle());
+                    var button = _idleTrackerPanel.AddButton(gnome.Value.NameAndTitle());
 
                     button.ToolTip.Text = gnome.Value.FormattedTopSkills(5);
                     button.Click += (sender, e) => {
@@ -74,17 +79,19 @@ namespace Mod
 
             if (numIdle == 0)
             {
-                idleTrackerPanel.Visible = false;
+                _idleTrackerPanel.Visible = false;
                 return;
             }
 
-            idleTrackerPanel.AddLabel(numIdle + " idle gnomes");
+            _idleTrackerPanel.AddLabel(numIdle + " idle gnomes");
 
-            idleTrackerPanel.SetPosition(
-                hudPanel.Width - idleTrackerPanel.Width - idleTrackerPanel.margins_0.Right,
-                hudPanel.Height - idleTrackerPanel.Height - idleTrackerPanel.margins_0.Bottom);
+            _idleTrackerPanel.SetPosition(
+                _hudPanel.Width - _idleTrackerPanel.Width - _idleTrackerPanel.margins_0.Right,
+                _hudPanel.Height - _idleTrackerPanel.Height - _idleTrackerPanel.margins_0.Bottom);
 
-            idleTrackerPanel.Visible = true;
+            _idleTrackerPanel.Visible = true;
         }
+
+
     }
 }

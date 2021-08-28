@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModLoader
+namespace GnollModLoader
 {
     // http://stackoverflow.com/a/15079092/2524350
     class ConsoleWindow

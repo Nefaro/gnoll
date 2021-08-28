@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using ModLoader;
+using GnollModLoader;
 using Game.GUI.Controls;
 using Game;
 
@@ -10,12 +10,14 @@ namespace Mod
     {
         public static ModMain instance;
 
-        private const string name = "ImportExportTrackedItemsMod";
-
         public ModMain()
         {
             instance = this;
         }
+
+        public string Name { get { return "ImportExportTrackedItemsMod"; } }
+
+        public string Description { get { return "Imports and Exports tracked items"; } }
 
         public void OnLoad(HookManager hookManager)
         {
@@ -116,5 +118,7 @@ namespace Mod
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(model, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText(path, json);
         }
+
+
     }
 }

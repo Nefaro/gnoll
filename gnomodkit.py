@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit v1 -- https://github.com/minexew/gnomodkit')
+print('gnomodkit vG1.0 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse
@@ -15,14 +15,18 @@ import urllib.request
 BUILD_DIR = 'build'
 CACHE_DIR = 'cache'
 SDK_DIR = 'sdk'
+MODS_DIR = 'Gnoll Mods'
 
 CONFIG_FILENAME = '.config.json'
 
 DOTNETFX_DEFAULT_DIR = 'C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319'
 
 PATCH_BINARY_URL = 'http://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php'
-DE4DOT_URL = 'https://ci.appveyor.com/api/buildjobs/inku0l04uplh1d1r/artifacts/de4dot.zip'
-GNOMORIA_HASH = '016e623994628aba2a3cb8cd4cfe2412'
+DE4DOT_URL = 'http://localhost:8000/de4dot-net45.zip'
+# Gnomoria v1.0 (??)
+# GNOMORIA_HASH = '016e623994628aba2a3cb8cd4cfe2412'
+# Gnomoria v1.0 [indev]
+GNOMORIA_HASH = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
 
 # for SDK
 DEOBFUSCATED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.exe')
@@ -37,7 +41,8 @@ SDK_GNOMORIALIB_DLL_FILENAME = os.path.join(SDK_DIR, 'gnomorialib.dll')
 WORKING_FILENAME = os.path.join(BUILD_DIR, 'GnoMod.il')
 OUTPUT_EXE_FILENAME = 'GnoMod.exe'
 
-MOD_LOADER_PATCH = 'ModLoader.patch'
+MOD_LOADER_PATCH = 'GnollModLoader.patch'
+
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -64,7 +69,8 @@ def get_game_dir():
 
 def get_game_mod_dir():
     game_dir = get_game_dir()
-    mod_dir = os.path.join(game_dir, "ModLoader")
+    mod_dir = os.path.join(game_dir, MODS_DIR)
+    mod_dir = os.path.join(mod_dir, "enabled")
     os.makedirs(mod_dir, exist_ok=True)
     return mod_dir
 
@@ -434,8 +440,9 @@ class TaskMakeAllFieldsPublic(Task):
 class TaskMakeMod(Task):
     def __init__(self, solution_dir):
         super().__init__()
-        self.name = os.path.basename(os.path.normpath(solution_dir))
-        self.solution_dir = solution_dir
+        
+        self.solution_dir = os.path.join(MODS_DIR, solution_dir)
+        self.name = os.path.basename(os.path.normpath(self.solution_dir))
         self.project_dir = os.path.join(self.solution_dir, self.name)
         self.dll_name = self.name + ".dll"
 
@@ -457,15 +464,15 @@ class TaskMakeModLoader(Task):
         return 'make ModLoader'
 
     def discover_dependencies(self):
-        solution_dir = 'ModLoader'
-        project_dir = os.path.join(solution_dir, 'ModLoader')
-        modloader_dll = 'ModLoader.dll'
+        solution_dir = 'GnollModLoader'
+        project_dir = os.path.join(solution_dir, 'GnollModLoader')
+        modloader_dll = 'GnollModLoader.dll'
 
         # make SDK
         self.add_dependency(TaskMakeSDK())
 
         # build ModLoader
-        self.add_dependency(TaskMsbuild(os.path.join(solution_dir, 'ModLoader.sln')))
+        self.add_dependency(TaskMsbuild(os.path.join(solution_dir, 'GnollModLoader.sln')))
         self.add_dependency(TaskCopyFile(os.path.join(project_dir, 'bin\\x86\\Debug', modloader_dll), os.path.join(get_game_dir(), modloader_dll)))
 
         # patch ModLoader hooks into GnomoriaSDK
@@ -480,23 +487,35 @@ class TaskMakeSDK(Task):
 
     def discover_dependencies(self):
         # find and check Gnomoria.exe
+        print('-- %s' % 'find and check Gnomoria.exe ...')
         self.exe = TaskCheckDistFile('Gnomoria.exe', GNOMORIA_HASH)
         self.add_dependency(self.exe)
-
+        print('-- %s' % 'find and check Gnomoria.exe ... DONE')
+        
+        print('-- %s' % 'reverse obfuscator ...')
         # undo obfuscator damage
         self.add_dependency(TaskDeobfuscate(self.exe.path, DEOBFUSCATED_FILENAME))
+        print('-- %s' % 'reverse obfuscator ... DONE')
 
+        print('-- %s' % 'disassemble into IL ...')
         # disassemble into IL code
         self.add_dependency(TaskDecompile(DEOBFUSCATED_FILENAME, DISASSEMBLED_FILENAME))
+        print('-- %s' % 'disassemble into IL ... DONE')
 
         # make all fields & methods public
+        print('-- %s' % 'publifying methods ...')
         self.add_dependency(TaskMakeAllFieldsPublic(DISASSEMBLED_FILENAME, SDK_IL_FILENAME))
+        print('-- %s' % 'all methods public ... DONE')
 
         # build GnomoriaSDK.dll
+        print('-- %s' % 'assemble SDK ...')
         self.add_dependency(TaskAssemble(SDK_IL_FILENAME, SDK_DLL_FILENAME))
+        print('-- %s' % 'assemble SDK ... DONE')
 
         # copy gnomorialib.dll
+        print('-- %s' % 'copy lib.dll ...')
         self.add_dependency(TaskCopyFile(os.path.join(get_game_dir(), 'gnomorialib.dll'), SDK_GNOMORIALIB_DLL_FILENAME))
+        print('-- %s' % 'copy lib.dll ... DONE')
 
     def is_up_to_date(self):
         return is_up_to_date(SDK_DLL_FILENAME, self.exe.path)

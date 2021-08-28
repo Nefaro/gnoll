@@ -3,7 +3,7 @@
    .ver 0:64:4510:27485
  }
 +// ModLoader: Add reference to assembly
-+.assembly extern ModLoader
++.assembly extern GnollModLoader
 +{
 +  .ver 1:0:0:0
 +}
@@ -29,7 +29,7 @@
 +    ldloc.0
 +    ldarg.0
 +    ldfld class Game.GUI.Controls.Manager Game.GUI.GuiManager::manager_0
-+    call void [ModLoader]ModLoader.HookManager::HookInGameHUDInit(class Game.GUI.InGameHUD, class Game.GUI.Controls.Manager)
++    call void [GnollModLoader]GnollModLoader.HookManager::HookInGameHUDInit(class Game.GUI.InGameHUD, class Game.GUI.Controls.Manager)
      IL_001d:  ret
    } // end of method GuiManager::CreateInGameHUD
  
@@ -38,7 +38,7 @@
      .maxstack  1
      .locals init (class Game.GnomanEmpire V_0)
 +    // ModLoader: Call app init hook
-+    call void [ModLoader]ModLoader.ModLoaderMain::HookInit()
++    call void [GnollModLoader]GnollModLoader.GnollMain::HookInit()
      IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
      IL_0005:  stloc.0
      .try
@@ -49,7 +49,7 @@
 +    // ModLoader: Hook per-frame update
 +    ldarg.1
 +    ldloc.0
-+    call void [ModLoader]ModLoader.HookManager::HookUpdateInGame(float32, float32)
++    call void [GnollModLoader]GnollModLoader.HookManager::HookUpdateInGame(float32, float32)
      IL_0065:  ret
    } // end of method GnomanEmpire::method_2
  
@@ -70,18 +70,19 @@
 +    // (button2.Top + button2.Height + button2.Margins.Bottom) is now on top of the stack, we hijack it for our hook
 +    ldarg.0
 +    ldarg.1
-+    call int32 [ModLoader]ModLoader.HookManager::HookImportExportListInit(int32, class Game.GUI.ImportExportMenu, class Game.GUI.Controls.Manager)
++    call int32 [GnollModLoader]GnollModLoader.HookManager::HookImportExportListInit(int32, class Game.GUI.ImportExportMenu, class Game.GUI.Controls.Manager)
      IL_01c1:  ldloc.2
      IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
 @@ -346018,6 +346042,10 @@
-     IL_01ba:  ldfld      class Game.GUI.Controls.Panel Game.GUI.MainMenuWindow::panel_0
-     IL_01bf:  ldloc.s    V_4
-     IL_01c1:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
+    IL_0200:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
+    IL_0205:  ldarg.0
+    IL_0206:  ldarg.1
 +    // ModLoader: Hook Main Menu GUI initialization
++    call void [GnollModLoader]GnollModLoader.HookManager::HookMainMenuGuiInit(class Game.GUI.MainMenuWindow, class Game.GUI.Controls.Manager)
 +    ldarg.0
 +    ldarg.1
-+    call void [ModLoader]ModLoader.ModLoaderMain::HookMainMenuGuiInit(class Game.GUI.MainMenuWindow, class Game.GUI.Controls.Manager)
-     IL_01c6:  ldarg.0
-     IL_01c7:  ldarg.1
-     IL_01c8:  ldstr      "Exit"
+    IL_0207:  ldstr      "Exit"
+    IL_020c:  call       instance class Game.GUI.Controls.Button Game.GUI.MainMenuWindow::method_39(class Game.GUI.Controls.Manager,
+                                                                                                    string)
+    IL_0211:  stloc.s    V_6

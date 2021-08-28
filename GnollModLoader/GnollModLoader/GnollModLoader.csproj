@@ -7,8 +7,8 @@
     <ProjectGuid>{5ACB9702-860E-436F-836D-0D57D2479E49}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModLoader</RootNamespace>
-    <AssemblyName>ModLoader</AssemblyName>
+    <RootNamespace>GnollModLoader</RootNamespace>
+    <AssemblyName>GnollModLoader</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GnomoriaSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -49,16 +52,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\MessageDialog.cs" />
-    <Compile Include="GUI\AboutModLoaderDialog.cs" />
+    <Compile Include="GUI\AboutMenuPanel.cs" />
+    <Compile Include="GUI\AbstractTabbedWindowPanel.cs" />
+    <Compile Include="GUI\ModLoaderMenu.cs" />
+    <Compile Include="GUI\ModsMenuPanel.cs" />
     <Compile Include="HookManager.cs" />
     <Compile Include="IMod.cs" />
-    <Compile Include="ModLoaderMain.cs" />
+    <Compile Include="GnollMain.cs" />
     <Compile Include="ConsoleWindow.cs" />
-    <Compile Include="ModManager.cs" />
+    <Compile Include="GnollModLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
