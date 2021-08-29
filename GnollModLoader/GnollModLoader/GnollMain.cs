@@ -26,7 +26,7 @@ namespace GnollModLoader
 
         public static void HookInit()
         {
-            ConsoleWindow.ShowConsoleWindow();
+            //ConsoleWindow.ShowConsoleWindow();
 
             System.Console.WriteLine(String.Format("Gnomodkit {0} {1}", NAME, VERSION_STRING));
 
