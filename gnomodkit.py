@@ -23,9 +23,9 @@ DOTNETFX_DEFAULT_DIR = 'C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319'
 
 PATCH_BINARY_URL = 'http://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php'
 DE4DOT_URL = 'http://localhost:8000/de4dot-net45.zip'
-# Gnomoria v1.0 (??)
+# (??)
 # GNOMORIA_HASH = '016e623994628aba2a3cb8cd4cfe2412'
-# Gnomoria v1.0 [indev]
+# Gnomoria v1.0 and [indev]
 GNOMORIA_HASH = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
 
 # for SDK
