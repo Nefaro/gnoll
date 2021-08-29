@@ -18,7 +18,7 @@ Building ModLoader
 ```
 ./gnomodkit.py modloader
 ```
-Building a mod contained in this project (under "Gnoll Mods" directory
+Building a mod contained in this project (mod name = directory name under "Gnoll Mods")
 ```
 ./gnomodkit.py mod:ExampleHelloWorld
 ```
@@ -28,6 +28,8 @@ Build a mod and run the modded game
 ```
 
 # How this thing works
+
+Note: This here explains how things work. The actual work should be done via gnomodkit.py script.
 
 ## 1. Building SDK
 
