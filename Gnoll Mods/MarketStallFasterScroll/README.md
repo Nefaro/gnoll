@@ -1,0 +1,1 @@
+This mod modifies the scroll speed on the market stall UI. Originally it is 10 units, this mod rises it to 48, which is 3 full lines.
