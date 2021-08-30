@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mod
+namespace GnollMods.ImportExportTrackedItemsMod
 {
     internal class TrackedItemsModel
     {

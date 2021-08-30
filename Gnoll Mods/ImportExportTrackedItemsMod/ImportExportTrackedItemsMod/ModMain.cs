@@ -4,9 +4,9 @@ using GnollModLoader;
 using Game.GUI.Controls;
 using Game;
 
-namespace Mod
+namespace GnollMods.ImportExportTrackedItemsMod
 {
-    public class ModMain : IMod
+    public class ModMain : IGnollMod
     {
         public static ModMain instance;
 
@@ -18,6 +18,8 @@ namespace Mod
         public string Name { get { return "ImportExportTrackedItemsMod"; } }
 
         public string Description { get { return "Imports and Exports tracked items"; } }
+
+        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
 
         public void OnLoad(HookManager hookManager)
         {

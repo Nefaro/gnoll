@@ -4,7 +4,7 @@ using Game.GUI.Controls;
 using System;
 using System.Collections.Generic;
 
-namespace Mod
+namespace GnollMods.ImportExportTrackedItemsMod
 {
     // Code based on ImportExport*Dialog from retail game
 

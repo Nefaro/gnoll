@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using GnollModLoader.GUI;
@@ -12,16 +13,17 @@ namespace GnollModLoader
 
         public delegate void ExportMenuListInitHandler(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, AddButton context);
         public delegate void InGameHUDInitHandler(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager);
+        public delegate void InGameHUDShowWindowHandler(Game.GUI.Controls.Window window);
         public delegate void UpdateInGameHandler(float realTimeDelta, float gameTimeDelta);
 
-        private List<IMod> _listOfMods;
+        private List<IGnollMod> _listOfMods;
 
         public HookManager()
         {
             instance = this;
         }
 
-        public void RegisterMods(List<IMod> listOfMods)
+        public void RegisterMods(List<IGnollMod> listOfMods)
         {
             this._listOfMods = listOfMods;
         }
@@ -79,8 +81,17 @@ namespace GnollModLoader
             window.panel_0.Add(modButton);
         }
 
+        public static void HookIngameHudShowWindow_after(Game.GUI.Controls.Window window)
+        {
+            if (instance.InGameShowWindow != null)
+            {
+                instance.InGameShowWindow(window);
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
+        public event InGameHUDShowWindowHandler InGameShowWindow;
         public event UpdateInGameHandler UpdateInGame;
 
         private static HookManager instance;

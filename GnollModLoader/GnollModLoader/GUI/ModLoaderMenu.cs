@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace GnollModLoader.GUI
 {
+    // Gnoll Mods menu at the main menu
     public class ModLoaderMenu : Panel
     {
         private TabControl _tabControl;
         private List<TabbedWindowPanel> _tabbedWindowList;
 
-        public ModLoaderMenu(Manager manager, List<IMod> listOfMods) : base(manager)
+        public ModLoaderMenu(Manager manager, List<IGnollMod> listOfMods) : base(manager)
         {
             this.Init();
             this.Width = this.Manager.ScreenWidth;

@@ -4,7 +4,7 @@ using Game.GUI.Controls;
 using System.IO;
 using System.Linq;
 
-namespace Mod
+namespace GnollMods.ImportExportTrackedItemsMod
 {
     // Code based on Export*Dialog from retail game
     // TODO: split into generic dialog + specific importer/exporter (low priority)

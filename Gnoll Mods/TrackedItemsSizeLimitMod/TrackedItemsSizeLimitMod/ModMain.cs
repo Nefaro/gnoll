@@ -8,15 +8,17 @@ using Game.GUI;
 using Game.GUI.Controls;
 using GnollModLoader;
 
-namespace Mod
+namespace GnollMods.TrackedItemsSizeLimitMod
 {
-    class ModMain : IMod
+    class ModMain : IGnollMod
     {
         public static ModMain instance;
 
         public string Name { get { return "TrackedItemsSizeLimitMod"; } }
 
         public string Description { get { return "Increases the limit of how many items can be tracked on the main HUD"; } }
+
+        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
 
         public ModMain()
         {
@@ -78,6 +80,7 @@ namespace Mod
             clone.Click += ((sender, e) =>
             {
                 System.Console.WriteLine(" -- Custom TrackedItem event handler");
+
                 TrackedItemGroup itemGroup = new TrackedItemGroup();
                 GnomanEmpire.Instance.Fortress.StockManager.TrackedItemGroups.Add(itemGroup);
 

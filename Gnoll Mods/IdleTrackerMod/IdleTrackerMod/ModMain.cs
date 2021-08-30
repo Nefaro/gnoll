@@ -5,9 +5,9 @@ using Game;
 using Game.GUI;
 using Game.GUI.Controls;
 
-namespace Mod
+namespace GnollMods.IdleTrackerMod
 {
-    public class ModMain : IMod
+    public class ModMain : IGnollMod
     {
         public static ModMain instance;
 
@@ -20,6 +20,8 @@ namespace Mod
 
         public string Description { get { return "Tracks idling workers and makes them visible"; } }
 
+        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
+
         public ModMain()
         {
             instance = this;
@@ -31,7 +33,7 @@ namespace Mod
             hookManager.UpdateInGame += HookManager_UpdateInGame;
         }
 
-        
+
 
         private void HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
         {
@@ -47,7 +49,7 @@ namespace Mod
 
         private void HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
-            this._hudPanel = inGameHUD.gclass0_0;            
+            this._hudPanel = inGameHUD.gclass0_0;
             this._idleTrackerPanel = new IdleTrackerPanel(manager);
             _idleTrackerPanel.Visible = false;
             _hudPanel.Add(_idleTrackerPanel);
@@ -71,7 +73,8 @@ namespace Mod
                     var button = _idleTrackerPanel.AddButton(gnome.Value.NameAndTitle());
 
                     button.ToolTip.Text = gnome.Value.FormattedTopSkills(5);
-                    button.Click += (sender, e) => {
+                    button.Click += (sender, e) =>
+                    {
                         GnomanEmpire.Instance.Camera.MoveTo(gnome.Value.Position, true, true);
                     };
                 }

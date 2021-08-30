@@ -2,7 +2,7 @@
 using Game.GUI.Controls;
 using Microsoft.Xna.Framework;
 
-namespace Mod
+namespace GnollMods.IdleTrackerMod
 {
     internal class IdleTrackerPanel : Panel
     {

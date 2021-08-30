@@ -7,7 +7,7 @@
     <ProjectGuid>{92FD7E16-472E-4BA6-A473-55F104DDF6A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mod</RootNamespace>
+    <RootNamespace>GnollMods.ImportExportTrackedItemsMod</RootNamespace>
     <AssemblyName>ImportExportTrackedItemsMod</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

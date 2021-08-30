@@ -9,17 +9,18 @@ using Game.GUI.Controls;
 
 namespace GnollModLoader.GUI
 {
+    // Gnoll Mods panel, shows loaded/enabled mods
     class ModsMenuPanel : AbstractTabbedWindowPanel
     {
-        private readonly List<IMod> _listOfMods;
+        private readonly List<IGnollMod> _listOfMods;
         private int _height;
 
-        public ModsMenuPanel(Manager manager, List<IMod> listOfMods) : base(manager)
+        public ModsMenuPanel(Manager manager, List<IGnollMod> listOfMods) : base(manager)
         {
             if (listOfMods != null)
                 this._listOfMods = listOfMods;
             else
-                this._listOfMods = new List<IMod>();
+                this._listOfMods = new List<IGnollMod>();
         }
 
         public override void SetupPanel()
@@ -72,7 +73,7 @@ namespace GnollModLoader.GUI
 
             listBox.ItemIndexChanged += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
-                IMod mod = this._listOfMods[listBox.ItemIndex];
+                IGnollMod mod = this._listOfMods[listBox.ItemIndex];
                 modNameLabel.Text = mod.Name;
                 string multiline = this.SpliceText(mod.Description, 50);
 

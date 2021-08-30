@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit vG1.0 -- https://github.com/Nefaro/gnoll')
+print('gnomodkit vG1.1 -- https://github.com/Nefaro/gnoll/tree/G1.1')
 print()
 
 import argparse
@@ -16,6 +16,7 @@ BUILD_DIR = 'build'
 CACHE_DIR = 'cache'
 SDK_DIR = 'sdk'
 MODS_DIR = 'Gnoll Mods'
+DATA_DIR = 'Data'
 
 CONFIG_FILENAME = '.config.json'
 
@@ -42,7 +43,6 @@ WORKING_FILENAME = os.path.join(BUILD_DIR, 'GnoMod.il')
 OUTPUT_EXE_FILENAME = 'GnoMod.exe'
 
 MOD_LOADER_PATCH = 'GnollModLoader.patch'
-
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -266,7 +266,12 @@ class TaskCopyFile(Task):
         return is_up_to_date(self.output_filename, self.filename)
 
     def run(self):
-        shutil.copyfile(self.filename, self.output_filename)
+        if os.path.isdir(self.filename):
+            if os.path.exists(self.output_filename):
+                shutil.rmtree(self.output_filename)
+            shutil.copytree(self.filename, self.output_filename)
+        else:
+            shutil.copy2(self.filename, self.output_filename)        
 
 class TaskDecompile(Task):
     def __init__(self, filename, output_filename):
@@ -458,6 +463,11 @@ class TaskMakeMod(Task):
 
         # install into game directory
         self.add_dependency(TaskCopyFile(os.path.join(self.project_dir, 'bin\\Debug', self.dll_name), os.path.join(get_game_mod_dir(), self.dll_name)))
+        
+        mod_data_dir = os.path.join(self.project_dir, DATA_DIR);
+        if os.path.exists(mod_data_dir):
+            # if mod has Data directory, install that as well
+            self.add_dependency(TaskCopyFile(mod_data_dir, os.path.join(get_game_mod_dir(), self.name, DATA_DIR)))
 
 class TaskMakeModLoader(Task):
     def __str__(self):

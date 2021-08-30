@@ -85,4 +85,15 @@
     IL_0207:  ldstr      "Exit"
     IL_020c:  call       instance class Game.GUI.Controls.Button Game.GUI.MainMenuWindow::method_39(class Game.GUI.Controls.Manager,
                                                                                                     string)
-    IL_0211:  stloc.s    V_6
+@@ -432532,6 +432560,9 @@
+     IL_0062:  callvirt   instance class Game.Common.GameProperty`1<bool> Game.World::get_Paused()
+     IL_0067:  call       !0 class Game.Common.GameProperty`1<bool>::op_Implicit(class Game.Common.GameProperty`1<!0>)
+     IL_006c:  stfld      bool Game.GUI.InGameHUD::bool_1
+-    IL_0071:  ldarg.2
++    IL_0071:  ldarg.1
++    // ModLoader: Call app init hook   
++    call void [GnollModLoader]GnollModLoader.HookManager::HookIngameHudShowWindow_after(class Game.GUI.Controls.Window)    
++    ldarg.2
+     IL_0072:  brfalse.s  IL_0089
+ 
+     IL_0074:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
