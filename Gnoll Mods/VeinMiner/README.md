@@ -1,0 +1,1 @@
+This mod allowes the miner to explore the mineral and gem veins and mine them out by theirown.
