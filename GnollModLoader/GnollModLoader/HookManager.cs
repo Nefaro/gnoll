@@ -11,10 +11,16 @@ namespace GnollModLoader
     {
         public delegate Game.GUI.Controls.Button AddButton(string label);
 
+        // Called on when export menu has initialized
         public delegate void ExportMenuListInitHandler(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, AddButton context);
+        // Called when the ingame HUD (this is the gamefield, NOT the main menu) is complete 
         public delegate void InGameHUDInitHandler(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager);
+        // Called after the ingame HUD opens a window
         public delegate void InGameHUDShowWindowHandler(Game.GUI.Controls.Window window);
+        // Called on every update, after the game's update has run
         public delegate void UpdateInGameHandler(float realTimeDelta, float gameTimeDelta);
+        // Called when a character has finished a job (after the ingame processing has finished)
+        public delegate void OnJobCompleteHandler(Game.Job job, Game.Character character);
 
         private List<IGnollMod> _listOfMods;
 
@@ -89,10 +95,19 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookOnJobComplete_after(Game.Job job, Game.Character character)
+        {
+            if (instance.OnJobComplete != null)
+            {
+                instance.OnJobComplete(job, character);
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
         public event InGameHUDShowWindowHandler InGameShowWindow;
         public event UpdateInGameHandler UpdateInGame;
+        public event OnJobCompleteHandler OnJobComplete;
 
         private static HookManager instance;
     }

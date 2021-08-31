@@ -11,11 +11,13 @@ namespace GnollModLoader
     public class GnollMain
     {
         public const string NAME = "Gnoll Mod Loader";
-        public const string VERSION_STRING = "G1.1";
+        public const string VERSION_STRING = "G1.2";
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
         public const string ORIGINAL_URL = "https://github.com/minexew/gnomodkit";
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
+
+        public static readonly bool _debug = false;
 
         static HookManager hookManager;
         static GnollModLoader modManager;
@@ -28,7 +30,8 @@ namespace GnollModLoader
         {
             // System Console for debugging
             // should probably put behind conf or button press ...
-            // ConsoleWindow.ShowConsoleWindow();
+            if ( _debug )
+                ConsoleWindow.ShowConsoleWindow();
 
             System.Console.WriteLine(String.Format("Gnomodkit {0} {1}", NAME, VERSION_STRING));
 

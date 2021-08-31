@@ -85,7 +85,17 @@
     IL_0207:  ldstr      "Exit"
     IL_020c:  call       instance class Game.GUI.Controls.Button Game.GUI.MainMenuWindow::method_39(class Game.GUI.Controls.Manager,
                                                                                                     string)
-@@ -432532,6 +432560,9 @@
+@@ -422848,6 +422876,9 @@
+    IL_008b:  ldarg.1
+    IL_008c:  ldarg.2
+    IL_008d:  callvirt   instance void Game.Job::Complete(class Game.Character)  
++    ldarg.1
++    ldarg.2
++    call void [GnollModLoader]GnollModLoader.HookManager::HookOnJobComplete_after(class Game.Job, class Game.Character)    
+    IL_0092:  ret
+  } // end of method JobBoard::CompleteJob
+
+@@ -432532,6 +432563,9 @@
      IL_0062:  callvirt   instance class Game.Common.GameProperty`1<bool> Game.World::get_Paused()
      IL_0067:  call       !0 class Game.Common.GameProperty`1<bool>::op_Implicit(class Game.Common.GameProperty`1<!0>)
      IL_006c:  stfld      bool Game.GUI.InGameHUD::bool_1

@@ -8,6 +8,7 @@ using Game;
 using Game.GUI;
 using Game.GUI.Controls;
 using GameLibrary;
+using Microsoft.Xna.Framework;
 
 namespace GnollModLoader
 {
@@ -16,7 +17,7 @@ namespace GnollModLoader
         private readonly HookManager _hookManager;
         private readonly List<IGnollMod> _modsList = new List<IGnollMod>();
 
-        public List<IGnollMod> Mods { get { return _modsList;  }}
+        public List<IGnollMod> Mods { get { return _modsList; } }
 
         public GnollModLoader(HookManager hookManager)
         {
@@ -37,7 +38,12 @@ namespace GnollModLoader
             }
             this._hookManager.RegisterMods(this.Mods);
 
-            this._hookManager.InGameHUDInit += DEBUG_HookManager_InGameHUDInit;
+            if (GnollMain._debug)
+            {
+                this._hookManager.InGameHUDInit += DEBUG_HookManager_InGameHUDInit;
+                this._hookManager.UpdateInGame += DEBUG_HookManager_UpdateInGame;
+                this._hookManager.OnJobComplete += DEBUG_HookManager_OnJobComplete;
+            }
         }
 
         public void LoadMod(string path)
@@ -62,15 +68,10 @@ namespace GnollModLoader
                     }
                 }
             }
-            catch(System.TypeLoadException)
+            catch (System.TypeLoadException)
             {
                 System.Console.WriteLine("-- Trying to load mod failed; Maybe not a Gnoll compatible nod?");
             }
-        }
-
-        private void DEBUG_HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
-        {
-
         }
 
         private IEnumerable<Type> GetAssemblyTypes(Assembly assembly)
@@ -85,5 +86,19 @@ namespace GnollModLoader
                 return e.Types.Where(t => t != null);
             }
         }
+
+        private void DEBUG_HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
+        {
+
+        }
+        private void DEBUG_HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
+        {
+        }
+
+        private void DEBUG_HookManager_OnJobComplete(Game.Job job, Game.Character character)
+        {
+        }
+
+
     }
 }
