@@ -27,6 +27,10 @@ Build a mod and run the modded game
 ./gnomodkit.py sdk mod:ExampleHelloWorld run
 ```
 
+# Included mods
+
+Check out the existing mods under "Gnoll Mods" directory
+
 # How this thing works
 
 Note: This here explains how things work. The actual work should be done via gnomodkit.py script.
