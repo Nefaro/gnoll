@@ -31,6 +31,11 @@ Build a mod and run the modded game
 
 Check out the existing mods under "Gnoll Mods" directory
 
+# Screenshots
+
+For pictures visit this Steam discussion:
+https://steamcommunity.com/app/224500/discussions/0/3042732434759234670/
+
 # How this thing works
 
 Note: This here explains how things work. The actual work should be done via gnomodkit.py script.
