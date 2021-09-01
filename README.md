@@ -59,5 +59,5 @@ GnomoriaSDK.dll + gnomorialib.dll can be now used to target Gnomoria internal AP
 
 ## 3. Building Mods manually
 - compile mod .dll
-- copy the resulting .dll into "<Gnomoria game directory>/Gnoll Mods/enabled"
+- copy the resulting .dll into "/Gnoll Mods/enabled" under Gnomoria directory 
 - all .dlls in "Gnoll Mods/enabled" directory will be loaded by the Mod Loader
