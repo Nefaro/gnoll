@@ -11,7 +11,7 @@ namespace GnollMods.VeinMiner
     {
         public static ModMain instance;
         public string Name { get { return  "VeinMiner"; } }
-        public string Description { get { return  "Allows the miner to mine out a discovered vein of ore or gems"; } }
+        public string Description { get { return  "Allows the miner to mine out a discovered vein of ore or gems."; } }
         public string BuiltWithLoaderVersion { get { return  "G1.2"; } }
 
         public ModMain()
@@ -39,6 +39,9 @@ namespace GnollMods.VeinMiner
 
         private void RegisterMiningJob(Map map, float col, float row, float level)
         {
+            if (!map.InBounds((int)level, (int)row, (int)col))
+                return;
+
             MapCell cell = map.GetCell((int)level, (int)row, (int)col);
             if (cell.HasEmbeddedWall())
             {
