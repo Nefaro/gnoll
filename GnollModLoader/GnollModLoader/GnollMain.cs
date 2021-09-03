@@ -11,7 +11,7 @@ namespace GnollModLoader
     public class GnollMain
     {
         public const string NAME = "Gnoll Mod Loader";
-        public const string VERSION_STRING = "G1.2";
+        public const string VERSION_STRING = "G1.3";
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
         public const string ORIGINAL_URL = "https://github.com/minexew/gnomodkit";
 

@@ -33,6 +33,15 @@
      IL_001d:  ret
    } // end of method GuiManager::CreateInGameHUD
  
+@@ -32953,7 +32953,7 @@
+     } // end of property Class20::System.Collections.IEnumerator.Current
+   } // end of class Class20
+ 
+-  .field family class [mscorlib]System.Collections.Generic.List`1<class Game.BehaviorTree.Node`1<!T>> mChildren
++  .field public class [mscorlib]System.Collections.Generic.List`1<class Game.BehaviorTree.Node`1<!T>> mChildren
+   .method public hidebysig specialname rtspecialname 
+           instance void  .ctor() cil managed
+   {
 @@ -126244,6 +126257,8 @@
      // Code size       25 (0x19)
      .maxstack  1
