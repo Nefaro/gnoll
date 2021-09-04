@@ -31,13 +31,28 @@ namespace GnollMods.FixStuckWheelbarrow
                 // Interested only this specific Behavior
                 if ( gnome.Behavior.GetType() == typeof(PlayerCharacterBehavior))
                 {
-                    FindNextType((System.Collections.IEnumerable)gnome.Behavior, GetTargetTypes().GetEnumerator());
+                    FindNextType((System.Collections.IEnumerable)gnome.Behavior, GetTargetTypesForPlayerCharacter().GetEnumerator());
+                }
+                else if (gnome.Behavior.GetType() == typeof(AutomatonBehavior))
+                {
+                    FindNextType((System.Collections.IEnumerable)gnome.Behavior, GetTargetTypesForAutomaton().GetEnumerator());
                 }
             }
         }
 
         // Behavior "path" to where we need to end up
-        private IEnumerable<Type> GetTargetTypes()
+        private IEnumerable<Type> GetTargetTypesForPlayerCharacter()
+        {
+            yield return typeof(DoWork);
+            yield return typeof(TakeAndPerformJob);
+            yield return typeof(PerformJob);
+            yield return typeof(GatherComponents);
+            yield return typeof(GatherComponentsWithWheelBarrow);
+            yield return typeof(GatherAllThenDropOffWB);
+            yield return typeof(GetNextComponentWB);
+        }
+
+        private IEnumerable<Type> GetTargetTypesForAutomaton()
         {
             yield return typeof(DoWork);
             yield return typeof(TakeAndPerformJob);
