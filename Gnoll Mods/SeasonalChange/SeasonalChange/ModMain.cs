@@ -32,8 +32,23 @@ namespace GnollMods.SeasonalChange
             // On first load, replace with current seasonal sprites
             this.SwitchSpritesToSeason(Game.GnomanEmpire.Instance.Region.Season().ToString().ToLower());
 
+            if ( IsNewGame())
+            {
+                // Need to do some more steps when a new game is started
+                // because the processing path is different and system is
+                // in a different state
+                this.CallTextureRepack();
+            }
+
             Game.GnomanEmpire.Instance.Region.OnSeasonChange += OnSeasonChange;
         }
+
+        private bool IsNewGame()
+        {
+            return (Game.GnomanEmpire.Instance.Region.TotalTime() < 1 &&
+                Game.GnomanEmpire.Instance.Region.Sunrise() > Game.GnomanEmpire.Instance.Region.Time.Value);
+        }
+
         private void OnSeasonChange(object sender, System.EventArgs e)
         {
             // good habbit to encapsulate your custom code
@@ -75,10 +90,9 @@ namespace GnollMods.SeasonalChange
                 foreach (var key in Game.GnomanEmpire.Instance.gameDefs_0.dictionary_4.Keys.ToList())
                 {
                     if (key.EndsWith("default.png"))
-                    {
+                    {                       
                         Game.GnomanEmpire.Instance.gameDefs_0.dictionary_4[key] =
                             Game.GnomanEmpire.Instance.gameDefs_0.dictionary_4[seasonalSprite];
-
                     }
                 }
             }
