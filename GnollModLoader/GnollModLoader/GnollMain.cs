@@ -11,13 +11,19 @@ namespace GnollModLoader
     public class GnollMain
     {
         public const string NAME = "Gnoll Mod Loader";
-        public const string VERSION_STRING = "G1.3";
+        private const string MAJOR_VERSION = "G1";
+        // for easier validation
+        private const uint PATCH_VERSION = 4;
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
         public const string ORIGINAL_URL = "https://github.com/minexew/gnomodkit";
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
 
         public static readonly bool _debug = false;
+        public static String VERSION
+        {
+            get { return MAJOR_VERSION + "." + PATCH_VERSION; }
+        }
 
         static HookManager hookManager;
         static GnollModLoader modManager;
@@ -33,7 +39,7 @@ namespace GnollModLoader
             if ( _debug )
                 ConsoleWindow.ShowConsoleWindow();
 
-            System.Console.WriteLine(String.Format("Gnomodkit {0} {1}", NAME, VERSION_STRING));
+            System.Console.WriteLine(String.Format("Gnomodkit {0} {1}", NAME, VERSION));
 
             hookManager = new HookManager();
 

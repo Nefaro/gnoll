@@ -1,4 +1,4 @@
-@@ -70,6 +70,11 @@
+@@ -70,6 +70,11 @@ ## Append assembly info
  {
    .ver 0:64:4510:27485
  }
@@ -18,7 +18,7 @@
      IL_0000:  ldarg.0
      IL_0001:  ldfld      class Game.GUI.Controls.Window Game.GUI.GuiManager::window_0
      IL_0006:  ldc.i4.0
-@@ -25357,7 +25363,14 @@
+@@ -25357,7 +25363,14 @@ ## Insert Hook for IngameHUDInit
      IL_000d:  call       instance void Game.GUI.GuiManager::method_2()
      IL_0012:  ldarg.0
      IL_0013:  newobj     instance void Game.GUI.InGameHUD::.ctor()
@@ -33,7 +33,7 @@
      IL_001d:  ret
    } // end of method GuiManager::CreateInGameHUD
  
-@@ -32953,7 +32953,7 @@
+@@ -32930,7 +32930,7 @@ ## Make behavior tree nodes public
      } // end of property Class20::System.Collections.IEnumerator.Current
    } // end of class Class20
  
@@ -42,7 +42,7 @@
    .method public hidebysig specialname rtspecialname 
            instance void  .ctor() cil managed
    {
-@@ -126244,6 +126257,8 @@
+@@ -126244,6 +126257,8 @@ ## Insert hook for initializing mod loader
      // Code size       25 (0x19)
      .maxstack  1
      .locals init (class Game.GnomanEmpire V_0)
@@ -51,7 +51,7 @@
      IL_0000:  call       class Game.GnomanEmpire Game.GnomanEmpire::get_Instance()
      IL_0005:  stloc.0
      .try
-@@ -201299,6 +201314,10 @@
+@@ -201299,6 +201314,10 @@ ## Insert hooks for ingame update
      IL_005a:  ldfld      class Game.Camera Game.GnomanEmpire::camera_0
      IL_005f:  ldarg.1
      IL_0060:  callvirt   instance void Game.Camera::Update(float32)
@@ -62,7 +62,7 @@
      IL_0065:  ret
    } // end of method GnomanEmpire::method_2
  
-@@ -230208,7 +230227,7 @@
+@@ -230208,7 +230227,7 @@ 
            instance void  .ctor(class Game.GUI.Controls.Manager manager) cil managed
    {
      // Code size       614 (0x266)
@@ -71,7 +71,7 @@
      .locals init (class Game.GUI.Controls.Button V_0,
               class Game.GUI.Controls.Button V_1,
               class Game.GUI.Controls.Button V_2,
-@@ -230365,6 +230384,11 @@
+@@ -230365,6 +230384,11 @@ ## Insert hook for import/export functionality
      IL_01b6:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01bb:  ldfld      int32 Game.GUI.Controls.Margins::Bottom
      IL_01c0:  add
@@ -83,7 +83,7 @@
      IL_01c1:  ldloc.2
      IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
-@@ -346018,6 +346042,10 @@
+@@ -346018,6 +346042,10 @@ ## Insert hook for main menu init
     IL_0200:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
     IL_0205:  ldarg.0
     IL_0206:  ldarg.1
@@ -94,7 +94,7 @@
     IL_0207:  ldstr      "Exit"
     IL_020c:  call       instance class Game.GUI.Controls.Button Game.GUI.MainMenuWindow::method_39(class Game.GUI.Controls.Manager,
                                                                                                     string)
-@@ -422848,6 +422876,9 @@
+@@ -422848,6 +422876,9 @@ ## Insert hook for character job completion
     IL_008b:  ldarg.1
     IL_008c:  ldarg.2
     IL_008d:  callvirt   instance void Game.Job::Complete(class Game.Character)  
@@ -104,7 +104,731 @@
     IL_0092:  ret
   } // end of method JobBoard::CompleteJob
 
-@@ -432532,6 +432563,9 @@
+@@ -427631,7 +427631,7 @@ ## Redefine entity list type to IList (for runtime replacement of the implementation)
+ {
+   .field public uint32 uint_0
+   .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_0
+-  .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_1
++  .field public class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> list_1
+   .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_2
+   .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_3
+   .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_4
+@@ -427695,7 +427695,7 @@ ## GameEnityManager constructor
+     IL_0013:  stfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
+     IL_0018:  ldarg.0
+     IL_0019:  newobj     instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::.ctor()
+-    IL_001e:  stfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_001e:  stfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+     IL_0023:  ldarg.0
+     IL_0024:  newobj     instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::.ctor()
+     IL_0029:  stfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
+@@ -427833,7 +427833,7 @@
+     IL_00e4:  ldarg.0
+     IL_00e5:  ldloc.0
+     IL_00e6:  newobj     instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::.ctor(int32)
+-    IL_00eb:  stfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_00eb:  stfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+     IL_00f0:  ldc.i4.0
+     IL_00f1:  stloc.s    V_4
+     IL_00f3:  br.s       IL_011a
+@@ -427847,9 +427847,9 @@ ## GameEntityManager constructor(BinaryReader reader)
+     IL_0105:  brfalse.s  IL_0114
+ 
+     IL_0107:  ldarg.0
+-    IL_0108:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_0108:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+     IL_010d:  ldloc.s    V_5
+-    IL_010f:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Add(!0)
++    IL_010f:  callvirt   instance void class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::Add(!0)
+     IL_0114:  ldloc.s    V_4
+     IL_0116:  ldc.i4.1
+     IL_0117:  add     
+@@ -428406,22 +428406,18 @@ ## GameEntityManager :: Serialize
+   .method public hidebysig instance void 
+           Serialize(class [mscorlib]System.IO.BinaryWriter writer) cil managed
+   {
+-    // Code size       584 (0x248)
++    // Code size       573 (0x23d)
+     .maxstack  2
+-    .locals init (valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity> V_0,
+-             class Game.GameEntity V_1,
+-             class Game.GameEntity V_2,
++    .locals init (valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity> V_0,
++             valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity> V_1,
++             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_2,
+              class Game.GameEntity V_3,
+-             class Game.GameEntity V_4,
++             class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity> V_4,
+              class Game.GameEntity V_5,
+              class Game.GameEntity V_6,
+-             valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity> V_7,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_8,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_9,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_10,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_11,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_12,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_13)
++             class Game.GameEntity V_7,
++             class Game.GameEntity V_8,
++             class Game.GameEntity V_9)
+     IL_0000:  ldarg.1
+     IL_0001:  ldarg.0
+     IL_0002:  ldfld      uint32 Game.GameEntityManager::uint_0
+@@ -428434,249 +428430,244 @@ ## GameEntityManager :: Serialize
+     IL_001d:  ldarg.0
+     IL_001e:  ldfld      class [mscorlib]System.Collections.Generic.Dictionary`2<uint32,class Game.GameEntity> Game.GameEntityManager::dictionary_0
+     IL_0023:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<!0,!1> class [mscorlib]System.Collections.Generic.Dictionary`2<uint32,class Game.GameEntity>::GetEnumerator()
+-    IL_0028:  stloc.s    V_7
++    IL_0028:  stloc.0
+     .try
+     {
+-      IL_002a:  nop
+-      IL_002b:  br.s       IL_0054
++      IL_0029:  br.s       IL_0052
+ 
+-      IL_002d:  ldloca.s   V_7
+-      IL_002f:  call       instance valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<!0,!1> valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>::get_Current()
+-      IL_0034:  stloc.0
+-      IL_0035:  ldarg.1
+-      IL_0036:  ldloca.s   V_0
+-      IL_0038:  call       instance !1 valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity>::get_Value()
+-      IL_003d:  callvirt   instance int32 Game.GameEntity::TypeID()
+-      IL_0042:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-      IL_0047:  ldloca.s   V_0
+-      IL_0049:  call       instance !1 valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity>::get_Value()
+-      IL_004e:  ldarg.1
+-      IL_004f:  callvirt   instance void Game.GameEntity::Serialize(class [mscorlib]System.IO.BinaryWriter)
+-      IL_0054:  ldloca.s   V_7
+-      IL_0056:  call       instance bool valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>::MoveNext()
+-      IL_005b:  brtrue.s   IL_002d
++      IL_002b:  ldloca.s   V_0
++      IL_002d:  call       instance valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<!0,!1> valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>::get_Current()
++      IL_0032:  stloc.1
++      IL_0033:  ldarg.1
++      IL_0034:  ldloca.s   V_1
++      IL_0036:  call       instance !1 valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity>::get_Value()
++      IL_003b:  callvirt   instance int32 Game.GameEntity::TypeID()
++      IL_0040:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++      IL_0045:  ldloca.s   V_1
++      IL_0047:  call       instance !1 valuetype [mscorlib]System.Collections.Generic.KeyValuePair`2<uint32,class Game.GameEntity>::get_Value()
++      IL_004c:  ldarg.1
++      IL_004d:  callvirt   instance void Game.GameEntity::Serialize(class [mscorlib]System.IO.BinaryWriter)
++      IL_0052:  ldloca.s   V_0
++      IL_0054:  call       instance bool valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>::MoveNext()
++      IL_0059:  brtrue.s   IL_002b
+ 
+-      IL_005d:  leave.s    IL_006d
++      IL_005b:  leave.s    IL_006b
+ 
+     }  // end .try
+     finally
+     {
+-      IL_005f:  ldloca.s   V_7
+-      IL_0061:  constrained. valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>
+-      IL_0067:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_006c:  endfinally
++      IL_005d:  ldloca.s   V_0
++      IL_005f:  constrained. valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<uint32,class Game.GameEntity>
++      IL_0065:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_006a:  endfinally
+     }  // end handler
+-    IL_006d:  ldarg.1
+-    IL_006e:  ldarg.0
+-    IL_006f:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
+-    IL_0074:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_0079:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_007e:  ldarg.0
+-    IL_007f:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
+-    IL_0084:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_0089:  stloc.s    V_8
++    IL_006b:  ldarg.1
++    IL_006c:  ldarg.0
++    IL_006d:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
++    IL_0072:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
++    IL_0077:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_007c:  ldarg.0
++    IL_007d:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
++    IL_0082:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
++    IL_0087:  stloc.2
+     .try
+     {
+-      IL_008b:  nop
+-      IL_008c:  br.s       IL_00a2
++      IL_0088:  br.s       IL_009e
+ 
+-      IL_008e:  ldloca.s   V_8
+-      IL_0090:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_0095:  stloc.1
+-      IL_0096:  ldarg.1
+-      IL_0097:  ldloc.1
+-      IL_0098:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_009d:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_00a2:  ldloca.s   V_8
+-      IL_00a4:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_00a9:  brtrue.s   IL_008e
++      IL_008a:  ldloca.s   V_2
++      IL_008c:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
++      IL_0091:  stloc.3
++      IL_0092:  ldarg.1
++      IL_0093:  ldloc.3
++      IL_0094:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_0099:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_009e:  ldloca.s   V_2
++      IL_00a0:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
++      IL_00a5:  brtrue.s   IL_008a
+ 
+-      IL_00ab:  leave.s    IL_00bb
++      IL_00a7:  leave.s    IL_00b7
+ 
+     }  // end .try
+     finally
+     {
+-      IL_00ad:  ldloca.s   V_8
+-      IL_00af:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_00b5:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_00ba:  endfinally
++      IL_00a9:  ldloca.s   V_2
++      IL_00ab:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
++      IL_00b1:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_00b6:  endfinally
+     }  // end handler
+-    IL_00bb:  ldarg.1
+-    IL_00bc:  ldarg.0
+-    IL_00bd:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
+-    IL_00c2:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_00c7:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_00cc:  ldarg.0
+-    IL_00cd:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
+-    IL_00d2:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_00d7:  stloc.s    V_9
++    IL_00b7:  ldarg.1
++    IL_00b8:  ldarg.0
++    IL_00b9:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_00be:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::get_Count()
++    IL_00c3:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_00c8:  ldarg.0
++    IL_00c9:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_00ce:  callvirt   instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<class Game.GameEntity>::GetEnumerator()
++    IL_00d3:  stloc.s    V_4
+     .try
+     {
+-      IL_00d9:  nop
+-      IL_00da:  br.s       IL_00f0
++      IL_00d5:  br.s       IL_00ed
+ 
+-      IL_00dc:  ldloca.s   V_9
+-      IL_00de:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_00e3:  stloc.2
+-      IL_00e4:  ldarg.1
+-      IL_00e5:  ldloc.2
+-      IL_00e6:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_00eb:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_00f0:  ldloca.s   V_9
+-      IL_00f2:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_00f7:  brtrue.s   IL_00dc
++      IL_00d7:  ldloc.s    V_4
++      IL_00d9:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity>::get_Current()
++      IL_00de:  stloc.s    V_5
++      IL_00e0:  ldarg.1
++      IL_00e1:  ldloc.s    V_5
++      IL_00e3:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_00e8:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_00ed:  ldloc.s    V_4
++      IL_00ef:  callvirt   instance bool [mscorlib]System.Collections.IEnumerator::MoveNext()
++      IL_00f4:  brtrue.s   IL_00d7
+ 
+-      IL_00f9:  leave.s    IL_0109
++      IL_00f6:  leave.s    IL_0104
+ 
+     }  // end .try
+     finally
+     {
+-      IL_00fb:  ldloca.s   V_9
+-      IL_00fd:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_0103:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_0108:  endfinally
++      IL_00f8:  ldloc.s    V_4
++      IL_00fa:  brfalse.s  IL_0103
++
++      IL_00fc:  ldloc.s    V_4
++      IL_00fe:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_0103:  endfinally
+     }  // end handler
+-    IL_0109:  ldarg.1
+-    IL_010a:  ldarg.0
+-    IL_010b:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
+-    IL_0110:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_0115:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_011a:  ldarg.0
+-    IL_011b:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
+-    IL_0120:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_0125:  stloc.s    V_10
++    IL_0104:  ldarg.1
++    IL_0105:  ldarg.0
++    IL_0106:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
++    IL_010b:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
++    IL_0110:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_0115:  ldarg.0
++    IL_0116:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
++    IL_011b:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
++    IL_0120:  stloc.2
+     .try
+     {
+-      IL_0127:  nop
+-      IL_0128:  br.s       IL_013e
++      IL_0121:  br.s       IL_0139
+ 
+-      IL_012a:  ldloca.s   V_10
+-      IL_012c:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_0131:  stloc.3
+-      IL_0132:  ldarg.1
+-      IL_0133:  ldloc.3
+-      IL_0134:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_0139:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_013e:  ldloca.s   V_10
+-      IL_0140:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_0145:  brtrue.s   IL_012a
++      IL_0123:  ldloca.s   V_2
++      IL_0125:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
++      IL_012a:  stloc.s    V_6
++      IL_012c:  ldarg.1
++      IL_012d:  ldloc.s    V_6
++      IL_012f:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_0134:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_0139:  ldloca.s   V_2
++      IL_013b:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
++      IL_0140:  brtrue.s   IL_0123
+ 
+-      IL_0147:  leave.s    IL_0157
++      IL_0142:  leave.s    IL_0152
+ 
+     }  // end .try
+     finally
+     {
+-      IL_0149:  ldloca.s   V_10
+-      IL_014b:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_0151:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_0156:  endfinally
++      IL_0144:  ldloca.s   V_2
++      IL_0146:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
++      IL_014c:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_0151:  endfinally
+     }  // end handler
+-    IL_0157:  ldarg.1
+-    IL_0158:  ldarg.0
+-    IL_0159:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_3
+-    IL_015e:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_0163:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_0168:  ldarg.0
+-    IL_0169:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_3
+-    IL_016e:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_0173:  stloc.s    V_11
++    IL_0152:  ldarg.1
++    IL_0153:  ldarg.0
++    IL_0154:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_3
++    IL_0159:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
++    IL_015e:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_0163:  ldarg.0
++    IL_0164:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_3
++    IL_0169:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
++    IL_016e:  stloc.2
+     .try
+     {
+-      IL_0175:  nop
+-      IL_0176:  br.s       IL_018e
++      IL_016f:  br.s       IL_0187
+ 
+-      IL_0178:  ldloca.s   V_11
+-      IL_017a:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_017f:  stloc.s    V_4
+-      IL_0181:  ldarg.1
+-      IL_0182:  ldloc.s    V_4
+-      IL_0184:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_0189:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_018e:  ldloca.s   V_11
+-      IL_0190:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_0195:  brtrue.s   IL_0178
++      IL_0171:  ldloca.s   V_2
++      IL_0173:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
++      IL_0178:  stloc.s    V_7
++      IL_017a:  ldarg.1
++      IL_017b:  ldloc.s    V_7
++      IL_017d:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_0182:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_0187:  ldloca.s   V_2
++      IL_0189:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
++      IL_018e:  brtrue.s   IL_0171
+ 
+-      IL_0197:  leave.s    IL_01a7
++      IL_0190:  leave.s    IL_01a0
+ 
+     }  // end .try
+     finally
+     {
+-      IL_0199:  ldloca.s   V_11
+-      IL_019b:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_01a1:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_01a6:  endfinally
++      IL_0192:  ldloca.s   V_2
++      IL_0194:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
++      IL_019a:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_019f:  endfinally
+     }  // end handler
+-    IL_01a7:  ldarg.1
+-    IL_01a8:  ldarg.0
+-    IL_01a9:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_4
+-    IL_01ae:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_01b3:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_01b8:  ldarg.0
+-    IL_01b9:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_4
+-    IL_01be:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_01c3:  stloc.s    V_12
++    IL_01a0:  ldarg.1
++    IL_01a1:  ldarg.0
++    IL_01a2:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_4
++    IL_01a7:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
++    IL_01ac:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_01b1:  ldarg.0
++    IL_01b2:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_4
++    IL_01b7:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
++    IL_01bc:  stloc.2
+     .try
+     {
+-      IL_01c5:  nop
+-      IL_01c6:  br.s       IL_01de
++      IL_01bd:  br.s       IL_01d5
+ 
+-      IL_01c8:  ldloca.s   V_12
+-      IL_01ca:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_01cf:  stloc.s    V_5
+-      IL_01d1:  ldarg.1
+-      IL_01d2:  ldloc.s    V_5
+-      IL_01d4:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_01d9:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_01de:  ldloca.s   V_12
+-      IL_01e0:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_01e5:  brtrue.s   IL_01c8
++      IL_01bf:  ldloca.s   V_2
++      IL_01c1:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
++      IL_01c6:  stloc.s    V_8
++      IL_01c8:  ldarg.1
++      IL_01c9:  ldloc.s    V_8
++      IL_01cb:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_01d0:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_01d5:  ldloca.s   V_2
++      IL_01d7:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
++      IL_01dc:  brtrue.s   IL_01bf
+ 
+-      IL_01e7:  leave.s    IL_01f7
++      IL_01de:  leave.s    IL_01ee
+ 
+     }  // end .try
+     finally
+     {
+-      IL_01e9:  ldloca.s   V_12
+-      IL_01eb:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_01f1:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_01f6:  endfinally
++      IL_01e0:  ldloca.s   V_2
++      IL_01e2:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
++      IL_01e8:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_01ed:  endfinally
+     }  // end handler
+-    IL_01f7:  ldarg.1
+-    IL_01f8:  ldarg.0
+-    IL_01f9:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_5
+-    IL_01fe:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
+-    IL_0203:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
+-    IL_0208:  ldarg.0
+-    IL_0209:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_5
+-    IL_020e:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_0213:  stloc.s    V_13
++    IL_01ee:  ldarg.1
++    IL_01ef:  ldarg.0
++    IL_01f0:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_5
++    IL_01f5:  callvirt   instance int32 class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::get_Count()
++    IL_01fa:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(int32)
++    IL_01ff:  ldarg.0
++    IL_0200:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_5
++    IL_0205:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
++    IL_020a:  stloc.2
+     .try
+     {
+-      IL_0215:  nop
+-      IL_0216:  br.s       IL_022e
++      IL_020b:  br.s       IL_0223
+ 
+-      IL_0218:  ldloca.s   V_13
+-      IL_021a:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_021f:  stloc.s    V_6
+-      IL_0221:  ldarg.1
+-      IL_0222:  ldloc.s    V_6
+-      IL_0224:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
+-      IL_0229:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
+-      IL_022e:  ldloca.s   V_13
+-      IL_0230:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_0235:  brtrue.s   IL_0218
++      IL_020d:  ldloca.s   V_2
++      IL_020f:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
++      IL_0214:  stloc.s    V_9
++      IL_0216:  ldarg.1
++      IL_0217:  ldloc.s    V_9
++      IL_0219:  callvirt   instance uint32 Game.GameEntity::get_UInt32_0()
++      IL_021e:  callvirt   instance void [mscorlib]System.IO.BinaryWriter::Write(uint32)
++      IL_0223:  ldloca.s   V_2
++      IL_0225:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
++      IL_022a:  brtrue.s   IL_020d
+ 
+-      IL_0237:  leave.s    IL_0247
++      IL_022c:  leave.s    IL_023c
+ 
+     }  // end .try
+     finally
+     {
+-      IL_0239:  ldloca.s   V_13
+-      IL_023b:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_0241:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_0246:  endfinally
++      IL_022e:  ldloca.s   V_2
++      IL_0230:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
++      IL_0236:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_023b:  endfinally
+     }  // end handler
+-    IL_0247:  ret
++    IL_023c:  ret
+   } // end of method GameEntityManager::Serialize
+ 
+   .method public hidebysig instance void 
+@@ -429002,44 +429002,45 @@ ## GameEntityManager::method_3
+   .method public hidebysig instance void 
+           method_3(float32 float_0) cil managed
+   {
+-    // Code size       64 (0x40)
++    // Code size       57 (0x39)
+     .maxstack  2
+-    .locals init (class Game.GameEntity V_0,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_1)
++    .locals init (class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity> V_0,
++             class Game.GameEntity V_1)
+     IL_0000:  ldarg.0
+-    IL_0001:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
+-    IL_0006:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_000b:  stloc.1
++    IL_0001:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_0006:  callvirt   instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<class Game.GameEntity>::GetEnumerator()
++    IL_000b:  stloc.0
+     .try
+     {
+-      IL_000c:  nop
+-      IL_000d:  br.s       IL_0026
++      IL_000c:  br.s       IL_0024
+ 
+-      IL_000f:  ldloca.s   V_1
+-      IL_0011:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_0016:  stloc.0
+-      IL_0017:  ldloc.0
+-      IL_0018:  callvirt   instance bool Game.GameEntity::IsValid()
+-      IL_001d:  brfalse.s  IL_0026
++      IL_000e:  ldloc.0
++      IL_000f:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity>::get_Current()
++      IL_0014:  stloc.1
++      IL_0015:  ldloc.1
++      IL_0016:  callvirt   instance bool Game.GameEntity::IsValid()
++      IL_001b:  brfalse.s  IL_0024
+ 
+-      IL_001f:  ldloc.0
+-      IL_0020:  ldarg.1
+-      IL_0021:  callvirt   instance void Game.GameEntity::Update(float32)
+-      IL_0026:  ldloca.s   V_1
+-      IL_0028:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_002d:  brtrue.s   IL_000f
++      IL_001d:  ldloc.1
++      IL_001e:  ldarg.1
++      IL_001f:  callvirt   instance void Game.GameEntity::Update(float32)
++      IL_0024:  ldloc.0
++      IL_0025:  callvirt   instance bool [mscorlib]System.Collections.IEnumerator::MoveNext()
++      IL_002a:  brtrue.s   IL_000e
+ 
+-      IL_002f:  leave.s    IL_003f
++      IL_002c:  leave.s    IL_0038
+ 
+     }  // end .try
+     finally
+     {
+-      IL_0031:  ldloca.s   V_1
+-      IL_0033:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_0039:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_003e:  endfinally
++      IL_002e:  ldloc.0
++      IL_002f:  brfalse.s  IL_0037
++
++      IL_0031:  ldloc.0
++      IL_0032:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_0037:  endfinally
+     }  // end handler
+-    IL_003f:  ret
++    IL_0038:  ret
+   } // end of method GameEntityManager::method_3
+ 
+   .method public hidebysig instance void
+@@ -429101,15 +429101,15 @@ ## GameEntityManager::method_5
+       IL_0011:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+       IL_0016:  stloc.0
+       IL_0017:  ldarg.0
+-      IL_0018:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++      IL_0018:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+       IL_001d:  ldloc.0
+-      IL_001e:  callvirt   instance bool class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Contains(!0)
++      IL_001e:  callvirt   instance bool class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::Contains(!0)
+       IL_0023:  brtrue.s   IL_0031
+ 
+       IL_0025:  ldarg.0
+-      IL_0026:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++      IL_0026:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+       IL_002b:  ldloc.0
+-      IL_002c:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Add(!0)
++      IL_002c:  callvirt   instance void class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::Add(!0)
+       IL_0031:  ldloca.s   V_1
+       IL_0033:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+       IL_0038:  brtrue.s   IL_000f
+@@ -429150,9 +429150,9 @@ ## GameEntityManager::method_6
+       IL_0011:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+       IL_0016:  stloc.0
+       IL_0017:  ldarg.0
+-      IL_0018:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
++      IL_0018:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
+       IL_001d:  ldloc.0
+-      IL_001e:  callvirt   instance bool class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Remove(!0)
++      IL_001e:  callvirt   instance bool class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::Remove(!0)
+       IL_0023:  pop
+       IL_0024:  ldloca.s   V_1
+       IL_0026:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()       
+@@ -429302,8 +429302,8 @@ ## GameEntityManager::clearAll
+     IL_0049:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
+     IL_004e:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()
+     IL_0053:  ldarg.0
+-    IL_0054:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
+-    IL_0059:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()
++    IL_0054:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_0059:  callvirt   instance void class [mscorlib]System.Collections.Generic.ICollection`1<class Game.GameEntity>::Clear()
+     IL_005e:  ldarg.0
+     IL_005f:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
+     IL_0064:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()
+@@ -429425,17 +429425,17 @@ ## GameEntityManager::SettleLiquids
+   .method public hidebysig instance void 
+           SettleLiquids() cil managed
+   {
+-    // Code size       122 (0x7a)
++    // Code size       115 (0x73)
+     .maxstack  2
+     .locals init (float32 V_0,
+              int32 V_1,
+-             class Game.GameEntity V_2,
+-             valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity> V_3)
++             class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity> V_2,
++             class Game.GameEntity V_3)
+     IL_0000:  ldc.r4     3.3333335e-002
+     IL_0005:  stloc.0
+     IL_0006:  ldc.i4     0x1f5
+     IL_000b:  stloc.1
+-    IL_000c:  br.s       IL_0071
++    IL_000c:  br.s       IL_006a
+ 
+     IL_000e:  ldarg.0
+     IL_000f:  call       instance void Game.GameEntityManager::method_2()
+@@ -429444,53 +429444,54 @@ ## GameEntityManager::SettleLiquids
+     IL_001a:  ldc.i4.0
+     IL_001b:  stloc.1
+     IL_001c:  ldarg.0
+-    IL_001d:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_1
+-    IL_0022:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<!0> class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::GetEnumerator()
+-    IL_0027:  stloc.3
++    IL_001d:  ldfld      class [mscorlib]System.Collections.Generic.IList`1<class Game.GameEntity> Game.GameEntityManager::list_1
++    IL_0022:  callvirt   instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<class Game.GameEntity>::GetEnumerator()
++    IL_0027:  stloc.2
+     .try
+     {
+-      IL_0028:  nop
+-      IL_0029:  br.s       IL_0046
++      IL_0028:  br.s       IL_0044
+ 
+-      IL_002b:  ldloca.s   V_3
+-      IL_002d:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
+-      IL_0032:  stloc.2
+-      IL_0033:  ldloc.2
+-      IL_0034:  isinst     Game.Liquid
+-      IL_0039:  brfalse.s  IL_0046
+-
+-      IL_003b:  ldloc.1
+-      IL_003c:  ldc.i4.1
+-      IL_003d:  add
+-      IL_003e:  stloc.1
+-      IL_003f:  ldloc.2
+-      IL_0040:  ldloc.0
+-      IL_0041:  callvirt   instance void Game.GameEntity::Update(float32)
+-      IL_0046:  ldloca.s   V_3
+-      IL_0048:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
+-      IL_004d:  brtrue.s   IL_002b
++      IL_002a:  ldloc.2
++      IL_002b:  callvirt   instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<class Game.GameEntity>::get_Current()
++      IL_0030:  stloc.3
++      IL_0031:  ldloc.3
++      IL_0032:  isinst     Game.Liquid
++      IL_0037:  brfalse.s  IL_0044
++
++      IL_0039:  ldloc.1
++      IL_003a:  ldc.i4.1
++      IL_003b:  add
++      IL_003c:  stloc.1
++      IL_003d:  ldloc.3
++      IL_003e:  ldloc.0
++      IL_003f:  callvirt   instance void Game.GameEntity::Update(float32)
++      IL_0044:  ldloc.2
++      IL_0045:  callvirt   instance bool [mscorlib]System.Collections.IEnumerator::MoveNext()
++      IL_004a:  brtrue.s   IL_002a
+ 
+-      IL_004f:  leave.s    IL_005f
++      IL_004c:  leave.s    IL_0058
+ 
+     }  // end .try
+     finally
+     {
+-      IL_0051:  ldloca.s   V_3
+-      IL_0053:  constrained. valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>
+-      IL_0059:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+-      IL_005e:  endfinally
++      IL_004e:  ldloc.2
++      IL_004f:  brfalse.s  IL_0057
++
++      IL_0051:  ldloc.2
++      IL_0052:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
++      IL_0057:  endfinally
+     }  // end handler
+-    IL_005f:  ldarg.0
+-    IL_0060:  call       instance void Game.GameEntityManager::method_4()
+-    IL_0065:  ldarg.0
+-    IL_0066:  call       instance void Game.GameEntityManager::method_6()
+-    IL_006b:  ldarg.0
+-    IL_006c:  call       instance void Game.GameEntityManager::method_7()
+-    IL_0071:  ldloc.1
+-    IL_0072:  ldc.i4     0x1f4
+-    IL_0077:  bgt.s      IL_000e
++    IL_0058:  ldarg.0
++    IL_0059:  call       instance void Game.GameEntityManager::method_4()
++    IL_005e:  ldarg.0
++    IL_005f:  call       instance void Game.GameEntityManager::method_6()
++    IL_0064:  ldarg.0
++    IL_0065:  call       instance void Game.GameEntityManager::method_7()
++    IL_006a:  ldloc.1
++    IL_006b:  ldc.i4     0x1f4
++    IL_0070:  bgt.s      IL_000e
+ 
+-    IL_0079:  ret
++    IL_0072:  ret
+   } // end of method GameEntityManager::SettleLiquids
+ 
+   .property instance class [gnomorialib]GameLibrary.HelpTopic[]
+@@ -432976,6 +432982,9 @@ ## Insert hook for ingame switching windows
      IL_0062:  callvirt   instance class Game.Common.GameProperty`1<bool> Game.World::get_Paused()
      IL_0067:  call       !0 class Game.Common.GameProperty`1<bool>::op_Implicit(class Game.Common.GameProperty`1<!0>)
      IL_006c:  stfld      bool Game.GUI.InGameHUD::bool_1

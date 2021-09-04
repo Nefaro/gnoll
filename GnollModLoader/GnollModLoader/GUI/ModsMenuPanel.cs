@@ -75,7 +75,7 @@ namespace GnollModLoader.GUI
             {
                 IGnollMod mod = this._listOfMods[listBox.ItemIndex];
                 modNameLabel.Text = mod.Name;
-                string multiline = this.SpliceText(mod.Description, 50);
+                string multiline = this.SpliceText(mod.Description, 47);
 
                 modDescLabel.Text = multiline;
                 size = Manager.Skin.Controls["Label"].Layers[0].Text.Font.Resource.MeasureString(modDescLabel.Text);
