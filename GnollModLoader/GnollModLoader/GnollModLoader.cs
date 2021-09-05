@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using Game;
-using Game.GUI;
 using Game.GUI.Controls;
-using GameLibrary;
-using Microsoft.Xna.Framework;
 
 namespace GnollModLoader
 {
@@ -43,6 +38,7 @@ namespace GnollModLoader
                 this._hookManager.InGameHUDInit += DEBUG_HookManager_InGameHUDInit;
                 this._hookManager.UpdateInGame += DEBUG_HookManager_UpdateInGame;
                 this._hookManager.OnJobComplete += DEBUG_HookManager_OnJobComplete;
+                this._hookManager.InGameShowWindow += DEBUG_HookManager_InGameShowWindow;
             }
         }
 
@@ -89,8 +85,8 @@ namespace GnollModLoader
 
         private void DEBUG_HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
-
         }
+
         private void DEBUG_HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
         {
         }
@@ -99,6 +95,9 @@ namespace GnollModLoader
         {
         }
 
+        private void DEBUG_HookManager_InGameShowWindow(Window window)
+        {
+        }
 
     }
 }

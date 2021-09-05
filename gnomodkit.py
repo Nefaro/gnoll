@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit vG1.4 -- https://github.com/Nefaro/gnoll/tree/G1.4')
+print('gnomodkit vG1.5 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse

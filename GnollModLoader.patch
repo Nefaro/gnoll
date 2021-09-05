@@ -703,6 +703,15 @@
        IL_0023:  pop
        IL_0024:  ldloca.s   V_1
        IL_0026:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()       
+@@ -429217,6 +429217,8 @@ ## GameEntityManager::method_8
+     .maxstack  8
+     IL_0000:  ldarg.1
+     IL_0001:  callvirt   instance void Game.GameEntity::OnSpawn()
++    ldarg.1
++    call void [GnollModLoader]GnollModLoader.HookManager::HookOnEntitySpawn_after(class Game.GameEntity)    
+     IL_0006:  ret
+   } // end of method GameEntityManager::method_8
+ 
 @@ -429302,8 +429302,8 @@ ## GameEntityManager::clearAll
      IL_0049:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
      IL_004e:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()

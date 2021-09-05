@@ -10,17 +10,18 @@ namespace GnollModLoader
 {
     public class GnollMain
     {
-        public const string NAME = "Gnoll Mod Loader";
         private const string MAJOR_VERSION = "G1";
         // for easier validation
-        private const uint PATCH_VERSION = 4;
+        private const uint PATCH_VERSION = 5;
+
+        public const string NAME = "Gnoll Mod Loader";
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
         public const string ORIGINAL_URL = "https://github.com/minexew/gnomodkit";
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
 
         public static readonly bool _debug = false;
-        public static String VERSION
+        public static string VERSION
         {
             get { return MAJOR_VERSION + "." + PATCH_VERSION; }
         }
