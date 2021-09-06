@@ -1,0 +1,1 @@
+This mod modifies the internal structure for a more specialized collection. The effect is, that entities can be processed faster and this gives us a FPS boost.
