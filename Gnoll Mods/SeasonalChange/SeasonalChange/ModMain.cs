@@ -32,7 +32,7 @@ namespace GnollMods.SeasonalChange
             // On first load, replace with current seasonal sprites
             this.SwitchSpritesToSeason(Game.GnomanEmpire.Instance.Region.Season().ToString().ToLower());
 
-            if ( IsNewGame())
+            if ( IsNewGame() )
             {
                 // Need to do some more steps when a new game is started
                 // because the processing path is different and system is
