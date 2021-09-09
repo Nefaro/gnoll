@@ -21,8 +21,10 @@ namespace GnollModLoader
         public delegate void UpdateInGameHandler(float realTimeDelta, float gameTimeDelta);
         // Called when a character has finished a job (after the ingame processing has finished)
         public delegate void OnJobCompleteHandler(Game.Job job, Game.Character character);
-        // Called after a new character has been spawned
+        // Called after a new entity has been spawned
         public delegate void OnEntitySpawnHandler(Game.GameEntity entity);
+        // Called before a new entity has been spawned
+        public delegate void BeforeEntitySpawnHandler(Game.GameEntity entity);
 
         private List<IGnollMod> _listOfMods;
 
@@ -105,6 +107,14 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookOnEntitySpawn_before(Game.GameEntity entity)
+        {
+            if (instance.BeforeEntitySpawn != null)
+            {
+                instance.BeforeEntitySpawn(entity);
+            }
+        }
+
         public static void HookOnJobComplete_after(Game.Job job, Game.Character character)
         {
             if (instance.OnJobComplete != null)
@@ -119,6 +129,7 @@ namespace GnollModLoader
         public event UpdateInGameHandler UpdateInGame;
         public event OnJobCompleteHandler OnJobComplete;
         public event OnEntitySpawnHandler OnEntitySpawn;
+        public event BeforeEntitySpawnHandler BeforeEntitySpawn;
 
         private static HookManager instance;
     }
