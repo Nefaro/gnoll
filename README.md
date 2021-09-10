@@ -8,6 +8,16 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
   - Python 3.2+
   - .NET SDK 4.0 or newer
 
+## Steam Workshop Mods
+
+Gnoll works with steam workshop mods. 
+Gnoll does not currently have any content mods, so game data and save games are untouched.
+
+To get Gnoll working with Steam, first build the modloader and mods, as shown in the Usage section. After successfully building the loader and mods, you should have "GnoMod.exe" in your Gnomoria directory. Next:
+* Backup your Gnomoria.exe (rename Gnomoria.exe -> Gnomoria.orig.exe. if something ever happens to your original .exe, don't worry, ask Steam to verify game files and it will re-download it). 
+* Rename Gnoll modified exe (rename GnoMod.exe -> Gnomoria.exe)
+* Run Gnomoria via Steam as usually
+
 ## Usage examples
 
 Building SDK
