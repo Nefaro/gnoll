@@ -61,8 +61,8 @@
     <Reference Include="GnollModLoader">
       <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnollModLoader.dll</HintPath>
     </Reference>
-    <Reference Include="GnomoriaSDK">
-      <HintPath>..\..\..\sdk\GnomoriaSDK.dll</HintPath>
+    <Reference Include="GnoMod">
+      <HintPath>H:\Steam\steamapps\common\Gnomoria\GnoMod.exe</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

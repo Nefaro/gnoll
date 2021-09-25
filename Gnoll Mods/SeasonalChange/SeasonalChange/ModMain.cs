@@ -45,7 +45,10 @@ namespace GnollMods.SeasonalChange
 
         private bool IsNewGame()
         {
-            return (Game.GnomanEmpire.Instance.Region.TotalTime() < 1 &&
+            var loadScreen = Game.GnomanEmpire.Instance.loadScreen_0;
+            return (loadScreen != null && 
+                loadScreen.GetType() == typeof(Game.GUI.CreateWorldLoadScreen)&&
+                Game.GnomanEmpire.Instance.Region.TotalTime() < 1 &&
                 Game.GnomanEmpire.Instance.Region.Sunrise() > Game.GnomanEmpire.Instance.Region.Time.Value);
         }
 
@@ -56,7 +59,7 @@ namespace GnollMods.SeasonalChange
             try
             {
                 string season = Game.GnomanEmpire.Instance.Region.Season().ToString().ToLower();
-                System.Console.WriteLine("-- Season change event called: new season : " + season);
+                System.Console.WriteLine("-- Season change event called; new season: " + season);
                 this.SwitchSpritesToSeason(season);
                 // Need to call the repack manually to replace the ingame sprites
                 this.CallTextureRepack();
@@ -80,7 +83,7 @@ namespace GnollMods.SeasonalChange
             // That way the original spritesheets are loaded and everything is still fine
             if (File.Exists(seasonalSprite))
             {
-                System.Console.WriteLine("-- Switching season sprites to : " + season);
+                System.Console.WriteLine("-- Switching season sprites to: " + season);
 
                 // Load our own custom spritesheet
                 Game.GnomanEmpire.Instance.gameDefs_0.method_81(seasonalSprite);
