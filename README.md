@@ -4,9 +4,11 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
 
 ## Prerequisites:
 
-  - Gnomoria v1.0
-  - Python 3.2+
-  - .NET SDK 4.0 or newer
+  - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
+  - Python 3.2+ (https://www.python.org/downloads/) 
+  - Windows and .NET SDK 4.0 or newer  
+  
+  (Note: Not sure if there exists any Linux tooling for the given operations)
 
 ## Steam Workshop Mods
 
