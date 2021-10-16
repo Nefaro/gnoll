@@ -25,6 +25,8 @@ namespace GnollModLoader
         public delegate void OnEntitySpawnHandler(Game.GameEntity entity);
         // Called before a new entity has been spawned
         public delegate void BeforeEntitySpawnHandler(Game.GameEntity entity);
+        // Called after main menu init, before "Exit" button is attached
+        public delegate void MainMenuGuiInitHandler(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager);
 
         private List<IGnollMod> _listOfMods;
 
@@ -89,6 +91,10 @@ namespace GnollModLoader
                 Game.GnomanEmpire.Instance.GuiManager.MenuStack.PushWindow(new ModLoaderMenu(Game.GnomanEmpire.Instance.GuiManager.Manager, instance._listOfMods));
             };
             window.panel_0.Add(modButton);
+            if (instance.MainMenuGuiInit != null)
+            {
+                instance.MainMenuGuiInit(window, manager);
+            }
         }
 
         public static void HookIngameHudShowWindow_after(Game.GUI.Controls.Window window)
@@ -130,6 +136,7 @@ namespace GnollModLoader
         public event OnJobCompleteHandler OnJobComplete;
         public event OnEntitySpawnHandler OnEntitySpawn;
         public event BeforeEntitySpawnHandler BeforeEntitySpawn;
+        public event MainMenuGuiInitHandler MainMenuGuiInit;
 
         private static HookManager instance;
     }

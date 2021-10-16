@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Game;
+using Game.GUI;
 using Game.GUI.Controls;
+using GameLibrary;
+using GnollModLoader.GUI;
 
 namespace GnollModLoader
 {
@@ -39,8 +43,11 @@ namespace GnollModLoader
                 this._hookManager.UpdateInGame += DEBUG_HookManager_UpdateInGame;
                 this._hookManager.OnJobComplete += DEBUG_HookManager_OnJobComplete;
                 this._hookManager.InGameShowWindow += DEBUG_HookManager_InGameShowWindow;
+                this._hookManager.BeforeEntitySpawn += DEBUG_HookManager_BeforeEntitySpawn;
+                this._hookManager.MainMenuGuiInit += DEBUG_HookManager_MainMenuGuiInit;
             }
         }
+
 
         public void LoadMod(string path)
         {
@@ -85,6 +92,7 @@ namespace GnollModLoader
 
         private void DEBUG_HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
+
         }
 
         private void DEBUG_HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
@@ -94,10 +102,17 @@ namespace GnollModLoader
         private void DEBUG_HookManager_OnJobComplete(Game.Job job, Game.Character character)
         {
         }
-
+       
         private void DEBUG_HookManager_InGameShowWindow(Window window)
         {
         }
 
+        private void DEBUG_HookManager_BeforeEntitySpawn(GameEntity entity)
+        {
+        }
+
+        private void DEBUG_HookManager_MainMenuGuiInit(MainMenuWindow window, Manager manager)
+        {
+        }
     }
 }

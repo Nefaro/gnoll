@@ -27,15 +27,15 @@ namespace GnollModLoader.GUI
             this._tabControl.Width = 480;
             this._tabControl.Height = 360;
             this._tabControl.PageChanged += new Game.GUI.Controls.EventHandler(this.OnPanelChanged);
-            this.Add((Control)this._tabControl);
+            this.Add(this._tabControl);
             this._tabbedWindowList = new List<TabbedWindowPanel>();
 
-            GnomanEmpire.Instance.GuiManager.Add((Control)this);
+            GnomanEmpire.Instance.GuiManager.Add(this);
             this.CenterTabControl();
             GnomanEmpire.Instance.Graphics.DeviceReset += new System.EventHandler<System.EventArgs>(this.OnDeviceReset);
 
-            this.AddTabPanel("About", (TabbedWindowPanel)new AboutMenuPanel(this.Manager));
-            this.AddTabPanel("Mods", (TabbedWindowPanel)new ModsMenuPanel(this.Manager, listOfMods));
+            this.AddTabPanel("About", new AboutMenuPanel(this.Manager));
+            this.AddTabPanel("Mods", new ModsMenuPanel(this.Manager, listOfMods));
         }
 
         private void OnPanelChanged(object sender, Game.GUI.Controls.EventArgs e)
