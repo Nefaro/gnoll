@@ -41,6 +41,7 @@
     <Compile Include="Challenge\OrchardChallenge.cs" />
     <Compile Include="Gui\AbstractTabbedWindowPanel.cs" />
     <Compile Include="Gui\ChallengesIngameScoreUI.cs" />
+    <Compile Include="Gui\ChallengesEndDialog.cs" />
     <Compile Include="Gui\ChallengesIngameUI.cs" />
     <Compile Include="Gui\ChallengesMenu.cs" />
     <Compile Include="Model\ChallengesPerChallengeScores.cs" />

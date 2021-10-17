@@ -1,5 +1,6 @@
 ﻿using Game.GUI;
 using Game.GUI.Controls;
+using GnollMods.Challenges.Challenge;
 using GnollMods.Challenges.Model;
 
 namespace GnollMods.Challenges.Gui
@@ -9,7 +10,7 @@ namespace GnollMods.Challenges.Gui
         private int _rowHeight = 18;
         private int _topMargin = 2;
 
-        public ChallengesIngameScoreUI(Manager manager, ChallengesScoreRecord record) : base(manager)
+        public ChallengesIngameScoreUI(Manager manager, ChallengesScoreRecord record, IChallenge challenge) : base(manager)
         {
             LoweredPanel desc = new LoweredPanel(manager);
             desc.Init();
@@ -82,7 +83,9 @@ namespace GnollMods.Challenges.Gui
                 record.KingdomName,
                 record.KingdomSeed);
 
-            score.Text = string.Format("CURRENT SCORE: {0}",
+            var isScoringEnded = challenge.IsEndConditionsMet();
+
+            score.Text = string.Format("CURRENT SCORE: {0}" +(isScoringEnded?" (scoring has ended)":"") ,
                 record.Score);
 
             difficulty.Text = string.Format("Difficulty: {0}",

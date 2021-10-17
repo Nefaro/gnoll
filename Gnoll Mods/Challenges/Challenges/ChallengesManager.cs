@@ -74,10 +74,23 @@ namespace GnollMods.Challenges
         private void OnDayStart(object sender, System.EventArgs e)
         {
             // check if challenge end condition is met
-            this.CheckEndContition();
+            var finished = this.IsChallengeFinished();
+            if ( finished )
+            {
+                System.Console.WriteLine(" -- Challenge end reached!");
+                var inGameHud = GnomanEmpire.Instance.GuiManager.InGameHUD_0;
+                var manager = GnomanEmpire.Instance.GuiManager.Manager;
+
+                bool flag = !(inGameHud.ActiveWindow is ChallengesIngameUI);
+                inGameHud.CloseWindow();
+                if (flag)
+                {
+                    inGameHud.ShowWindow(new ChallengesEndDialog(manager, this.ActiveChallenge), true);
+                }
+            }
         }
 
-        private void CheckEndContition()
+        private bool IsChallengeFinished()
         {
             if (this.ActiveChallenge != null && this.ActiveChallenge.IsEndConditionsMet())
             {
@@ -86,7 +99,9 @@ namespace GnollMods.Challenges
                 settings.Add(endTag);
                 SaveScore();
                 Game.GnomanEmpire.Instance.Region.OnDayStart -= OnDayStart;
+                return true;
             }
+            return false;
         }
 
         internal void HookManager_InGameHUDInit(InGameHUD inGameHUD, Manager manager)
@@ -140,9 +155,10 @@ namespace GnollMods.Challenges
                 {
                     // Active challenge
                     // Day start = sunrise
+                    System.Console.WriteLine(" -- Day start event handler attached");
                     Game.GnomanEmpire.Instance.Region.OnDayStart += OnDayStart;
                     // just in case the challenge has already finished
-                    this.CheckEndContition();
+                    this.IsChallengeFinished();
                 }
             }
         }
@@ -155,20 +171,16 @@ namespace GnollMods.Challenges
 
                 Button button7 = glass.method_40("Challenges", "Challenges", new Game.GUI.Controls.EventHandler((sender, events) =>
                 {
-                    System.Console.WriteLine(" -- Challenges button clicked");
-
                     bool flag = !(inGameHUD.ActiveWindow is ChallengesIngameUI);
                     inGameHUD.CloseWindow();
                     if (flag)
                     {
                         string mapSize = this.SizeMap[GnomanEmpire.Instance.World.Region.Map.MapWidth];
                         ChallengesScoreRecord record = this.BuildScoreRecord(this.ActiveChallenge, mapSize);
-                        inGameHUD.ShowWindow(new ChallengesIngameUI(manager, record), true);
+                        inGameHUD.ShowWindow(new ChallengesIngameUI(manager, record, this.ActiveChallenge), true);
                     }
                 }));
                 glass.panel_0.Add(button7);
-                glass.panel_0.Height = button7.Height;
-                glass.panel_0.Top = glass.panel_0.Margins.Top;
                 button7.Left = glass.panel_0.Width + button7.Margins.Left;
                 glass.panel_0.Width = button7.Left + button7.Width;
                 glass.panel_0.Left = (glass.Width - glass.panel_0.Width) / 2;

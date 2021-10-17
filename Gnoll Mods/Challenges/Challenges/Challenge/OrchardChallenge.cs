@@ -24,6 +24,12 @@ namespace GnollMods.Challenges.Challenge
                 "We need your settlement to help us out and collect as much fruit as you can. \nWe depend on you, please do not let us down!";
         }
 
+        public string ChallengeEndMessage()
+        {
+            return "Joyful greetings, Governor!\n\n We have received your shipment of your produce. This will defenitly keep us fed in the following seasons." +
+                "Great thanks to you, the motherland is in your dept!";
+        }
+
         public string ChallengeName()
         {
             return "Orchard";
@@ -63,8 +69,10 @@ namespace GnollMods.Challenges.Challenge
 
         public bool IsEndConditionsMet()
         {
-            // Check the days since beginning
-            return Game.GnomanEmpire.Instance.Region.TotalTime() >= TIMELIMIT_DAYS;
+            // Check if it's the next day or correct day after sunrise
+            return Game.GnomanEmpire.Instance.Region.TotalTime() >= (TIMELIMIT_DAYS + 1) ||
+                (Game.GnomanEmpire.Instance.Region.TotalTime() >= TIMELIMIT_DAYS &&
+                Game.GnomanEmpire.Instance.Region.Time.Value > Game.GnomanEmpire.Instance.Region.Sunrise());
         }
     }
 }

@@ -17,6 +17,8 @@ namespace GnollMods.Challenges.Challenge
 
         string ChallengeTimeframe();
 
+        string ChallengeEndMessage();
+
         void OnStart();
 
         string CalculateScore();
