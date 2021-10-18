@@ -9,7 +9,8 @@ namespace GnollMods.Challenges.Challenge
 {
     class OrchardChallenge : IChallenge
     {
-        private const int TIMELIMIT_DAYS = 3 * 12;
+        // 12 days per season, 4 seasons per year, 3 years per challenge
+        private const int TIMELIMIT_DAYS = 12 * 4 * 3;
 
         // start at this
         private const double SCORE_BASE = 1.0;
