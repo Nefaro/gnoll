@@ -27,7 +27,7 @@ namespace GnollMods.Challenges.Challenge
 
         public string ChallengeEndMessage()
         {
-            return "Joyful greetings, Governor!\n\n We have received your shipment of your produce. This will defenitly keep us fed in the following seasons." +
+            return "Joyful greetings, Governor!\n\n We have received your shipment of your produce. This will definitely keep us fed in the following seasons. " +
                 "Great thanks to you, the motherland is in your dept!";
         }
 

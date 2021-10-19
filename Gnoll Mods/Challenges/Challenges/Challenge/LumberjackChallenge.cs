@@ -31,7 +31,7 @@ namespace GnollMods.Challenges.Challenge
         }
         public string ChallengeEndMessage()
         {
-            return "Joyful greetings, Governor!\n\n We have received your shipment of wood. This will defenitly help us in keeping us warm during the winter." +
+            return "Joyful greetings, Governor!\n\n We have received your shipment of wood. This will definitely help us in keeping us warm during the winter. " +
                 "Great thanks to you, the motherland is in your dept!";
         }
 
