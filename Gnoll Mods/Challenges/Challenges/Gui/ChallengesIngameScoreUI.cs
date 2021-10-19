@@ -1,4 +1,7 @@
-﻿using Game.GUI;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Game.GUI;
 using Game.GUI.Controls;
 using GnollMods.Challenges.Challenge;
 using GnollMods.Challenges.Model;
@@ -95,13 +98,32 @@ namespace GnollMods.Challenges.Gui
                 record.MetalAmount,
                 record.MetalDepth);
 
-            enemy.Text = string.Format("Enemy strength '{0}' ({1} growth)",
-                record.EnemyStrength,
-                (record.EnemyStrengthGrowth ? "with" : "without"));
+            // Filter out our tags
+            List<string> filtered = record.EnemyList
+                .FindAll(item => !item.StartsWith(ChallengesManager.TAG_START))
+                .ToList();
 
-            enemy2.Text = string.Format("Enemy attack rate '{0}' and size '{1}'",
-                record.EnemyAttackRate,
-                record.EnemyAttackSize);
+            if (ChallengesManager.GAME_MODE_PEACEFUL.Equals(record.Difficulty, StringComparison.OrdinalIgnoreCase))
+            {
+                enemy.Text = String.Format("Peaceful, enemies disabled");
+                enemy2.Text = "";
+            }
+            else if (filtered.Count() > 0)
+            {
+                enemy.Text = string.Format("Enemy strength {0} ({1} growth)",
+                    record.EnemyStrength,
+                    (record.EnemyStrengthGrowth ? "with" : "without"));
+
+                enemy2.Text = string.Format("Enemy attack rate {0}, size {1}, {2} types of enemies",
+                    record.EnemyAttackRate,
+                    record.EnemyAttackSize,
+                    filtered.Count());
+            }
+            else
+            {
+                enemy.Text = String.Format("No enemies selected");
+                enemy2.Text = "";
+            }
         }
     }
 }

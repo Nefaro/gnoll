@@ -15,7 +15,9 @@ namespace GnollMods.Challenges
     {
         private readonly static string SCORE_FILE = GnomanEmpire.SaveFolderPath("GnollChallenges") + "\\{0}_scores.json";
 
-        private readonly static string TAG_START = "tag:";
+        public readonly static string TAG_START = "tag:";
+        public readonly static string GAME_MODE_PEACEFUL = "Peaceful";
+
         private readonly static string START_TAG_PATTERN = TAG_START + "{0}:start";
         private readonly static string END_TAG_PATTERN = TAG_START + "{0}:end";
 

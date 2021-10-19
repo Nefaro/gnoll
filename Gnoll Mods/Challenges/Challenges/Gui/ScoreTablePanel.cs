@@ -100,13 +100,32 @@ namespace GnollMods.Challenges.Gui
                 data.MetalAmount,
                 data.MetalDepth);
 
-            _enemy.Text = String.Format("Enemy strength {0} ({1} growth)",
-                data.EnemyStrength,
-                (data.EnemyStrengthGrowth?"with":"without"));
+            // Filter out our tags
+            List<string> filtered = data.EnemyList
+                .FindAll(item => !item.StartsWith(ChallengesManager.TAG_START))
+                .ToList();
 
-            _enemy2.Text = String.Format("Enemy attack rate {0} and size {1}",
-                data.EnemyAttackRate,
-                data.EnemyAttackSize);
+            if (ChallengesManager.GAME_MODE_PEACEFUL.Equals(data.Difficulty, StringComparison.OrdinalIgnoreCase))
+            {
+                _enemy.Text = String.Format("Peaceful, enemies disabled");
+                _enemy2.Text = "";
+            }
+            else if ( filtered.Count() > 0 )
+            {
+                _enemy.Text = String.Format("Enemy strength {0} ({1} growth)",
+                    data.EnemyStrength,
+                    (data.EnemyStrengthGrowth ? "with" : "without"));
+
+                _enemy2.Text = String.Format("Enemy attack rate {0}, size {1} and {2} enemy types",
+                    data.EnemyAttackRate,
+                    data.EnemyAttackSize,
+                    filtered.Count());
+            }
+            else
+            {
+                _enemy.Text = String.Format("No enemies selected");
+                _enemy2.Text = "";
+            }
 
             this.Show();
         }
