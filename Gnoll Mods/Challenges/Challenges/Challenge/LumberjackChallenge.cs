@@ -21,7 +21,7 @@ namespace GnollMods.Challenges.Challenge
         // start at this
         private const double SCORE_BASE = 1.0;
         // for each extra type, add this coef for the score calc
-        private const double SCORE_INC = 0.1;
+        private const double SCORE_INC = 0.25;
         private const string ITEM_ID = "RawWood";
 
         public string ChallengeDescription()
