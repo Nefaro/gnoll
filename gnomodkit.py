@@ -23,7 +23,9 @@ CONFIG_FILENAME = '.config.json'
 DOTNETFX_DEFAULT_DIR = 'C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319'
 
 PATCH_BINARY_URL = 'http://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php'
-DE4DOT_URL = 'http://localhost:8000/de4dot-net45.zip'
+# DE4DOT_URL = 'http://localhost:8000/de4dot.zip'
+DE4DOT_URL = 'https://github.com/ViRb3/de4dot-cex/releases/download/v4.0.0/de4dot-cex.zip'
+NUGET_URL = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 # (??)
 # GNOMORIA_HASH = '016e623994628aba2a3cb8cd4cfe2412'
 # Gnomoria v1.0 and [indev]
@@ -41,6 +43,8 @@ SDK_GNOMORIALIB_DLL_FILENAME = os.path.join(SDK_DIR, 'gnomorialib.dll')
 # for ModLoader
 WORKING_FILENAME = os.path.join(BUILD_DIR, 'GnoMod.il')
 OUTPUT_EXE_FILENAME = 'GnoMod.exe'
+# SDK dll that has the modloader patch applied
+SDK_DLL_PATCHED_FILENAME = os.path.join(SDK_DIR, 'GnomoriaSDK-patched.dll')
 
 MOD_LOADER_PATCH = 'GnollModLoader.patch'
 
@@ -83,6 +87,9 @@ def get_ildasm_path():
 
 def get_msbuild_path():
     return os.path.join(get_dotnetfx_dir(), 'MSBuild.exe')
+
+def get_nuget_path():  
+    return os.path.join(CACHE_DIR, 'nuget.exe')
 
 def is_up_to_date(product, source):
     try:
@@ -459,6 +466,7 @@ class TaskMakeMod(Task):
         self.add_dependency(TaskMakeSDK())
 
         # build mod
+        self.add_dependency(TaskNugetRestore(os.path.join(self.solution_dir, self.name + ".sln")))
         self.add_dependency(TaskMsbuild(os.path.join(self.solution_dir, self.name + ".sln")))
 
         # install into game directory
@@ -468,6 +476,18 @@ class TaskMakeMod(Task):
         if os.path.exists(mod_data_dir):
             # if mod has Data directory, install that as well
             self.add_dependency(TaskCopyFile(mod_data_dir, os.path.join(get_game_mod_dir(), self.name, DATA_DIR)))
+
+class TaskMakeAllMods(Task):
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        return 'make all mods'
+
+    def discover_dependencies(self):        
+        dirs = next(os.walk(MODS_DIR))[1]
+        for dir in dirs:
+            self.add_dependency(TaskMakeMod(dir))
 
 class TaskMakeModLoader(Task):
     def __str__(self):
@@ -489,6 +509,7 @@ class TaskMakeModLoader(Task):
         self.add_dependency(TaskApplyPatch(SDK_IL_FILENAME, WORKING_FILENAME, MOD_LOADER_PATCH))
 
         # assemble GnoMod
+        self.add_dependency(TaskAssemble(WORKING_FILENAME, SDK_DLL_PATCHED_FILENAME))
         self.add_dependency(TaskAssemble(WORKING_FILENAME, os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)))
 
 class TaskMakeSDK(Task):
@@ -542,7 +563,38 @@ class TaskMsbuild(Task):
 
     def run(self):
         check_call([self.msbuild_path, self.solution])
+        
+class TaskGetNuget(Task):
+    def __init__(self):
+        super().__init__()
+        self.nuget_path = get_nuget_path()
+        
+    def discover_dependencies(self):
+        self.add_dependency(TaskDownloadFile(NUGET_URL, self.nuget_path))
+        
+    def __str__(self):
+        return 'get nuget'
+        
+    def is_up_to_date(self):
+        # Not quite correct. Fixable?
+        return os.path.exists(self.nuget_path)  
+        
+class TaskNugetRestore(Task):
+    def __init__(self, solution):
+        super().__init__()
+        self.solution = solution
 
+        self.nuget_path = get_nuget_path()
+
+    def __str__(self):
+        return 'nuget restore %s' % self.solution
+        
+    def discover_dependencies(self):
+        self.add_dependency(TaskGetNuget())
+        
+    def run(self):
+        check_call([self.nuget_path, 'restore', self.solution]) 
+        
 class TaskRunModdedGame(Task):
     def __str__(self):
         return 'run'
@@ -570,14 +622,16 @@ targets = args.targets if len(args.targets) else args.targets
 for target in targets:
     if target == 'clean':
         tr.add_dependency(TaskClean())
+    elif target == 'sdk':
+        tr.add_dependency(TaskMakeSDK())        
+    elif target == 'modloader':
+        tr.add_dependency(TaskMakeModLoader())        
+    elif target.startswith('mod:all'):
+        tr.add_dependency(TaskMakeAllMods())
     elif target.startswith('mod:'):
         tr.add_dependency(TaskMakeMod(target[4:]))
-    elif target == 'modloader':
-        tr.add_dependency(TaskMakeModLoader())
     elif target == 'run':
         tr.add_dependency(TaskRunModdedGame())
-    elif target == 'sdk':
-        tr.add_dependency(TaskMakeSDK())
     else:
         raise Exception('invalid target: ' + target)
 
