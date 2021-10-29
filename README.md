@@ -32,6 +32,7 @@ py gnomodkit.py unsteam
 
 ## Quick installation guide (Longer version in wiki [Installation](../../wiki/Installation) )
 Assumption: Python executable for Windows is named 'py'. Might be something else, modify commands accordingly.
+
 Assumption: All prerequisites have been met/installed
 
 Building SDK
