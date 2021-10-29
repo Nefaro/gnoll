@@ -1,20 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FasterEntityProcessing", "FasterEntityProcessing\FasterEntityProcessing.csproj", "{54163A10-03F0-4160-8251-F24C968EC169}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{54163A10-03F0-4160-8251-F24C968EC169}.Debug|x86.ActiveCfg = Release|x86
-		{54163A10-03F0-4160-8251-F24C968EC169}.Debug|x86.Build.0 = Release|x86
-		{54163A10-03F0-4160-8251-F24C968EC169}.Release|x86.ActiveCfg = Release|x86
-		{54163A10-03F0-4160-8251-F24C968EC169}.Release|x86.Build.0 = Release|x86
+		{54163A10-03F0-4160-8251-F24C968EC169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54163A10-03F0-4160-8251-F24C968EC169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54163A10-03F0-4160-8251-F24C968EC169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54163A10-03F0-4160-8251-F24C968EC169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
