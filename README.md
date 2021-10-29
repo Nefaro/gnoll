@@ -20,7 +20,7 @@ To get Gnoll working with Steam, first build the modloader and mods, as shown in
 * Rename Gnoll modified exe (rename GnoMod.exe -> Gnomoria.exe)
 * Run Gnomoria via Steam as usually
 
-## Quick installation guide (Longer version in wiki [Installation](wiki/Installation) )
+## Quick installation guide (Longer version in wiki [Installation](../../wiki/Installation) )
 Assumption: Python executable for Windows is named 'py'. Might be something else, modify commands accordingly.
 
 Building SDK
