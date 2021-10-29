@@ -261,16 +261,17 @@ class TaskClean(Task):
         shutil.rmtree(SDK_DIR, True)
 
 class TaskCopyFile(Task):
-    def __init__(self, filename, output_filename):
+    def __init__(self, filename, output_filename, force = False):
         super().__init__()
         self.filename = filename
         self.output_filename = output_filename
+        self.force = force
 
     def __str__(self):
         return 'copy ' + self.output_filename
 
     def is_up_to_date(self):
-        return is_up_to_date(self.output_filename, self.filename)
+        return not(self.force) and is_up_to_date(self.output_filename, self.filename)
 
     def run(self):
         if os.path.isdir(self.filename):
@@ -607,6 +608,55 @@ class TaskRunModdedGame(Task):
         dir = get_game_dir()
         subprocess.run(exe, cwd=dir)
 
+class TaskSteam(Task):
+    def __init__(self):
+        super().__init__()
+        self.steam_exe = os.path.join(get_game_dir(),'Gnomoria.exe')
+        self.steam_backup_exe = os.path.join(get_game_dir(), 'Gnomoria.orig.exe')
+        self.modded_exe = os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)
+        
+    def discover_dependencies(self):
+        self.add_dependency(TaskBackupOrigExe())
+        self.add_dependency(TaskCopyFile(self.modded_exe, self.steam_exe))
+        
+    def __str__(self):
+        return 'make as steam exe'
+        
+    def is_up_to_date(self):
+        return is_up_to_date(self.steam_exe, self.modded_exe)  
+
+class TaskBackupOrigExe(Task):
+    def __init__(self):
+        super().__init__()
+        self.steam_exe = os.path.join(get_game_dir(),'Gnomoria.exe')
+        self.steam_backup_exe = os.path.join(get_game_dir(), 'Gnomoria.orig.exe')
+        
+    def discover_dependencies(self):
+        self.add_dependency(TaskCopyFile(self.steam_exe, self.steam_backup_exe))
+        
+    def __str__(self):
+        return 'backup original exe'
+        
+    def is_up_to_date(self):
+        return os.path.exists(self.steam_backup_exe)  
+
+class TaskUnSteam(Task):
+    def __init__(self):
+        super().__init__()
+        self.steam_exe = os.path.join(get_game_dir(),'Gnomoria.exe')
+        self.steam_backup_exe = os.path.join(get_game_dir(), 'Gnomoria.orig.exe')
+        self.modded_exe = os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)
+        
+    def discover_dependencies(self):
+        self.add_dependency(TaskCopyFile(self.steam_backup_exe, self.steam_exe, True))
+        
+    def __str__(self):
+        return 'make restore steam exe'
+        
+    def is_up_to_date(self):
+        #hack basically
+        return not(os.path.exists(self.steam_backup_exe))
+        
 class TaskRunner(Task):
     pass
 
@@ -632,6 +682,10 @@ for target in targets:
         tr.add_dependency(TaskMakeMod(target[4:]))
     elif target == 'run':
         tr.add_dependency(TaskRunModdedGame())
+    elif target == 'steam':
+        tr.add_dependency(TaskSteam())
+    elif target == 'unsteam':
+        tr.add_dependency(TaskUnSteam())         
     else:
         raise Exception('invalid target: ' + target)
 
