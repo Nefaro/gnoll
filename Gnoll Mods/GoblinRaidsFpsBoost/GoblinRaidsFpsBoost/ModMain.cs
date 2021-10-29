@@ -102,7 +102,8 @@ namespace GnollMods.GoblinRaidsFpsBoost
 
         private TaskResult EnsureWaitingTime(Character character, float dt)
         {
-            if (!FoundValuableTimeCache.TryGetValue(character, out float lastCheck))
+            float lastCheck;
+            if (!FoundValuableTimeCache.TryGetValue(character, out lastCheck))
             {
                 // First time, can proceed
                 FoundValuableTimeCache.Add(character, Game.GnomanEmpire.Instance.Region.TotalTime());
