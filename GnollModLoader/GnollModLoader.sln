@@ -1,24 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29926.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GnollModLoader", "GnollModLoader\GnollModLoader.csproj", "{5ACB9702-860E-436F-836D-0D57D2479E49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
+        Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5ACB9702-860E-436F-836D-0D57D2479E49}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{5ACB9702-860E-436F-836D-0D57D2479E49}.Debug|x86.ActiveCfg = Debug|x86
 		{5ACB9702-860E-436F-836D-0D57D2479E49}.Debug|x86.Build.0 = Debug|x86
-		{5ACB9702-860E-436F-836D-0D57D2479E49}.Release|Any CPU.ActiveCfg = Release|x86
 		{5ACB9702-860E-436F-836D-0D57D2479E49}.Release|x86.ActiveCfg = Release|x86
-		{5ACB9702-860E-436F-836D-0D57D2479E49}.Release|x86.Build.0 = Release|x86
+		{5ACB9702-860E-436F-836D-0D57D2479E49}.Release|x86.Build.0 = Release|x86        
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

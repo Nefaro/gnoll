@@ -59,7 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GnollModLoader">
-      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnollModLoader.dll</HintPath>
+      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Debug\GnollModLoader.dll</HintPath>
     </Reference>
     <Reference Include="GnomoriaSDK">
       <HintPath>..\..\..\sdk\GnomoriaSDK.dll</HintPath>

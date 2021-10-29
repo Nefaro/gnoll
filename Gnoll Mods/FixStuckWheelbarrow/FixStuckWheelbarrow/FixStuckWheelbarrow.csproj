@@ -56,10 +56,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GnollModLoader">
-      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnollModLoader.dll</HintPath>
+      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Debug\GnollModLoader.dll</HintPath>
     </Reference>
-    <Reference Include="GnoMod">
-      <HintPath>..\..\..\build\GnoMod.exe</HintPath>
+    <Reference Include="GnomoriaSDK-patched">
+      <HintPath>..\..\..\sdk\GnomoriaSDK-patched.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

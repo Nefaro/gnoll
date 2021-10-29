@@ -13,12 +13,13 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -59,7 +60,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GnollModLoader">
-      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnollModLoader.dll</HintPath>
+      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Debug\GnollModLoader.dll</HintPath>
     </Reference>
     <Reference Include="GnoMod">
       <HintPath>H:\Steam\steamapps\common\Gnomoria\GnoMod.exe</HintPath>
