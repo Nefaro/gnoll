@@ -7,6 +7,7 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
   - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
   - Python 3.2+ (https://www.python.org/downloads/) 
   - Windows and .NET SDK 4.0 or newer  
+  - Internet (build script downloads helper tools)
   
   (Note: Not sure if there exists any Linux tooling for the given operations)
 
@@ -22,6 +23,7 @@ To get Gnoll working with Steam, first build the modloader and mods, as shown in
 
 ## Quick installation guide (Longer version in wiki [Installation](../../wiki/Installation) )
 Assumption: Python executable for Windows is named 'py'. Might be something else, modify commands accordingly.
+Assumption: All prerequisites have been met/installed
 
 Building SDK
 ```
