@@ -616,6 +616,7 @@ class TaskSteam(Task):
         self.modded_exe = os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)
         
     def discover_dependencies(self):
+        self.add_dependency(TaskMakeModLoader())        
         self.add_dependency(TaskBackupOrigExe())
         self.add_dependency(TaskCopyFile(self.modded_exe, self.steam_exe))
         
