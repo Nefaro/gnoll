@@ -92,6 +92,7 @@ GnomoriaSDK.dll + gnomorialib.dll can be now used to target Gnomoria internal AP
 
 - compile GnollModLoader.dll, copy to game dir
 - patch Gnomoria with ModLoader hooks; GnomoriaSDK.il + GnollModLoader.patch -> GnoMod.il
+- assemble GnoMod.il -> GnomoriaSDK-patched.dll
 - assemble GnoMod.il -> GnoMod.exe
 
 ## 3. Building Mods manually
