@@ -17,6 +17,7 @@ namespace GnollMods.GoblinRaidsFpsBoost
         public int RequireMinPatchVersion { get { return 5; } }
 
         private const float TOLERANCE = 0.002f;
+        private readonly Random random = new Random();
 
         // Holds the time of last processing
         private static Dictionary<Character, float> FoundValuableTimeCache = new Dictionary<Character, float>();
@@ -116,8 +117,15 @@ namespace GnollMods.GoblinRaidsFpsBoost
                 return TaskResult.Running;
             }
             // It's time
-            FoundValuableTimeCache[character] = Game.GnomanEmpire.Instance.Region.TotalTime();
+            float coef = NextFloat(random) * TOLERANCE;
+            // Adding up-to half of Tolerance so that not everyone would act at the same time
+            FoundValuableTimeCache[character] = Game.GnomanEmpire.Instance.Region.TotalTime() + coef;
             return TaskResult.Failure;
+        }
+
+        private float NextFloat(Random random)
+        {
+            return (float)(random.NextDouble() * 0.5);
         }
     }
 }
