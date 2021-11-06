@@ -10,6 +10,7 @@ Currently those mods are:
 - GoblinRaidsFpsBoost - Slows down the thinking process for goblins, that are outside of the gates and cannot come in, gives FPS boost
 - IdleTrackerMod - Tracks and show idle gnomes
 - ImportExportTrackedItemsMod - Allows to export and import the tracked item list, that is shown in the main HUD
+- MantRaidFpsBoost - Helps in situations where Mants cannot get into your fortress, gives FPS boost
 - MarketStallFasterScroll - Makes the trade window scroll faster / more lines
 - SeasonalChange - Switches the environment graphics according to current season 
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
