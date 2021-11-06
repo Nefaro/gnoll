@@ -60,9 +60,11 @@
   <ItemGroup>
     <Reference Include="GnollModLoader">
       <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Debug\GnollModLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="GnomoriaSDK">
       <HintPath>..\..\..\sdk\GnomoriaSDK.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

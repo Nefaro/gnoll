@@ -281,6 +281,27 @@ class TaskCopyFile(Task):
         else:
             shutil.copy2(self.filename, self.output_filename)        
 
+class TaskCopyFileByExtension(Task):
+    def __init__(self, source_dir, output_dir, extension):
+        super().__init__()
+        self.extension = extension
+        self.output_dir = output_dir
+        self.source_dir = source_dir
+
+    def __str__(self):
+        return 'copy (by '+self.extension+') ' + self.source_dir
+
+    def is_up_to_date(self):
+        return False
+
+    def run(self):
+        for basename in os.listdir(self.source_dir):
+            if basename.endswith(self.extension):
+                pathname = os.path.join(self.source_dir, basename)
+                if os.path.isfile(pathname) and not is_up_to_date(os.path.join(self.output_dir, basename), pathname):
+                    print(" Pathname: " + os.path.join(self.output_dir, basename))
+                    shutil.copy2(pathname, self.output_dir)                    
+
 class TaskDecompile(Task):
     def __init__(self, filename, output_filename):
         super().__init__()
@@ -471,7 +492,8 @@ class TaskMakeMod(Task):
         self.add_dependency(TaskMsbuild(os.path.join(self.solution_dir, self.name + ".sln")))
 
         # install into game directory
-        self.add_dependency(TaskCopyFile(os.path.join(self.project_dir, 'bin\\Debug', self.dll_name), os.path.join(get_game_mod_dir(), self.dll_name)))
+        # self.add_dependency(TaskCopyFile(os.path.join(self.project_dir, 'bin\\Debug', self.dll_name), os.path.join(get_game_mod_dir(), self.dll_name)))
+        self.add_dependency(TaskCopyFileByExtension(os.path.join(self.project_dir, 'bin\\Debug'), os.path.join(get_game_mod_dir()), '.dll'))
         
         mod_data_dir = os.path.join(self.project_dir, DATA_DIR);
         if os.path.exists(mod_data_dir):
