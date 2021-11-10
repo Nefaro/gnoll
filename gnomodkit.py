@@ -632,9 +632,6 @@ class TaskPatchCompilerBug(Task):
     def __str__(self):
         return 'patch-compiler-bug ' + self.filename
 
-    def is_up_to_date(self):
-        return is_up_to_date(self.output_filename, self.filename)
-
     def run(self):
         with open(self.filename) as input, open(self.output_filename, 'w') as output:
             for line in input:
