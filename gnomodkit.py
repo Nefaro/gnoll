@@ -561,6 +561,11 @@ class TaskMakeSDK(Task):
         self.add_dependency(TaskMakeAllFieldsPublic(DISASSEMBLED_FILENAME, SDK_IL_FILENAME))
         print('-- %s' % 'all methods public ... DONE')
 
+        # patch a (de)compiler bug
+        print('-- %s' % 'patching bug ...')
+        self.add_dependency(TaskPatchCompilerBug( SDK_IL_FILENAME))
+        print('-- %s' % 'patching bug ... DONE')
+
         # build GnomoriaSDK.dll
         print('-- %s' % 'assemble SDK ...')
         self.add_dependency(TaskAssemble(SDK_IL_FILENAME, SDK_DLL_FILENAME))
@@ -617,6 +622,27 @@ class TaskNugetRestore(Task):
         
     def run(self):
         check_call([self.nuget_path, 'restore', self.solution]) 
+        
+class TaskPatchCompilerBug(Task):
+    def __init__(self, filename):
+        super().__init__()
+        self.filename = filename
+        self.output_filename = self.filename + '.temp'
+
+    def __str__(self):
+        return 'patch-compiler-bug ' + self.filename
+
+    def is_up_to_date(self):
+        return is_up_to_date(self.output_filename, self.filename)
+
+    def run(self):
+        with open(self.filename) as input, open(self.output_filename, 'w') as output:
+            for line in input:
+                line = line.replace('-nan(ind)', '(00 00 C0 FF)')
+                print(line, end='', file=output)
+                
+        os.remove(self.filename)
+        os.rename(self.output_filename, self.filename)
         
 class TaskRunModdedGame(Task):
     def __str__(self):
