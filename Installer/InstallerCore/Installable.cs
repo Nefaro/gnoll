@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using NVcdiff;
 
 namespace InstallerCore
 {
@@ -24,6 +26,35 @@ namespace InstallerCore
         public override string ToString()
         {
             return $"(CopyInstallable {this._payload.GetHashCode()})";
+        }
+    }
+
+    // Patch must be generated like this: xdelta3 -S -s Gnomoria.exe Gnoll.exe Gnoll.xdelta
+    // (until we get a better VCDIFF library)
+    public class PatchInstallable : Installable
+    {
+        private byte[] _patchData;
+        private string _srcPath;
+
+        public PatchInstallable(byte[] payload, string srcPath)
+        {
+            _patchData = payload;
+            _srcPath = srcPath;
+        }
+
+        public override void Install(string destination)
+        {
+            using (var original = File.OpenRead(_srcPath))
+            using (var patch = new MemoryStream(_patchData))
+            using (var target = File.Open(destination, FileMode.Create, FileAccess.ReadWrite))
+            {
+                VcdiffDecoder.Decode(original, patch, target);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"(PatchInstallable {this._patchData.GetHashCode()}+{_srcPath})";
         }
     }
 }
