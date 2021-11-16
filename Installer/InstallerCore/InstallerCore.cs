@@ -33,18 +33,22 @@ namespace InstallerCore
 
     public class PatchDatabase
     {
-        public Installable GetInstallableIfAvailable(int modKitBuildNumber, string gameMd5)
+        public Installable GetInstallableIfAvailable(int modKitBuildNumber, string gameMd5, string vanillaExePath)
         {
-            // TODO: PatchInstallable
-            //string patchResourceName = $"G{modKitBuildNumber}_{gameMd5.Substring(0, 8)}.xdelta";
-            //var patchBytes = (byte[])Properties.Resources.ResourceManager.GetObject(patchResourceName);
-
             string fullResourceName = $"G{modKitBuildNumber}_{gameMd5.Substring(0, 8)}.exe";
             var fullBytes = (byte[])Properties.Resources.ResourceManager.GetObject(fullResourceName);
 
             if (fullBytes != null)
             {
                 return new CopyInstallable(fullBytes);
+            }
+
+            string patchResourceName = $"G{modKitBuildNumber}_{gameMd5.Substring(0, 8)}.xdelta";
+            var patchBytes = (byte[])Properties.Resources.ResourceManager.GetObject(patchResourceName);
+
+            if (patchBytes != null)
+            {
+                return new PatchInstallable(patchBytes, vanillaExePath);
             }
             else
             {
@@ -113,7 +117,7 @@ namespace InstallerCore
 
             var actions = new List<Action>();
 
-            var installable = patchDb.GetInstallableIfAvailable(modKitVersion.BuildNumber, vanillaGameMd5);
+            var installable = patchDb.GetInstallableIfAvailable(modKitVersion.BuildNumber, vanillaGameMd5, vanillaGamePath);
 
             // offer action InstallModKit if game unmodded and recognized (patch available)
             if (!isExeModded)
