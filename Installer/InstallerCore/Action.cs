@@ -21,11 +21,11 @@ namespace InstallerCore
 
         public override void Execute()
         {
-            // back up destination
-            File.Move(OutputPath, BackupPath);
+            // apply patch. do this to a temp file because the patch itself might be referring to the file being replaced! (e.g. Gnomoria.exe)
+            string tmpOutputPath = OutputPath + ".tmp";
+            Patch.Install(tmpOutputPath);
 
-            // apply patch
-            Patch.Install(OutputPath);
+            File.Replace(tmpOutputPath, OutputPath, BackupPath);
 
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
