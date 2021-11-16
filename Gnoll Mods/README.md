@@ -12,6 +12,7 @@ Currently those mods are:
 - ImportExportTrackedItemsMod - Allows to export and import the tracked item list, that is shown in the main HUD
 - MantRaidFpsBoost - Helps in situations where Mants cannot get into your fortress, gives FPS boost
 - MarketStallFasterScroll - Makes the trade window scroll faster / more lines
+- MarketStallSellFilters - Player can now filter own inventory by value and name
 - SeasonalChange - Switches the environment graphics according to current season 
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
 - VeinMiner - Enhances mining in a way tha gnomes digg out the mineral/gem veins by themselves

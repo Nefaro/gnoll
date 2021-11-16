@@ -485,8 +485,8 @@ class TaskMakeMod(Task):
         return 'make ' + self.name
 
     def discover_dependencies(self):
-        # make SDK
-        self.add_dependency(TaskMakeSDK())
+        # make ModLoader (generates patched .dll)
+        self.add_dependency(TaskMakeModLoader())
 
         # build mod
         self.add_dependency(TaskNugetRestore(os.path.join(self.solution_dir, self.name + ".sln")))

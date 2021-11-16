@@ -1,0 +1,2 @@
+This mod adds value and name filters to the market stall, helping the player to find the proper items.
+Also gives merchants proper names (... maybe, they get their kingdom name, which is still better than just "gnome")
