@@ -1,0 +1,12 @@
+[
+  {
+    "name": "v1.0 (GOG)",
+    "md5sum": "016e623994628aba2a3cb8cd4cfe2412",
+    "tag": "1.0-GOG"
+  },
+  {
+    "name": "v1.0 (Steam 2019)",
+    "md5sum": "c9f6d4b91b40f08953b0cb48e5dc81f4",
+    "tag": "1.0-STEAM"
+  }
+]
