@@ -46,7 +46,7 @@ OUTPUT_EXE_FILENAME = 'GnoMod.exe'
 # SDK dll that has the modloader patch applied
 SDK_DLL_PATCHED_FILENAME = os.path.join(SDK_DIR, 'GnomoriaSDK-patched.dll')
 
-MOD_LOADER_PATCH = 'GnollModLoader.patch'
+MOD_LOADER_PATCH = '.\\patch\\GnollModLoader.patch'
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
