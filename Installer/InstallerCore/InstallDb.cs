@@ -46,14 +46,16 @@ namespace InstallerCore
             }
         }
 
-        public void Save(string fileName)
+        public void Save(string fileName, StreamWriter logFile)
         {
             string tmpFileName = fileName + ".tmp";
 
             byte[] jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(this);
             File.WriteAllBytes(tmpFileName, jsonUtf8Bytes);
 
-            File.Replace(tmpFileName, fileName, destinationBackupFileName: null);
+            logFile.WriteLine($"Updating {fileName}");
+            File.Delete(fileName);      // If the file to be deleted does not exist, no exception is thrown.
+            File.Move(tmpFileName, fileName);
         }
     }
 }

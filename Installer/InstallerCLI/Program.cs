@@ -1,11 +1,12 @@
 ﻿using InstallerCore;
 using System;
+using System.IO;
 
 namespace InstallerCLI
 {
     class Program
     {
-        static void AlmostMain(string[] args)
+        static void AlmostMain(string[] args, StreamWriter logFile)
         {
             var modKitVersion = new ModKitVersion(1700, "G1.7");
             var gameDb = new GameDb();
@@ -23,7 +24,7 @@ namespace InstallerCLI
                 gameDir = Console.ReadLine();
             }
 
-            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb);
+            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb, logFile);
 
             Console.WriteLine($"Game version:            {res.GameVersion}");
             Console.WriteLine($"Installed gnoll version: {res.ModKitVersion}");
@@ -44,22 +45,31 @@ namespace InstallerCLI
 
                 if (choice != "")
                 {
-                    actions[int.Parse(choice)].Execute();
+                    actions[int.Parse(choice)].Execute(logFile);
+                    Console.WriteLine("Success.");
                 }
             }
         }
 
         static void Main(string[] args)
         {
-            try
+            using (var logFile = new StreamWriter("GnollInstaller.log", append: true))
             {
-                AlmostMain(args);
-            }
-            finally
-            {
-                Console.WriteLine();
-                Console.WriteLine("(Press Enter to exit)");
-                Console.ReadLine();
+                try
+                {
+                    AlmostMain(args, logFile);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    logFile.WriteLine(ex.ToString());
+                }
+                finally
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("(Press Enter to exit)");
+                    Console.ReadLine();
+                }
             }
         }
     }
