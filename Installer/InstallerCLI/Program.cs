@@ -29,6 +29,11 @@ namespace InstallerCLI
             Console.WriteLine($"Game version:            {res.GameVersion}");
             Console.WriteLine($"Installed gnoll version: {res.ModKitVersion}");
 
+            if (!res.PatchAvailable)
+            {
+                Console.WriteLine($"WARNING: No patch available for this game version");
+            }
+
             var actions = res.AvailableActions;
 
             for (int i = 0; i < actions.Length; i++)

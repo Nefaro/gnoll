@@ -7,16 +7,18 @@ namespace InstallerCore
 {
     public class ScanResult
     {
-        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions)
+        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions, bool patchAvailable)
         {
             ModKitVersion = gnollVersion;
             GameVersion = gameVersion;
             AvailableActions = availableActions;
+            PatchAvailable = patchAvailable;
         }
 
         public string ModKitVersion { get; }
         public string GameVersion { get; }
         public Action[] AvailableActions { get; }
+        public bool PatchAvailable { get; }
     }
 
     public class ModKitVersion
@@ -167,7 +169,7 @@ namespace InstallerCore
             string gnollVersion = (catalog.DefaultRecord != null ? catalog.DefaultRecord.ModKitBuildNumber.ToString() : null);
             string gameVersionString = gameDb.GetGameVersionStringByMd5Hash(vanillaGameMd5);
 
-            return new ScanResult(gnollVersion, gameVersionString, actions.ToArray());
+            return new ScanResult(gnollVersion, gameVersionString, actions.ToArray(), patchAvailable: (installable != null));
         }
     }
 }
