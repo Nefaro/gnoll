@@ -7,7 +7,7 @@ namespace InstallerCore
         public abstract void Execute(StreamWriter logFile);
     }
 
-    internal class InstallModKit : Action
+    public class InstallModKit : Action
     {
         public InstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
         {
@@ -46,7 +46,7 @@ namespace InstallerCore
         public Installable Patch { get; }
     }
 
-    internal class InstallStandalone : Action
+    public class InstallStandalone : Action
     {
         public InstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
         {
@@ -80,7 +80,7 @@ namespace InstallerCore
         public Installable Patch { get; }
     }
 
-    internal class UninstallModKit : Action
+    public class UninstallModKit : Action
     {
         public UninstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion)
         {
@@ -114,7 +114,7 @@ namespace InstallerCore
         public ModKitVersion ModKitVersion { get; }
     }
 
-    internal class UninstallStandalone : Action
+    public class UninstallStandalone : Action
     {
         public UninstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion)
         {
