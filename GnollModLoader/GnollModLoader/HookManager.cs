@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Game;
 using GnollModLoader.GUI;
 
 namespace GnollModLoader
@@ -27,6 +28,8 @@ namespace GnollModLoader
         public delegate void BeforeEntitySpawnHandler(Game.GameEntity entity);
         // Called after main menu init, before "Exit" button is attached
         public delegate void MainMenuGuiInitHandler(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager);
+        // Caleld after new game has configured but before any generqation has happened
+        public delegate void BeforeStartNewGameHandler(CreateWorldOptions worldOptions);
 
         private List<IGnollMod> _listOfMods;
 
@@ -129,6 +132,14 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookOnStartNewGame_before(CreateWorldOptions worldOptions)
+        {
+            if (instance.BeforeStartNewGame != null)
+            {
+                instance.BeforeStartNewGame(worldOptions);
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
         public event InGameHUDShowWindowHandler InGameShowWindow;
@@ -137,6 +148,7 @@ namespace GnollModLoader
         public event OnEntitySpawnHandler OnEntitySpawn;
         public event BeforeEntitySpawnHandler BeforeEntitySpawn;
         public event MainMenuGuiInitHandler MainMenuGuiInit;
+        public event BeforeStartNewGameHandler BeforeStartNewGame;
 
         private static HookManager instance;
     }

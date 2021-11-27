@@ -46,6 +46,7 @@ namespace GnollModLoader
                 this._hookManager.BeforeEntitySpawn += DEBUG_HookManager_BeforeEntitySpawn;
                 this._hookManager.OnEntitySpawn += DEBUG_HookManager_OnEntitySpawn;
                 this._hookManager.MainMenuGuiInit += DEBUG_HookManager_MainMenuGuiInit;
+                this._hookManager.BeforeStartNewGame += DEBUG_HookManager_BeforeStartNewGame;
             }
         }
 
@@ -115,6 +116,10 @@ namespace GnollModLoader
         }
 
         private void DEBUG_HookManager_MainMenuGuiInit(MainMenuWindow window, Manager manager)
+        {
+        }
+
+        private void DEBUG_HookManager_BeforeStartNewGame(CreateWorldOptions worldOptions)
         {
         }
     }

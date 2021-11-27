@@ -62,6 +62,16 @@
      IL_0065:  ret
    } // end of method GnomanEmpire::method_2
  
+@@ -201710,6 +201710,9 @@ ##7 Insert hook before new game generation
+              int32 V_5,
+              string[] V_6,
+              int32 V_7)
++    // ModLoader: Call before new game generation
++    ldarg.1
++    call void [GnollModLoader]GnollModLoader.HookManager::HookOnStartNewGame_before(class Game.CreateWorldOptions worldOptions)              
+     IL_0000:  ldstr      "Worlds\\"
+     IL_0005:  call       string Game.GnomanEmpire::SaveFolderPath(string)
+     IL_000a:  stloc.0
 @@ -230208,7 +230227,7 @@ 
            instance void  .ctor(class Game.GUI.Controls.Manager manager) cil managed
    {
@@ -71,7 +81,7 @@
      .locals init (class Game.GUI.Controls.Button V_0,
               class Game.GUI.Controls.Button V_1,
               class Game.GUI.Controls.Button V_2,
-@@ -230365,6 +230384,11 @@ ##8 Insert hook for import/export functionality
+@@ -230365,6 +230384,11 @@ ##9 Insert hook for import/export functionality
      IL_01b6:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01bb:  ldfld      int32 Game.GUI.Controls.Margins::Bottom
      IL_01c0:  add
@@ -83,7 +93,7 @@
      IL_01c1:  ldloc.2
      IL_01c2:  callvirt   instance valuetype Game.GUI.Controls.Margins Game.GUI.Controls.Control::get_Margins()
      IL_01c7:  ldfld      int32 Game.GUI.Controls.Margins::Top
-@@ -346018,6 +346042,10 @@ ##9 Insert hook for main menu init
+@@ -346018,6 +346042,10 @@ ##10 Insert hook for main menu init
     IL_0200:  callvirt   instance void Game.GUI.Controls.Control::Add(class Game.GUI.Controls.Control)
     IL_0205:  ldarg.0
     IL_0206:  ldarg.1
@@ -94,7 +104,7 @@
     IL_0207:  ldstr      "Exit"
     IL_020c:  call       instance class Game.GUI.Controls.Button Game.GUI.MainMenuWindow::method_39(class Game.GUI.Controls.Manager,
                                                                                                     string)
-@@ -422848,6 +422876,9 @@ ##10 Insert hook for character job completion
+@@ -422848,6 +422876,9 @@ ##11 Insert hook for character job completion
     IL_008b:  ldarg.1
     IL_008c:  ldarg.2
     IL_008d:  callvirt   instance void Game.Job::Complete(class Game.Character)  
@@ -104,7 +114,7 @@
     IL_0092:  ret
   } // end of method JobBoard::CompleteJob
 
-@@ -427631,7 +427631,7 @@ ##11 Redefine entity list type to IList (for runtime replacement of the implementation)
+@@ -427631,7 +427631,7 @@ ##12 Redefine entity list type to IList (for runtime replacement of the implementation)
  {
    .field public uint32 uint_0
    .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_0
@@ -113,7 +123,7 @@
    .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_2
    .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_3
    .field public class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> list_4
-@@ -427695,7 +427695,7 @@ ##12 GameEnityManager constructor
+@@ -427695,7 +427695,7 @@ ##13 GameEnityManager constructor
      IL_0013:  stfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
      IL_0018:  ldarg.0
      IL_0019:  newobj     instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::.ctor()
@@ -131,7 +141,7 @@
      IL_00f0:  ldc.i4.0
      IL_00f1:  stloc.s    V_4
      IL_00f3:  br.s       IL_011a
-@@ -427847,9 +427847,9 @@ ##14 GameEntityManager constructor(BinaryReader reader)
+@@ -427847,9 +427847,9 @@ ##15 GameEntityManager constructor(BinaryReader reader)
      IL_0105:  brfalse.s  IL_0114
  
      IL_0107:  ldarg.0
@@ -143,7 +153,7 @@
      IL_0114:  ldloc.s    V_4
      IL_0116:  ldc.i4.1
      IL_0117:  add     
-@@ -428406,22 +428406,18 @@ ##15 GameEntityManager :: Serialize
+@@ -428406,22 +428406,18 @@ ##16 GameEntityManager :: Serialize
    .method public hidebysig instance void 
            Serialize(class [mscorlib]System.IO.BinaryWriter writer) cil managed
    {
@@ -174,7 +184,7 @@
      IL_0000:  ldarg.1
      IL_0001:  ldarg.0
      IL_0002:  ldfld      uint32 Game.GameEntityManager::uint_0
-@@ -428434,249 +428430,244 @@ ##16 GameEntityManager :: Serialize
+@@ -428434,249 +428430,244 @@ ##17 GameEntityManager :: Serialize
      IL_001d:  ldarg.0
      IL_001e:  ldfld      class [mscorlib]System.Collections.Generic.Dictionary`2<uint32,class Game.GameEntity> Game.GameEntityManager::dictionary_0
      IL_0023:  callvirt   instance valuetype [mscorlib]System.Collections.Generic.Dictionary`2/Enumerator<!0,!1> class [mscorlib]System.Collections.Generic.Dictionary`2<uint32,class Game.GameEntity>::GetEnumerator()
@@ -599,7 +609,7 @@
    } // end of method GameEntityManager::Serialize
  
    .method public hidebysig instance void 
-@@ -429002,44 +429002,45 @@ ##17 GameEntityManager::method_3
+@@ -429002,44 +429002,45 @@ ##18 GameEntityManager::method_3
    .method public hidebysig instance void 
            method_3(float32 float_0) cil managed
    {
@@ -671,7 +681,7 @@
    } // end of method GameEntityManager::method_3
  
    .method public hidebysig instance void
-@@ -429101,15 +429101,15 @@ ##18 GameEntityManager::method_5
+@@ -429101,15 +429101,15 @@ ##19 GameEntityManager::method_5
        IL_0011:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
        IL_0016:  stloc.0
        IL_0017:  ldarg.0
@@ -691,7 +701,7 @@
        IL_0031:  ldloca.s   V_1
        IL_0033:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()
        IL_0038:  brtrue.s   IL_000f
-@@ -429150,9 +429150,9 @@ ##19 GameEntityManager::method_6
+@@ -429150,9 +429150,9 @@ ##20 GameEntityManager::method_6
        IL_0011:  call       instance !0 valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::get_Current()
        IL_0016:  stloc.0
        IL_0017:  ldarg.0
@@ -703,7 +713,7 @@
        IL_0023:  pop
        IL_0024:  ldloca.s   V_1
        IL_0026:  call       instance bool valuetype [mscorlib]System.Collections.Generic.List`1/Enumerator<class Game.GameEntity>::MoveNext()       
-@@ -429213,11 +429213,15 @@ ##20 GameEntityManager::method_8
+@@ -429213,11 +429213,15 @@ ##21 GameEntityManager::method_8
    .method public hidebysig instance void 
            method_8(class Game.GameEntity gameEntity_0) cil managed
    {
@@ -722,7 +732,7 @@
    } // end of method GameEntityManager::method_8
  
    .method public hidebysig instance void 
-@@ -429302,8 +429302,8 @@ ##21 GameEntityManager::clearAll
+@@ -429302,8 +429302,8 @@ ##22 GameEntityManager::clearAll
      IL_0049:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_0
      IL_004e:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()
      IL_0053:  ldarg.0
@@ -733,7 +743,7 @@
      IL_005e:  ldarg.0
      IL_005f:  ldfld      class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity> Game.GameEntityManager::list_2
      IL_0064:  callvirt   instance void class [mscorlib]System.Collections.Generic.List`1<class Game.GameEntity>::Clear()
-@@ -429425,17 +429425,17 @@ ##22 GameEntityManager::SettleLiquids
+@@ -429425,17 +429425,17 @@ ##23 GameEntityManager::SettleLiquids
    .method public hidebysig instance void 
            SettleLiquids() cil managed
    {
@@ -755,7 +765,7 @@
  
      IL_000e:  ldarg.0
      IL_000f:  call       instance void Game.GameEntityManager::method_2()
-@@ -429444,53 +429444,54 @@ ##23 GameEntityManager::SettleLiquids
+@@ -429444,53 +429444,54 @@ ##24 GameEntityManager::SettleLiquids
      IL_001a:  ldc.i4.0
      IL_001b:  stloc.1
      IL_001c:  ldarg.0
@@ -847,7 +857,7 @@
    } // end of method GameEntityManager::SettleLiquids
  
    .property instance class [gnomorialib]GameLibrary.HelpTopic[]
-@@ -432976,6 +432982,9 @@ ##24 Insert hook for ingame switching windows
+@@ -432976,6 +432982,9 @@ ##25 Insert hook for ingame switching windows
      IL_0062:  callvirt   instance class Game.Common.GameProperty`1<bool> Game.World::get_Paused()
      IL_0067:  call       !0 class Game.Common.GameProperty`1<bool>::op_Implicit(class Game.Common.GameProperty`1<!0>)
      IL_006c:  stfld      bool Game.GUI.InGameHUD::bool_1
