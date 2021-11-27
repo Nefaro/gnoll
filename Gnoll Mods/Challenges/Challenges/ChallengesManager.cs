@@ -49,7 +49,9 @@ namespace GnollMods.Challenges
         private readonly IList<IChallenge> _challenges = new List<IChallenge>()
         {
             new LumberjackChallenge(),
-            new OrchardChallenge()
+            new OrchardChallenge(),
+            new ChitinHuntChallenge(),
+            new MushroomsChallenge()
         };
 
         public IList<IChallenge> Challenges { get { return _challenges; } }
@@ -62,7 +64,7 @@ namespace GnollMods.Challenges
             if (challengeIdx < Challenges.Count)
             {
                 this.ActiveChallenge = Challenges[challengeIdx];
-                this.ActiveChallenge.OnStart();
+                this.ActiveChallenge.OnPreStart();
                 this._isNewStart = true;
             }
         }
@@ -106,13 +108,51 @@ namespace GnollMods.Challenges
             return false;
         }
 
+        internal void HookManager_BeforeStartNewGame(CreateWorldOptions worldOptions)
+        {
+            this.AssignActiveChallenge();
+            if (this.ActiveChallenge == null)
+                return;
+
+            this.ActiveChallenge.OnNewGameStart(worldOptions);
+        }
+
         internal void HookManager_InGameHUDInit(InGameHUD inGameHUD, Manager manager)
+        {
+            this.AssignActiveChallenge();
+            if (this.ActiveChallenge == null)
+                return;
+
+            HashSet<string> settings = Game.GnomanEmpire.Instance.World.DifficultySettings.hashSet_0;
+            var startTag = this.FormatStartTag(this.ActiveChallenge);
+            var endTag = this.FormatEndTag(this.ActiveChallenge);
+            if (this._isNewStart)
+            {
+                settings.Add(startTag);
+            }
+
+            if ( settings.Contains(startTag))
+            {
+                this.AttachIngameUI(inGameHUD, manager);
+                if (!settings.Contains(endTag))
+                {
+                    // Active challenge
+                    // Day start = sunrise
+                    System.Console.WriteLine(" -- Day start event handler attached");
+                    Game.GnomanEmpire.Instance.Region.OnDayStart += OnDayStart;
+                    // just in case the challenge has already finished
+                    this.IsChallengeFinished();
+                }
+            }
+        }
+
+        private void AssignActiveChallenge()
         {
             // need to check if the current game has any tags
             // need to find which challenge is tagged
             HashSet<string> settings = Game.GnomanEmpire.Instance.World.DifficultySettings.hashSet_0;
             var hasTags = false;
-            if ( !this._isNewStart )
+            if (!this._isNewStart)
             {
                 foreach (string item in settings)
                 {
@@ -141,26 +181,6 @@ namespace GnollMods.Challenges
                         System.Console.WriteLine("-- Found current challenge: {0}", this.ActiveChallenge);
                         break;
                     }
-                }
-            }
-            var startTag = this.FormatStartTag(this.ActiveChallenge);
-            var endTag = this.FormatEndTag(this.ActiveChallenge);
-            if (this._isNewStart)
-            {
-                settings.Add(startTag);
-            }
-
-            if ( settings.Contains(startTag))
-            {
-                this.AttachIngameUI(inGameHUD, manager);
-                if (!settings.Contains(endTag))
-                {
-                    // Active challenge
-                    // Day start = sunrise
-                    System.Console.WriteLine(" -- Day start event handler attached");
-                    Game.GnomanEmpire.Instance.Region.OnDayStart += OnDayStart;
-                    // just in case the challenge has already finished
-                    this.IsChallengeFinished();
                 }
             }
         }
@@ -245,18 +265,20 @@ namespace GnollMods.Challenges
 
         private ChallengesScoreRecord BuildScoreRecord(IChallenge challenge, string size)
         {
-            ChallengesScoreRecord record = new ChallengesScoreRecord();
-            record.KingdomName = GnomanEmpire.Instance.World.AIDirector.PlayerFaction.Name;
-            record.KingdomSize = size;
-            record.KingdomSeed = "" + GnomanEmpire.Instance.World.Region.Map.WorldSeed;
-            record.Score = challenge.CalculateScore();
-            record.Difficulty = GnomanEmpire.Instance.World.DifficultySettings.gameMode_0.ToString();
-            record.BaseMod = "" + GnomanEmpire.Instance.GameDefs.BaseModFolder.SteamWorkshopItemID;
-            record.ModList =
+            ChallengesScoreRecord record = new ChallengesScoreRecord
+            {
+                KingdomName = GnomanEmpire.Instance.World.AIDirector.PlayerFaction.Name,
+                KingdomSize = size,
+                KingdomSeed = "" + GnomanEmpire.Instance.World.Region.Map.WorldSeed,
+                Score = challenge.CalculateScore(),
+                Difficulty = GnomanEmpire.Instance.World.DifficultySettings.gameMode_0.ToString(),
+                BaseMod = "" + GnomanEmpire.Instance.GameDefs.BaseModFolder.SteamWorkshopItemID,
+                ModList =
                 new List<ModFolder>(GnomanEmpire.Instance.GameDefs.ModFolders)
                 .Select(mod => mod.Folder)
-                .ToList();
-            record.Date = DateTime.Now.ToString();
+                .ToList(),
+                Date = DateTime.Now.ToString()
+            };
             if (GnomanEmpire.Instance.World.DifficultySettings.int_0 < _metalDepth.Count)
                 record.MetalDepth = _metalDepth[GnomanEmpire.Instance.World.DifficultySettings.int_0];
             else
@@ -267,7 +289,14 @@ namespace GnollMods.Challenges
             else
                 record.MetalAmount = _metalAmount[1];
 
-            record.EnemyList = GnomanEmpire.Instance.World.DifficultySettings.hashSet_0.ToList();
+            var enemies = GnomanEmpire.Instance.GameDefs.NewGameSettings.EnemyRaceOptions
+                .Select(nmy => nmy.RaceIDs)
+                .SelectMany(races => races)
+                .ToList();
+
+            var realEnemies = enemies.Except(GnomanEmpire.Instance.World.DifficultySettings.hashSet_0).ToList();
+
+            record.EnemyList = realEnemies;
             record.EnemyStrength = "" + GnomanEmpire.Instance.World.DifficultySettings.RawEnemyStrength;
             record.EnemyStrengthGrowth = GnomanEmpire.Instance.World.DifficultySettings.IncreaseOverTime;
             record.EnemyAttackRate = "" + GnomanEmpire.Instance.World.DifficultySettings.AttackRate;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Game;
 using GnollModLoader;
 
 namespace GnollMods.Challenges.Challenge
@@ -19,10 +20,13 @@ namespace GnollMods.Challenges.Challenge
 
         string ChallengeEndMessage();
 
-        void OnStart();
+        void OnPreStart();
+        void OnNewGameStart(CreateWorldOptions worldOptions);
 
         string CalculateScore();
         bool IsEndConditionsMet();
+
+        string AdditionalRules();
     }
 
 }

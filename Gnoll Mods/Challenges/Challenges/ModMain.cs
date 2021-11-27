@@ -18,8 +18,8 @@ namespace GnollMods.Challenges
         public static ModMain Instance { get { return _instance; } }
         public string Name { get { return "Challenges"; } }
         public string Description { get { return "Introduces 'Challenges' game mode: a game with objectives."; } }
-        public string BuiltWithLoaderVersion { get { return "G1.6"; } }
-        public int RequireMinPatchVersion { get { return 6; } }
+        public string BuiltWithLoaderVersion { get { return "G1.8"; } }
+        public int RequireMinPatchVersion { get { return 8; } }
 
         private HookManager _hookManager;
 
@@ -36,6 +36,7 @@ namespace GnollMods.Challenges
         {
             hookManager.MainMenuGuiInit += HookManager_MainMenuGuiInit;
             hookManager.InGameHUDInit += _challengesManager.HookManager_InGameHUDInit;
+            hookManager.BeforeStartNewGame += _challengesManager.HookManager_BeforeStartNewGame;
             this._hookManager = hookManager;
         }
 

@@ -32,7 +32,7 @@ namespace GnollMods.Challenges.Challenge
         public string ChallengeEndMessage()
         {
             return "Joyful greetings, Governor!\n\n We have received your shipment of wood. This will definitely help us in keeping us warm during the winter. " +
-                "Great thanks to you, the motherland is in your dept!";
+                "Great many thanks to you, the motherland is in your dept!";
         }
 
         public string ChallengeName()
@@ -50,13 +50,17 @@ namespace GnollMods.Challenges.Challenge
             return "3 years";
         }
 
-        public void OnStart()
+        public void OnPreStart()
+        {
+        }
+
+        public void OnNewGameStart(CreateWorldOptions worldOptions)
         {
         }
 
         public string CalculateScore()
         {
-            StockManager stockManager = GnomanEmpire.Instance.Fortress.StockManager;
+            StockManager stockManager = GnomanEmpire.Instance.Fortress.StockManager;      
             Dictionary<string, List<Item>> dict = stockManager.ItemsByItemID(ITEM_ID);
             double score = 0;
             var idx = 0;
@@ -77,6 +81,11 @@ namespace GnollMods.Challenges.Challenge
             return Game.GnomanEmpire.Instance.Region.TotalTime() >= (TIMELIMIT_DAYS + 1) ||
                 (Game.GnomanEmpire.Instance.Region.TotalTime() >= TIMELIMIT_DAYS &&
                 Game.GnomanEmpire.Instance.Region.Time.Value > Game.GnomanEmpire.Instance.Region.Sunrise());
+        }
+
+        public string AdditionalRules()
+        {
+            return "";
         }
     }
 }

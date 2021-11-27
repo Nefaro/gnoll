@@ -7,7 +7,7 @@ using GnollModLoader;
 
 namespace GnollMods.Challenges.Challenge
 {
-    class OrchardChallenge : IChallenge
+    class ChitinHuntChallenge : IChallenge
     {
         // 12 days per season, 4 seasons per year, 3 years per challenge
         private const int TIMELIMIT_DAYS = 12 * 4 * 3;
@@ -16,29 +16,36 @@ namespace GnollMods.Challenges.Challenge
         private const double SCORE_BASE = 1.0;
         // for each extra type, add this coef for the score calc
         private const double SCORE_INC = 0.25;
-        private const string ITEM_ID = "Fruit";
+        private const string ITEM_ID = "BugCiv_RawChitin";
+        private const string ITEM_NAME_PART = "chitin";
+        private const string ENEMIES_MANTS_PART = "mant";
 
         public string ChallengeDescription()
         {
-            return "Hasty greetings, Governor! \n\nWe desperately need your help! \nBecause of the weather, we have had some serious trouble with rodents. This has caused a situation where our fruit stocks are running out" +
-                " and our orchards have been damaged severly. " +
-                "We need your settlement to help us out and collect as much fruit as you can. \nWe depend on you, please do not let us down!";
+            return "Hasty greetings, Governor! \n\nWe desperately need your help! \nBecause of ... reasons, we have a desperate need for some chitin. Yes, chitin. " +
+                "This means we need you to do some hunting. Any type of chitin is welcome, as long as it's raw chitin! " +
+                "\nWe depend on you, please do not let us down!";
         }
 
         public string ChallengeEndMessage()
         {
-            return "Joyful greetings, Governor!\n\n We have received your shipment of your produce. This will definitely keep us fed in the following seasons. " +
+            return "Joyful greetings, Governor!\n\n We have received your shipment of your produce. This will definitely help us with future plans. " +
                 "Great many thanks to you, the motherland is in your dept!";
         }
 
         public string ChallengeName()
         {
-            return "Orchard";
+            return "ChitinHunt";
         }
 
         public string ChallengeObjective()
         {
-            return "Collect and store fruit";
+            return "Collect and store chitin";
+        }
+
+        public string AdditionalRules()
+        {
+            return "Mants will be force enabled";
         }
 
         public string ChallengeTimeframe()
@@ -48,15 +55,27 @@ namespace GnollMods.Challenges.Challenge
 
         public void OnPreStart()
         {
-
+            
         }
         public void OnNewGameStart(CreateWorldOptions worldOptions)
         {
+            var newGameSettings = GnomanEmpire.Instance.GameDefs.NewGameSettings;
+            foreach (var enemy in newGameSettings.EnemyRaceOptions)
+            {
+                if (enemy.Name.ToLower().Contains(ENEMIES_MANTS_PART))
+                {
+                    foreach (string raceID in enemy.RaceIDs)
+                    {
+                        worldOptions.DifficultySettings.AllowRace(raceID, true);
+                    }
+                }
+            }
         }
 
         public string CalculateScore()
         { 
             StockManager stockManager = GnomanEmpire.Instance.Fortress.StockManager;
+
             Dictionary<string, List<Item>> dict = stockManager.ItemsByItemID(ITEM_ID);
             double score = 0;
             var idx = 0;
@@ -64,8 +83,11 @@ namespace GnollMods.Challenges.Challenge
             {
                 foreach (var item in dict.OrderByDescending(i => i.Value.Count()))
                 {
-                    score += (SCORE_BASE + SCORE_INC* idx) * item.Value.Count();
-                    idx++;
+                    if (item.Key.ToLower().Contains(ITEM_NAME_PART))
+                    {
+                        score += (SCORE_BASE + SCORE_INC * idx) * item.Value.Count();
+                        idx++;
+                    }
                 }
             }
             return "" + (int)score;
@@ -79,9 +101,6 @@ namespace GnollMods.Challenges.Challenge
                 Game.GnomanEmpire.Instance.Region.Time.Value > Game.GnomanEmpire.Instance.Region.Sunrise());
         }
 
-        public string AdditionalRules()
-        {
-            return "";
-        }
+
     }
 }

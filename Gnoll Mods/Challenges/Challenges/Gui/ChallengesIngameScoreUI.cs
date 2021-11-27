@@ -32,6 +32,7 @@ namespace GnollMods.Challenges.Gui
             score.Height = _rowHeight;
             score.Top = line * (_rowHeight + _topMargin);
             score.Width = 430;
+            score.TextColor = Microsoft.Xna.Framework.Color.Yellow;
             desc.Add(score);
 
             Label separator = new Label(manager);
@@ -80,6 +81,7 @@ namespace GnollMods.Challenges.Gui
             enemy2.Height = _rowHeight;
             enemy2.Top = ++line * (_rowHeight + _topMargin);
             enemy2.Width = 430;
+            enemy2.TextColor = Microsoft.Xna.Framework.Color.Orange;
             desc.Add(enemy2);
 
             kingdom.Text = string.Format("{0} ({1})",
@@ -106,6 +108,7 @@ namespace GnollMods.Challenges.Gui
             if (ChallengesManager.GAME_MODE_PEACEFUL.Equals(record.Difficulty, StringComparison.OrdinalIgnoreCase))
             {
                 enemy.Text = String.Format("Peaceful, enemies disabled");
+                enemy.TextColor = Microsoft.Xna.Framework.Color.LimeGreen;
                 enemy2.Text = "";
             }
             else if (filtered.Count() > 0)
@@ -113,8 +116,9 @@ namespace GnollMods.Challenges.Gui
                 enemy.Text = string.Format("Enemy strength {0} ({1} growth)",
                     record.EnemyStrength,
                     (record.EnemyStrengthGrowth ? "with" : "without"));
+                enemy.TextColor = Microsoft.Xna.Framework.Color.Orange;
 
-                enemy2.Text = string.Format("Enemy attack rate {0}, size {1}, {2} types of enemies",
+                enemy2.Text = string.Format("Attack rate {0} and size {1} by {2} type(s) of enemies",
                     record.EnemyAttackRate,
                     record.EnemyAttackSize,
                     filtered.Count());
@@ -122,6 +126,7 @@ namespace GnollMods.Challenges.Gui
             else
             {
                 enemy.Text = String.Format("No enemies selected");
+                enemy.TextColor = Microsoft.Xna.Framework.Color.LimeGreen;
                 enemy2.Text = "";
             }
         }

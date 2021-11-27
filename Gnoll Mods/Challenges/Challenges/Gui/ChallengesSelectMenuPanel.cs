@@ -13,7 +13,6 @@ namespace GnollMods.Challenges.Gui
 {
     class ChallengesSelectMenuPanel : AbstractTabbedWindowPanel
     {
-
         public ChallengesSelectMenuPanel(HookManager hookManager, Manager manager) : base(manager)
         {
             this.Width = 630;
@@ -57,16 +56,61 @@ namespace GnollMods.Challenges.Gui
             description.Top = 0;
             descPanel.Add(description);
 
+            Label objectives = new Label(manager);
+            objectives.Text = "";
+            objectives.Height = descPanel.Height - descPanel.Margins.Vertical;
+            objectives.Width = descPanel.Width - descPanel.Margins.Horizontal;
+            objectives.Top = 0;
+            objectives.TextColor = Microsoft.Xna.Framework.Color.Yellow;
+            descPanel.Add(objectives);
+
+            Label timeframe = new Label(manager);
+            timeframe.Text = "";
+            timeframe.Height = descPanel.Height - descPanel.Margins.Vertical;
+            timeframe.Width = descPanel.Width - descPanel.Margins.Horizontal;
+            timeframe.Top = 0;
+            timeframe.TextColor = Microsoft.Xna.Framework.Color.Yellow;
+            descPanel.Add(timeframe);
+
+            Label rules = new Label(manager);
+            rules.Text = "";
+            rules.Height = descPanel.Height - descPanel.Margins.Vertical;
+            rules.Width = descPanel.Width - descPanel.Margins.Horizontal;
+            rules.Top = 0;
+            rules.TextColor = Microsoft.Xna.Framework.Color.Orange;
+            descPanel.Add(rules);
+
             listBox.ItemIndexChanged += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
+                var font = Manager.Skin.Controls["Label"].Layers[0].Text.Font;
+                var fontResource = font.Resource;
                 if (listBox.ItemIndex < challenges.Count)
                 {
-                    description.Text = this.SpliceText(challenges[listBox.ItemIndex].ChallengeDescription(), 48 * 9);
+                    rules.Hide();
+                    var chall = challenges[listBox.ItemIndex];
+                    description.Text = this.SpliceText(chall.ChallengeDescription(), 48 * 9);
                     description.Text += "\n\n===== ===== ===== ===== ===== ===== =====\n";
-                    description.Text += "\nObjective: " + this.SpliceText(challenges[listBox.ItemIndex].ChallengeObjective(), 40 * 9);
-                    description.Text += "\nTimeframe: " + this.SpliceText(challenges[listBox.ItemIndex].ChallengeTimeframe(), 40 * 9);
-                    var size = Manager.Skin.Controls["Label"].Layers[0].Text.Font.Resource.MeasureString(description.Text);
+                    var size = fontResource.MeasureString(description.Text);
                     description.Height = (int)size.Y;
+
+                    objectives.Top = description.Height;
+                    objectives.Text = "Objective: " + this.SpliceText(chall.ChallengeObjective(), 40 * 9);
+                    size = fontResource.MeasureString(objectives.Text);
+                    objectives.Height = (int)size.Y;
+
+                    timeframe.Top = objectives.Top + objectives.Height; ;
+                    timeframe.Text = "Timeframe: " + this.SpliceText(chall.ChallengeTimeframe(), 40 * 9);
+                    size = fontResource.MeasureString(timeframe.Text);
+                    timeframe.Height = (int)size.Y;
+
+                    if (!String.IsNullOrEmpty(chall.AdditionalRules()))
+                    {
+                        rules.Top = timeframe.Top + timeframe.Height; ;
+                        rules.Text = "\nSpecial Rules: " + this.SpliceText(chall.AdditionalRules(), 40 * 9);
+                        size = fontResource.MeasureString(rules.Text);
+                        rules.Height = (int)size.Y;
+                        rules.Show();
+                    }
                 }
             };
             if (challenges.Count > 0)
@@ -105,6 +149,7 @@ namespace GnollMods.Challenges.Gui
             button.Top = this.Height - this.ClientMargins.Vertical - button.Height - button.Margins.Bottom;
             return button;
         }
+
         private string SpliceText(string text, int max)
         {
             SpriteFont font = Manager.Skin.Controls["Label"].Layers[0].Text.Font.Resource;
