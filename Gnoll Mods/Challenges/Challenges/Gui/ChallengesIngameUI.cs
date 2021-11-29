@@ -19,6 +19,7 @@ namespace GnollMods.Challenges.Gui
 			this.Resizable = false;
 			this.Center();
 			base.AddPage("Score", new ChallengesIngameScoreUI(manager, record, challenge));
+			base.AddPage("Stats", new ChallengesIngameStatsUI(manager, record, challenge));
 		}
 	}
 }

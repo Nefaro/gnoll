@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Game;
 using GnollModLoader;
+using GnollMods.Challenges.Model;
 
 namespace GnollMods.Challenges.Challenge
 {
@@ -24,9 +25,12 @@ namespace GnollMods.Challenges.Challenge
         void OnNewGameStart(CreateWorldOptions worldOptions);
 
         string CalculateScore();
+        List<StatsItem> CalculateStats();
+
         bool IsEndConditionsMet();
 
         string AdditionalRules();
+
     }
 
 }

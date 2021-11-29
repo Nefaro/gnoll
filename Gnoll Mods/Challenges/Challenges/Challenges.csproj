@@ -37,12 +37,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ChallengesManager.cs" />
+    <Compile Include="Challenge\AbstractItemBasedChallenge.cs" />
     <Compile Include="Challenge\IChallenge.cs" />
     <Compile Include="Challenge\LumberjackChallenge.cs" />
     <Compile Include="Challenge\ChitinHuntChallenge.cs" />
     <Compile Include="Challenge\MushroomsChallenges.cs" />
     <Compile Include="Challenge\OrchardChallenge.cs" />
     <Compile Include="Gui\AbstractTabbedWindowPanel.cs" />
+    <Compile Include="Gui\ChallengesIngameStatsUI.cs" />
     <Compile Include="Gui\ChallengesIngameScoreUI.cs" />
     <Compile Include="Gui\ChallengesEndDialog.cs" />
     <Compile Include="Gui\ChallengesIngameUI.cs" />
@@ -53,6 +55,7 @@
     <Compile Include="Gui\ChallengesScoringMenuPanel.cs" />
     <Compile Include="Gui\ChallengesSelectMenuPanel.cs" />
     <Compile Include="Gui\ScoreTablePanel.cs" />
+    <Compile Include="Model\StatsItem.cs" />
     <Compile Include="ModMain.cs" />
   </ItemGroup>
   <ItemGroup>
