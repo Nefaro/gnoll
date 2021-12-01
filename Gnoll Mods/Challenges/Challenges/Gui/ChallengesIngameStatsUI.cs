@@ -21,6 +21,8 @@ namespace GnollMods.Challenges.Gui
             desc.Left = 10;
             desc.Width = 435;
             desc.Height = 150;
+            desc.AutoScroll = true;
+            desc.HorizontalScrollBarEnabled = false;
 
             this.Add(desc);
 
