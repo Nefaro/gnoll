@@ -22,6 +22,8 @@ namespace GnollMods.IdleTrackerMod
 
         public string BuiltWithLoaderVersion { get { return "G1.1"; } }
 
+        public int RequireMinPatchVersion { get { return 1; } }
+
         public ModMain()
         {
             instance = this;

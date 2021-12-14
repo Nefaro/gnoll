@@ -13,7 +13,7 @@ namespace GnollMods.VeinMiner
         public string Name { get { return  "VeinMiner"; } }
         public string Description { get { return  "Allows the miner to mine out a discovered vein of ore or gems."; } }
         public string BuiltWithLoaderVersion { get { return  "G1.2"; } }
-
+        public int RequireMinPatchVersion { get { return 2; } }
         public ModMain()
         {
             instance = this;

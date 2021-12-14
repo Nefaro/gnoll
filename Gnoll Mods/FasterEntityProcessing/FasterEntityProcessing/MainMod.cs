@@ -99,6 +99,8 @@ namespace GnollMods.FasterEntityProcessing
 
         public string BuiltWithLoaderVersion { get { return "G1.4"; } }
 
+        public int RequireMinPatchVersion { get { return 4; } }
+
         public void OnLoad(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
