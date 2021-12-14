@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Game;
 using GnollModLoader.GUI;
 
@@ -28,8 +24,10 @@ namespace GnollModLoader
         public delegate void BeforeEntitySpawnHandler(Game.GameEntity entity);
         // Called after main menu init, before "Exit" button is attached
         public delegate void MainMenuGuiInitHandler(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager);
-        // Caleld after new game has configured but before any generqation has happened
+        // Calld after new game has configured but before any generation has happened
         public delegate void BeforeStartNewGameHandler(CreateWorldOptions worldOptions);
+        // Calld after new game has configured and after mod defs have been read in, but before any generation
+        public delegate void BeforeStartNewGameAfterReadDefsHandler(CreateWorldOptions worldOptions);
 
         private List<IGnollMod> _listOfMods;
 
@@ -60,7 +58,7 @@ namespace GnollModLoader
 
             if (instance.ExportMenuListInit != null)
             {
-                Console.WriteLine("-- Hook Import/Export list");
+                Logger.Log("-- Hook Import/Export list");
                 instance.ExportMenuListInit(importExportMenu, manager, addButton);
             }
 
@@ -71,7 +69,7 @@ namespace GnollModLoader
         {
             if (instance.InGameHUDInit != null)
             {
-                Console.WriteLine("-- Hook In Game HUD Init");
+                Logger.Log("-- Hook In Game HUD Init");
                 instance.InGameHUDInit(inGameHUD, manager);
             }
         }
@@ -87,7 +85,7 @@ namespace GnollModLoader
 
         public static void HookMainMenuGuiInit(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager)
         {
-            Console.WriteLine("-- Hook Main Menu Init");
+            Logger.Log("-- Hook Main Menu Init");
             Game.GUI.Controls.Button modButton = window.method_39(manager, GnollMain.NAME);
             modButton.Click += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
@@ -140,6 +138,14 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookOnStartNewGame_afterReadDefs(CreateWorldOptions worldOptions)
+        {
+            if (instance.BeforeStartNewGameAfterReadDefs != null)
+            {
+                instance.BeforeStartNewGameAfterReadDefs(worldOptions);
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
         public event InGameHUDShowWindowHandler InGameShowWindow;
@@ -149,6 +155,7 @@ namespace GnollModLoader
         public event BeforeEntitySpawnHandler BeforeEntitySpawn;
         public event MainMenuGuiInitHandler MainMenuGuiInit;
         public event BeforeStartNewGameHandler BeforeStartNewGame;
+        public event BeforeStartNewGameAfterReadDefsHandler BeforeStartNewGameAfterReadDefs;
 
         private static HookManager instance;
     }

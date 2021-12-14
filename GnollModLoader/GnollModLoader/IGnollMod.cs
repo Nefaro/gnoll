@@ -20,6 +20,10 @@ namespace GnollModLoader
 
         // Version of the loader when the mod was built.
         // Keeping track of the version for debugging etc.
-        string BuiltWithLoaderVersion { get;  }
+        string BuiltWithLoaderVersion { get; }
+
+        // Min required patch version
+        // Modloader should detect incompatible patch version to avoid trouble
+        int RequireMinPatchVersion { get; }
     }
 }

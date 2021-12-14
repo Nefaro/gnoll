@@ -11,8 +11,9 @@ namespace GnollModLoader
     public class GnollMain
     {
         private const string MAJOR_VERSION = "G1";
+
         // for easier validation
-        private const uint PATCH_VERSION = 8;
+        public const uint PATCH_VERSION = 9;
 
         public const string NAME = "Gnoll Mod Loader";
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
@@ -40,7 +41,7 @@ namespace GnollModLoader
             if ( _debug )
                 ConsoleWindow.ShowConsoleWindow();
 
-            System.Console.WriteLine(String.Format("Gnomodkit {0} {1}", NAME, VERSION));
+            Logger.Log("Gnomodkit {0} {1}", NAME, VERSION);
 
             hookManager = new HookManager();
 

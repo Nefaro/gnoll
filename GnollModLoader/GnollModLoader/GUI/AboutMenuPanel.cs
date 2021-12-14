@@ -15,9 +15,9 @@ namespace GnollModLoader.GUI
             this.AddLabel(manager, "DLL mods loaded by \"" + GnollMain.NAME + "\"");
             this.AddLabel(manager, "Running version \"" + GnollMain.VERSION + "\"");
             this.AddLabel(manager, "More info and code at: ");
-            this.AddLabel(manager, " -> " + GnollMain.APP_URL);
+            this.AddLabel(manager, "> " + GnollMain.APP_URL);
             this.AddLabel(manager, "Based on work done at: ");
-            this.AddLabel(manager, " -> " + GnollMain.ORIGINAL_URL);
+            this.AddLabel(manager, "> " + GnollMain.ORIGINAL_URL);
         }
 
         public void AddLabel(Manager manager, string text)

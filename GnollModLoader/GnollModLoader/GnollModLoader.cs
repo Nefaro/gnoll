@@ -6,8 +6,6 @@ using System.Reflection;
 using Game;
 using Game.GUI;
 using Game.GUI.Controls;
-using GameLibrary;
-using GnollModLoader.GUI;
 
 namespace GnollModLoader
 {
@@ -28,7 +26,7 @@ namespace GnollModLoader
             String mask = "*.dll";
             if (!Directory.Exists(dir))
             {
-                System.Console.WriteLine("-- Mod directory missing; no mods loaded");
+                Logger.Log("-- Mod directory missing; no mods loaded");
                 return;
             }
             foreach (String filename in Directory.EnumerateFiles(dir, mask, SearchOption.AllDirectories))
@@ -47,12 +45,13 @@ namespace GnollModLoader
                 this._hookManager.OnEntitySpawn += DEBUG_HookManager_OnEntitySpawn;
                 this._hookManager.MainMenuGuiInit += DEBUG_HookManager_MainMenuGuiInit;
                 this._hookManager.BeforeStartNewGame += DEBUG_HookManager_BeforeStartNewGame;
+                this._hookManager.BeforeStartNewGameAfterReadDefs += DEBUG_HookManager_BeforeStartNewGameAfterReadDefs;
             }
         }
 
-        public void LoadMod(string path)
+        public bool LoadMod(string path)
         {
-            System.Console.WriteLine("-- Loading mod from: '" + path + "'");
+            Logger.Log("-- Checking {0} for mods ... ", path);
             Assembly assembly = Assembly.LoadFrom(path);
 
             try
@@ -65,17 +64,31 @@ namespace GnollModLoader
                     if (searchType.IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
                     {
                         IGnollMod mod = (IGnollMod)Activator.CreateInstance(type);
-                        System.Console.WriteLine("-- Instantiating mod: " + mod.Name);
+                        if ( GnollMain.PATCH_VERSION >= mod.RequireMinPatchVersion )
+                        {
+                            Logger.Log("-- ++ Instantiating mod: " + mod.Name);
 
-                        _modsList.Add(mod);
-                        mod.OnLoad(_hookManager);
+                            _modsList.Add(mod);
+                            mod.OnLoad(_hookManager);
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.Log("-- -- Validation failed for mod: " + mod.Name);
+                            Logger.Log("-- -- Current patch version {0}, mod required patch version {1} or higher  ", GnollMain.PATCH_VERSION, mod.RequireMinPatchVersion);
+                            return false;
+                        }
                     }
                 }
             }
-            catch (System.TypeLoadException)
+            catch (System.TypeLoadException e)
             {
-                System.Console.WriteLine("-- Trying to load mod failed; Maybe not a Gnoll compatible nod?");
+                Logger.Log("-- -- Trying to load mod from '{0}' failed with exception");
+                Logger.Log("-- -- {0}", e);
+                return false;
             }
+            Logger.Log("-- -- No mods found from '{0}'", path);
+            return false;
         }
 
         private IEnumerable<Type> GetAssemblyTypes(Assembly assembly)
@@ -120,6 +133,10 @@ namespace GnollModLoader
         }
 
         private void DEBUG_HookManager_BeforeStartNewGame(CreateWorldOptions worldOptions)
+        {
+        }
+
+        private void DEBUG_HookManager_BeforeStartNewGameAfterReadDefs(CreateWorldOptions worldOptions)
         {
         }
     }
