@@ -49,6 +49,7 @@ namespace GnollMods.Challenges.Gui
             Label score = new Label(manager);
             score.Init();
             score.Text = "FINAL SCORE: " + challenge.CalculateScore();
+            score.TextColor = Microsoft.Xna.Framework.Color.Yellow;
             score.Height = _rowHeight;
             score.Top = separator.Top + separator.Height + 2 * _topMargin;
             score.Width = 430;

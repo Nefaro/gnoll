@@ -253,6 +253,7 @@ namespace GnollMods.Challenges.Gui
             score.Height = _rowHeight;
             score.Top = idx++ * (_rowHeight + _topMargin);
             score.Width = 430;
+            score.TextColor = Microsoft.Xna.Framework.Color.Yellow;
             desc.Add(score);
 
             Label kingdom = new Label(manager);

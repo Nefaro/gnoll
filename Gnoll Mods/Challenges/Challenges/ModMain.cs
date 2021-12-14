@@ -36,7 +36,7 @@ namespace GnollMods.Challenges
         {
             hookManager.MainMenuGuiInit += HookManager_MainMenuGuiInit;
             hookManager.InGameHUDInit += _challengesManager.HookManager_InGameHUDInit;
-            hookManager.BeforeStartNewGame += _challengesManager.HookManager_BeforeStartNewGame;
+            hookManager.BeforeStartNewGameAfterReadDefs += _challengesManager.HookManager_BeforeStartNewGameAfterReadDefs;
             this._hookManager = hookManager;
         }
 
@@ -46,7 +46,7 @@ namespace GnollMods.Challenges
             modButton.Click += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
                 _challengesManager.Reset();
-                var scores = _challengesManager.LoadScore();
+                var scores = _challengesManager.LoadAllScores();
                 Game.GnomanEmpire.Instance.GuiManager.MenuStack.PushWindow(new ChallengesMenu(_hookManager, Game.GnomanEmpire.Instance.GuiManager.Manager, scores));
             };
             window.panel_0.Add(modButton);

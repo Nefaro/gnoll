@@ -108,12 +108,11 @@ namespace GnollMods.Challenges
             return false;
         }
 
-        internal void HookManager_BeforeStartNewGame(CreateWorldOptions worldOptions)
+        internal void HookManager_BeforeStartNewGameAfterReadDefs(CreateWorldOptions worldOptions)
         {
             this.AssignActiveChallenge();
             if (this.ActiveChallenge == null)
                 return;
-
             this.ActiveChallenge.OnNewGameStart(worldOptions);
         }
 
@@ -218,7 +217,7 @@ namespace GnollMods.Challenges
 
             System.Console.WriteLine(" -- Save scores called");
 
-            ChallengesScores scoreData = this.LoadScore();
+            ChallengesScores scoreData = this.LoadScores(this.ActiveChallenge);
             List<ModFolder> modList = new List<ModFolder>(GnomanEmpire.Instance.GameDefs.ModFolders);
 
             if (modList.Count == 1 && modList[0].SteamWorkshopItemID == 0)
@@ -304,7 +303,7 @@ namespace GnollMods.Challenges
             return record;
         }
 
-        public ChallengesScores LoadScore()
+        public ChallengesScores LoadAllScores()
         {
             System.Console.WriteLine(" -- Loading scores");
             ChallengesScores scores = new ChallengesScores();
@@ -322,6 +321,25 @@ namespace GnollMods.Challenges
                     foreach (var entry in challengeScores.VanillaScores)
                         scores.VanillaScores[entry.Key] = entry.Value;
                 }
+            }
+            return scores;
+        }
+
+        public ChallengesScores LoadScores(IChallenge challenge)
+        {
+            System.Console.WriteLine(" -- Loading scores");
+            ChallengesScores scores = new ChallengesScores();
+            string filename = string.Format(SCORE_FILE, challenge.ChallengeName().ToLower());
+            if (System.IO.File.Exists(filename))
+            {
+                string json = System.IO.File.ReadAllText(filename);
+                ChallengesScores challengeScores = Newtonsoft.Json.JsonConvert.DeserializeObject<ChallengesScores>(json);
+
+                foreach (var entry in challengeScores.ModdedScores)
+                    scores.ModdedScores[entry.Key] = entry.Value;
+
+                foreach (var entry in challengeScores.VanillaScores)
+                    scores.VanillaScores[entry.Key] = entry.Value;
             }
             return scores;
         }
