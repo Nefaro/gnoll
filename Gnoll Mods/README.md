@@ -6,6 +6,7 @@ Currently those mods are:
 - Challenges - Adds a game type with a specific task or objective
 - FasterEntityProcessing - An enhancement on entity processing, gives FPS boost
 - FixStuckWheelbarrow - A fix for when a gnomes/automata gets stuck, because the wheelbarrow is full
+- FixDisableNewGameModdedMobs - This fixes situation where new game start would only disable vanilla enemis and leave modded enemies enabled
 - FreezeEntitiesOnPause - Pauses the thinking process for characters when the game itself is paused, gives FPS boost during game pause
 - GoblinRaidsFpsBoost - Slows down the thinking process for goblins, that are outside of the gates and cannot come in, gives FPS boost
 - IdleTrackerMod - Tracks and show idle gnomes
