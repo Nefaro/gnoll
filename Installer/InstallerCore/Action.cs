@@ -4,10 +4,10 @@ namespace InstallerCore
 {
     public abstract class Action
     {
-        public abstract void Execute();
+        public abstract void Execute(StreamWriter logFile);
     }
 
-    internal class InstallModKit : Action
+    public class InstallModKit : Action
     {
         public InstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
         {
@@ -19,18 +19,18 @@ namespace InstallerCore
             Patch = patch;
         }
 
-        public override void Execute()
+        public override void Execute(StreamWriter logFile)
         {
-            // back up destination
-            File.Move(OutputPath, BackupPath);
+            // apply patch. do this to a temp file because the patch itself might be referring to the file being replaced! (e.g. Gnomoria.exe)
+            string tmpOutputPath = OutputPath + ".tmp";
+            Patch.Install(tmpOutputPath);
 
-            // apply patch
-            Patch.Install(OutputPath);
+            File.Replace(tmpOutputPath, OutputPath, BackupPath);
 
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
             catalog.DefaultRecord = new InstallRecord(modKitBuildNumber: ModKitVersion.BuildNumber, vanillaMd5: VanillaMd5);
-            catalog.Save(CatalogPath);
+            catalog.Save(CatalogPath, logFile);
         }
 
         public override string ToString()
@@ -46,7 +46,7 @@ namespace InstallerCore
         public Installable Patch { get; }
     }
 
-    internal class InstallStandalone : Action
+    public class InstallStandalone : Action
     {
         public InstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
         {
@@ -57,7 +57,7 @@ namespace InstallerCore
             Patch = patch;
         }
 
-        public override void Execute()
+        public override void Execute(StreamWriter logFile)
         {
             // apply patch
             Patch.Install(OutputPath);
@@ -65,7 +65,7 @@ namespace InstallerCore
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
             catalog.Standalone.Add(new InstallRecord(modKitBuildNumber: ModKitVersion.BuildNumber, vanillaMd5: VanillaMd5));
-            catalog.Save(CatalogPath);
+            catalog.Save(CatalogPath, logFile);
         }
 
         public override string ToString()
@@ -80,7 +80,7 @@ namespace InstallerCore
         public Installable Patch { get; }
     }
 
-    internal class UninstallModKit : Action
+    public class UninstallModKit : Action
     {
         public UninstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion)
         {
@@ -91,7 +91,7 @@ namespace InstallerCore
             ModKitVersion = modKitVersion;
         }
 
-        public override void Execute()
+        public override void Execute(StreamWriter logFile)
         {
             // restore backup
             File.Replace(BackupPath, OutputPath, destinationBackupFileName: null);
@@ -99,7 +99,7 @@ namespace InstallerCore
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
             catalog.DefaultRecord = null;
-            catalog.Save(CatalogPath);
+            catalog.Save(CatalogPath, logFile);
         }
 
         public override string ToString()
@@ -114,7 +114,7 @@ namespace InstallerCore
         public ModKitVersion ModKitVersion { get; }
     }
 
-    internal class UninstallStandalone : Action
+    public class UninstallStandalone : Action
     {
         public UninstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion)
         {
@@ -124,7 +124,7 @@ namespace InstallerCore
             ModKitVersion = modKitVersion;
         }
 
-        public override void Execute()
+        public override void Execute(StreamWriter logFile)
         {
             // delete patched executable
             File.Delete(OutputPath);
@@ -141,7 +141,7 @@ namespace InstallerCore
                     continue;
                 }
             }
-            catalog.Save(CatalogPath);
+            catalog.Save(CatalogPath, logFile);
         }
 
         public override string ToString()
