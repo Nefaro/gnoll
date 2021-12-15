@@ -40,16 +40,17 @@ namespace InstallerGUI
             this.uninstallModkitButton = new System.Windows.Forms.Button();
             this.uninstallStandaloneButton = new System.Windows.Forms.Button();
             this.versionLabel = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.ForestGreen;
+            this.pictureBox1.Image = global::InstallerGUI.Properties.Resources.banner;
             this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(356, 82);
+            this.pictureBox1.Size = new System.Drawing.Size(360, 80);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -150,21 +151,23 @@ namespace InstallerGUI
             this.versionLabel.TabIndex = 10;
             this.versionLabel.Text = "Gnoll Installer";
             // 
-            // label3
+            // linkLabel1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(314, 293);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(57, 13);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "TODO link";
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(332, 293);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(40, 13);
+            this.linkLabel1.TabIndex = 11;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "GitHub";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 315);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.uninstallStandaloneButton);
             this.Controls.Add(this.uninstallModkitButton);
@@ -197,7 +200,7 @@ namespace InstallerGUI
         private System.Windows.Forms.Button uninstallModkitButton;
         private System.Windows.Forms.Button uninstallStandaloneButton;
         private System.Windows.Forms.Label versionLabel;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }
 
