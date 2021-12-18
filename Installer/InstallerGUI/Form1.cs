@@ -1,6 +1,7 @@
 ﻿using InstallerCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -18,10 +19,22 @@ namespace InstallerGUI
         public Form1()
         {
             InitializeComponent();
+            DPI_Per_Monitor.TryEnableDPIAware(this, SetUserFonts);
 
             versionLabel.Text = $"Gnoll {modKitVersion.VersionString} by Nefaro && Minexew";
 
             _logFile = new StreamWriter("GnollInstaller.log", append: true);
+        }
+        void SetUserFonts(float scaleFactorX, float scaleFactorY)
+        {
+            var OldFont = Font;
+            Font = new Font(OldFont.FontFamily, 11f * scaleFactorX, OldFont.Style, GraphicsUnit.Pixel);
+            OldFont.Dispose();
+        }
+        protected override void DefWndProc(ref Message m)
+        {
+            DPI_Per_Monitor.Check_WM_DPICHANGED_WM_NCCREATE(SetUserFonts, m, this.Handle);
+            base.DefWndProc(ref m);
         }
 
         private void RescanGame()
