@@ -78,6 +78,7 @@
     <Compile Include="GameDb.cs" />
     <Compile Include="Installable.cs" />
     <Compile Include="InstallDb.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -98,6 +99,7 @@
     <Compile Include="InstallerCore.cs" />
     <None Include="packages.config" />
     <None Include="Payloads\G1700_016e6239.xdelta" />
+    <None Include="Payloads\G1900_c9f6d4b9.xdelta" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Payloads\G1700_016e6239_full.exe" />

@@ -24,7 +24,7 @@ namespace InstallerCLI
                 gameDir = Console.ReadLine();
             }
 
-            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb, logFile);
+            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb);
 
             Console.WriteLine($"Game version:            {res.GameVersion}");
             Console.WriteLine($"Installed gnoll version: {res.ModKitVersion}");
@@ -50,7 +50,7 @@ namespace InstallerCLI
 
                 if (choice != "")
                 {
-                    actions[int.Parse(choice)].Execute(logFile);
+                    actions[int.Parse(choice)].Execute();
                     Console.WriteLine("Success.");
                 }
             }

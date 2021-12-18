@@ -22,6 +22,8 @@ namespace InstallerCore
 
     public class InstallDb
     {
+        private static readonly Logger _log = Logger.GetLogger;
+
         [JsonPropertyName("default")]
         public InstallRecord DefaultRecord { get; set; }
 
@@ -46,14 +48,14 @@ namespace InstallerCore
             }
         }
 
-        public void Save(string fileName, StreamWriter logFile)
+        public void Save(string fileName)
         {
             string tmpFileName = fileName + ".tmp";
 
             byte[] jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(this);
             File.WriteAllBytes(tmpFileName, jsonUtf8Bytes);
 
-            logFile.WriteLine($"Updating {fileName}");
+            _log.WriteLine($"Updating {fileName}");
             File.Delete(fileName);      // If the file to be deleted does not exist, no exception is thrown.
             File.Move(tmpFileName, fileName);
         }

@@ -83,6 +83,16 @@ namespace InstallerCore.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] G1900_c9f6d4b9_xdelta {
+            get {
+                object obj = ResourceManager.GetObject("G1900_c9f6d4b9.xdelta", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] GameVersions {
             get {
                 object obj = ResourceManager.GetObject("GameVersions", resourceCulture);

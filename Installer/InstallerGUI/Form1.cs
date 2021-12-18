@@ -9,12 +9,12 @@ namespace InstallerGUI
 {
     public partial class Form1 : Form
     {
-        private static ModKitVersion modKitVersion = new ModKitVersion(1700, "G1.7");
+        private static ModKitVersion modKitVersion = new ModKitVersion(1900, "G1.9");
 
         private InstallerCore.Action _installModkitAction, _installStandaloneAction,
             _uninstallModkitAction, _uninstallStandaloneAction;
 
-        private readonly StreamWriter _logFile;
+        private static readonly Logger _log = InstallerCore.Logger.GetLogger;
 
         public Form1()
         {
@@ -22,8 +22,7 @@ namespace InstallerGUI
             DPI_Per_Monitor.TryEnableDPIAware(this, SetUserFonts);
 
             versionLabel.Text = $"Gnoll {modKitVersion.VersionString} by Nefaro && Minexew";
-
-            _logFile = new StreamWriter("GnollInstaller.log", append: true);
+            _log.log("Running Gnoll installer ...");
         }
         void SetUserFonts(float scaleFactorX, float scaleFactorY)
         {
@@ -31,6 +30,7 @@ namespace InstallerGUI
             Font = new Font(OldFont.FontFamily, 11f * scaleFactorX, OldFont.Style, GraphicsUnit.Pixel);
             OldFont.Dispose();
         }
+        
         protected override void DefWndProc(ref Message m)
         {
             DPI_Per_Monitor.Check_WM_DPICHANGED_WM_NCCREATE(SetUserFonts, m, this.Handle);
@@ -39,64 +39,74 @@ namespace InstallerGUI
 
         private void RescanGame()
         {
-            installModkitButton.Enabled = false;
-            installStandaloneButton.Enabled = false;
-            uninstallModkitButton.Enabled = false;
-            uninstallStandaloneButton.Enabled = false;
-            gameVersionLabel.Text = "?";
-
-            var gameDb = new GameDb();
-            var patchDb = new PatchDatabase();
-
-            string gameDir = gamePathInput.Text;
-
-            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb, _logFile);
-
-            string gameVersionStr = res.GameVersion;
-
-            if (res.ModKitVersion != null)
+            try
             {
-                gameVersionStr += ", Gnoll " + res.ModKitVersion;
+                installModkitButton.Enabled = false;
+                installStandaloneButton.Enabled = false;
+                uninstallModkitButton.Enabled = false;
+                uninstallStandaloneButton.Enabled = false;
+                gameVersionLabel.Text = "?";
+
+                var gameDb = new GameDb();
+                var patchDb = new PatchDatabase();
+
+                string gameDir = gamePathInput.Text;
+
+                var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb);
+
+                string gameVersionStr = res.GameVersion;
+
+                if (res.ModKitVersion != null)
+                {
+                    gameVersionStr += ", Gnoll " + res.ModKitVersion;
+                }
+                else
+                {
+                    gameVersionStr += " unmodded";
+                }
+
+                gameVersionLabel.Text = gameVersionStr;
+
+                if (!res.PatchAvailable)
+                {
+                    MessageBox.Show("No patch available for this game version", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                // Ugh, this code is a dumpster fire... at least it's straightforward
+
+                foreach (var action in res.AvailableActions)
+                {
+                    if (action is InstallModKit)
+                    {
+                        installModkitButton.Enabled = true;
+                        _installModkitAction = action;
+                    }
+
+                    if (action is UninstallModKit)
+                    {
+                        uninstallModkitButton.Enabled = true;
+                        _uninstallModkitAction = action;
+                    }
+
+                    if (action is InstallStandalone)
+                    {
+                        installStandaloneButton.Enabled = true;
+                        _installStandaloneAction = action;
+                    }
+
+                    if (action is UninstallStandalone)
+                    {
+                        uninstallStandaloneButton.Enabled = true;
+                        _uninstallStandaloneAction = action;
+                    }
+                }
             }
-            else
+            catch(Exception e)
             {
-                gameVersionStr += " unmodded";
-            }
-
-            gameVersionLabel.Text = gameVersionStr;
-
-            if (!res.PatchAvailable)
-            {
-                MessageBox.Show("No patch available for this game version", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            // Ugh, this code is a dumpster fire... at least it's straightforward
-
-            foreach (var action in res.AvailableActions)
-            {
-                if (action is InstallModKit)
-                {
-                    installModkitButton.Enabled = true;
-                    _installModkitAction = action;
-                }
-
-                if (action is UninstallModKit)
-                {
-                    uninstallModkitButton.Enabled = true;
-                    _uninstallModkitAction = action;
-                }
-
-                if (action is InstallStandalone)
-                {
-                    installStandaloneButton.Enabled = true;
-                    _installStandaloneAction = action;
-                }
-
-                if (action is UninstallStandalone)
-                {
-                    uninstallStandaloneButton.Enabled = true;
-                    _uninstallStandaloneAction = action;
-                }
+                // bad stuff
+                _log.log("ERR: Could not identify game version");
+                _log.log(e.ToString());
+                MessageBox.Show("Could not identify game version, no patch available", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -125,7 +135,7 @@ namespace InstallerGUI
         {
             try
             {
-                _installModkitAction.Execute(_logFile);
+                _installModkitAction.Execute();
                 ShowOk();
             }
             finally
@@ -138,7 +148,7 @@ namespace InstallerGUI
         {
             try
             {
-                _installStandaloneAction.Execute(_logFile);
+                _installStandaloneAction.Execute();
                 ShowOk();
             }
             finally
@@ -151,7 +161,7 @@ namespace InstallerGUI
         {
             try
             {
-                _uninstallModkitAction.Execute(_logFile);
+                _uninstallModkitAction.Execute();
                 ShowOk();
             }
             finally
@@ -164,7 +174,7 @@ namespace InstallerGUI
         {
             try
             {
-                _uninstallStandaloneAction.Execute(_logFile);
+                _uninstallStandaloneAction.Execute();
                 ShowOk();
             }
             finally
