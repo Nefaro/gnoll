@@ -3,8 +3,13 @@
     "name": "v1.0 (GOG)",
     "md5sum": "016e623994628aba2a3cb8cd4cfe2412",
     "tag": "1.0-GOG",
-    "patches": [],
-    "latestVersion":""
+    "patches": [
+        {
+        "version": 9,
+        "versionString":"G1.9",
+        "filename": "Gnoll1.9_016e6239.xdelta"
+    }],
+    "latestVersion":"G1.9"
   },
   {
     "name": "v1.0 (Steam 2019)",

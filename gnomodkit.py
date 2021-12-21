@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+import string
 
 BUILD_DIR = 'build'
 CACHE_DIR = 'cache'
@@ -26,11 +27,12 @@ PATCH_BINARY_URL = 'http://gnuwin32.sourceforge.net/downlinks/patch-bin-zip.php'
 # DE4DOT_URL = 'http://localhost:8000/de4dot.zip'
 DE4DOT_URL = 'https://github.com/ViRb3/de4dot-cex/releases/download/v4.0.0/de4dot-cex.zip'
 NUGET_URL = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
-# (??)
-# GNOMORIA_HASH = '016e623994628aba2a3cb8cd4cfe2412'
-# Gnomoria v1.0 and [indev]
-GNOMORIA_HASH = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
+# Gnomoria v1.0 GoG
+GNOMORIA_HASH_GOG = '016e623994628aba2a3cb8cd4cfe2412'
+# Gnomoria v1.0 Steam
+GNOMORIA_HASH_STEAM = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
 
+GNOMORIA_DIST_FILE = 'Gnomoria.exe';
 # for SDK
 DEOBFUSCATED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.exe')
 DISASSEMBLED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.il')
@@ -46,7 +48,7 @@ OUTPUT_EXE_FILENAME = 'GnoMod.exe'
 # SDK dll that has the modloader patch applied
 SDK_DLL_PATCHED_FILENAME = os.path.join(SDK_DIR, 'GnomoriaSDK-patched.dll')
 
-MOD_LOADER_PATCH = '.\\patch\\GnollModLoader.patch'
+MOD_LOADER_PATCH_TEMPLATE = '.\\patch\\GnollModLoader_$gamehash.patch'
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -236,21 +238,21 @@ class TaskAssemble(Task):
             check_call([self.ilasm_path, '/out=' + self.output_filename, self.filename], stdout=log)
 
 class TaskCheckDistFile(Task):
-    def __init__(self, path, required_hash):
+    def __init__(self, path, required_hash_list):
         super().__init__()
 
         self.relative_path = path
         self.path = os.path.join(get_game_dir(), path)
-        self.required_hash = required_hash
+        self.required_hash_list = required_hash_list
 
     def __str__(self):
         return 'check %s' % self.relative_path
 
     def run(self):
         file_hash = md5sum(self.path)
-        if file_hash != self.required_hash:
-            raise Exception('ERROR: Hash of "%s" is %s instead of expected %s' % (
-                    self.relative_path, file_hash, self.required_hash))
+        if file_hash not in self.required_hash_list:
+            raise Exception('ERROR: Hash of "%s" is %s instead of expected one of %s' % (
+                    self.relative_path, file_hash, self.required_hash_list))
 
 class TaskClean(Task):
     def __str__(self):
@@ -486,7 +488,7 @@ class TaskMakeMod(Task):
 
     def discover_dependencies(self):
         # make ModLoader (generates patched .dll)
-        self.add_dependency(TaskMakeModLoader())
+        self.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))
 
         # build mod
         self.add_dependency(TaskNugetRestore(os.path.join(self.solution_dir, self.name + ".sln")))
@@ -514,6 +516,11 @@ class TaskMakeAllMods(Task):
             self.add_dependency(TaskMakeMod(dir))
 
 class TaskMakeModLoader(Task):
+    def __init__(self, relative_dist_path):
+        super().__init__()
+        self.path = os.path.join(get_game_dir(), relative_dist_path)
+        self.dist_md5 = md5sum(self.path)[ 0 : 8 ]
+
     def __str__(self):
         return 'make ModLoader'
 
@@ -521,6 +528,7 @@ class TaskMakeModLoader(Task):
         solution_dir = 'GnollModLoader'
         project_dir = os.path.join(solution_dir, 'GnollModLoader')
         modloader_dll = 'GnollModLoader.dll'
+        patch_file = string.Template(MOD_LOADER_PATCH_TEMPLATE).substitute(gamehash=self.dist_md5);
 
         # make SDK
         self.add_dependency(TaskMakeSDK())
@@ -530,7 +538,7 @@ class TaskMakeModLoader(Task):
         self.add_dependency(TaskCopyFile(os.path.join(project_dir, 'bin\\x86\\Debug', modloader_dll), os.path.join(get_game_dir(), modloader_dll)))
 
         # patch ModLoader hooks into GnomoriaSDK
-        self.add_dependency(TaskApplyPatch(SDK_IL_FILENAME, WORKING_FILENAME, MOD_LOADER_PATCH))
+        self.add_dependency(TaskApplyPatch(SDK_IL_FILENAME, WORKING_FILENAME, patch_file))
 
         # assemble GnoMod
         self.add_dependency(TaskAssemble(WORKING_FILENAME, SDK_DLL_PATCHED_FILENAME))
@@ -543,7 +551,7 @@ class TaskMakeSDK(Task):
     def discover_dependencies(self):
         # find and check Gnomoria.exe
         print('-- %s' % 'find and check Gnomoria.exe ...')
-        self.exe = TaskCheckDistFile('Gnomoria.exe', GNOMORIA_HASH)
+        self.exe = TaskCheckDistFile(GNOMORIA_DIST_FILE, [GNOMORIA_HASH_STEAM,GNOMORIA_HASH_GOG])
         self.add_dependency(self.exe)
         print('-- %s' % 'find and check Gnomoria.exe ... DONE')
         
@@ -647,7 +655,7 @@ class TaskRunModdedGame(Task):
         return 'run'
 
     def discover_dependencies(self):
-        self.add_dependency(TaskMakeModLoader())
+        self.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))
 
     def run(self):
         exe = os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)
@@ -662,7 +670,7 @@ class TaskSteam(Task):
         self.modded_exe = os.path.join(get_game_dir(), OUTPUT_EXE_FILENAME)
         
     def discover_dependencies(self):
-        self.add_dependency(TaskMakeModLoader())        
+        self.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))        
         self.add_dependency(TaskBackupOrigExe())
         self.add_dependency(TaskCopyFile(self.modded_exe, self.steam_exe))
         
@@ -722,7 +730,7 @@ for target in targets:
     elif target == 'sdk':
         tr.add_dependency(TaskMakeSDK())        
     elif target == 'modloader':
-        tr.add_dependency(TaskMakeModLoader())        
+        tr.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))        
     elif target.startswith('mod:all'):
         tr.add_dependency(TaskMakeAllMods())
     elif target.startswith('mod:'):

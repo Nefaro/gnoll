@@ -13,7 +13,7 @@ namespace InstallerGUI
             _uninstallModkitAction, _uninstallStandaloneAction;
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.0)";
+        private static readonly string _appName = $"Gnoll Installer (v1.0.1)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()

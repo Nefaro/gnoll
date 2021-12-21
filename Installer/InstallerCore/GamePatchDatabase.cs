@@ -76,6 +76,8 @@ namespace InstallerCore
                 return null;
 
             var latestPatch = this.GetLatestPatch(gameEntry);
+            if (latestPatch == null)
+                return null;
             var patchFile = Path.Combine(_patchFolder,latestPatch.Filename); 
             if (patchFile == null)
                 return null;

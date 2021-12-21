@@ -112,14 +112,15 @@ namespace InstallerCore
                 actions.Add(new UninstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, moddedVersion));
             }
 
-            // offer action InstallStandalone if current version not present and patch available
-            var standaloneFilename = $"Gnoll-{installable.PatchVersion}-{vanillaGameMd5.Substring(0, 8)}.exe";
-            string standalonePath = Path.Combine(installDir, standaloneFilename);
+            string standaloneFilename = (!String.IsNullOrEmpty(installable.PatchVersion)? $"Gnoll-{installable.PatchVersion}-{vanillaGameMd5.Substring(0, 8)}.exe":null);
             string standalone = (isUpToDateStandaloneInstallPresent ? standaloneFilename : null);
+
+            // offer action InstallStandalone if current version not present and patch available
             if (!isUpToDateStandaloneInstallPresent)
             {
-                if (installable != null)
+                if (installable != null && standaloneFilename != null)
                 {
+                    string standalonePath = Path.Combine(installDir, standaloneFilename);
                     _log.WriteLine($"Game not stand-alone modded & patch available => propose InstallStandalone");
                     actions.Add(new InstallStandalone(catalogPath, standalonePath, vanillaGameMd5, installable.PatchVersion, installable));
                 }
@@ -130,6 +131,8 @@ namespace InstallerCore
             }
             else
             {
+
+                string standalonePath = Path.Combine(installDir, standaloneFilename);
                 _log.WriteLine($"Game stand-alone modded => propose UninstallStandalone");
                 actions.Add(new UninstallStandalone(catalogPath, standalonePath, vanillaGameMd5, standalone));
             }
