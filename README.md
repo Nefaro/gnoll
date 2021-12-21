@@ -11,6 +11,11 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
   
   (Note: Not sure if there exists any Linux tooling for the given operations)
 
+## Installing via Installer
+We have now an Installer! Take a look in here: [Installation](../../wiki/Installation-via-the-Installer)
+
+**Note:** However, one should not be in the habbit of downloading random executables from the internet, as such you can always build the mods yourself.
+
 ## Steam Workshop Mods
 
 Gnoll works with steam workshop mods. 
@@ -30,7 +35,7 @@ which will do all that for you. To get back the original .exe
 py gnomodkit.py unsteam
 ```
 
-## Quick installation guide (Longer version in wiki [Installation](../../wiki/Installation) )
+## Quick Manual installation guide (Longer version in wiki [Installation](../../wiki/Manual-Installation) )
 Assumption: Python executable for Windows is named 'py'. Might be something else, modify commands accordingly.
 
 Assumption: All prerequisites have been met/installed
