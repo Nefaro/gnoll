@@ -14,15 +14,27 @@ namespace InstallerGUI
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
         private static readonly string _appName = $"Gnoll Installer (v1.0)";
-        private GamePatchDatabase _gameDb = new GamePatchDatabase(AppContext.BaseDirectory);
+        private readonly GamePatchDatabase _gameDb;
 
         public Form1()
         {
-            InitializeComponent();
-            DPI_Per_Monitor.TryEnableDPIAware(this, SetUserFonts);
-            this.Text = _appName;
-            versionLabel.Text = $"{_appName} by Minexew && Nefaro";
-            _log.log("Running Gnoll installer ...");
+            _log.log("Running Gnoll Installer ...");
+            try
+            {
+                InitializeComponent();
+                DPI_Per_Monitor.TryEnableDPIAware(this, SetUserFonts);
+                this.Text = _appName;
+                versionLabel.Text = $"{_appName} by Minexew && Nefaro";
+                _gameDb = new GamePatchDatabase(AppContext.BaseDirectory);
+            }
+            catch(Exception e)
+            {
+                _log.log("Running Gnoll Installer ... FAILED");
+                _log.log(e.ToString());
+                MessageBox.Show($"Cannot run Gnoll Installer: \r\nERROR: {e.Message}",
+                    "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(0);
+            }
         }
         void SetUserFonts(float scaleFactorX, float scaleFactorY)
         {
