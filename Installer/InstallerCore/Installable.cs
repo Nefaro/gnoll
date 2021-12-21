@@ -35,11 +35,14 @@ namespace InstallerCore
     {
         private byte[] _patchData;
         private string _srcPath;
+        private string _patchVersion;
+        public string PatchVersion { get => _patchVersion; }
 
-        public PatchInstallable(byte[] payload, string srcPath)
+        public PatchInstallable(byte[] payload, string srcPath, string patchVersion)
         {
             _patchData = payload;
             _srcPath = srcPath;
+            _patchVersion = patchVersion;
         }
 
         public override void Install(string destination)

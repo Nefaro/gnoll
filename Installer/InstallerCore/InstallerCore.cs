@@ -7,58 +7,24 @@ namespace InstallerCore
 {
     public class ScanResult
     {
-        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions, bool patchAvailable)
+        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions, 
+            bool patchAvailable, string standaloneVersion, string patchVersion)
         {
             ModKitVersion = gnollVersion;
             GameVersion = gameVersion;
             AvailableActions = availableActions;
             PatchAvailable = patchAvailable;
+            StandaloneVersion = standaloneVersion;
+            PatchVersion = patchVersion;
         }
 
         public string ModKitVersion { get; }
         public string GameVersion { get; }
+        public string StandaloneVersion { get; }
         public Action[] AvailableActions { get; }
         public bool PatchAvailable { get; }
-    }
 
-    public class ModKitVersion
-    {
-        public ModKitVersion(int buildNumber, string versionString)
-        {
-            BuildNumber = buildNumber;
-            VersionString = versionString;
-        }
-
-        public int BuildNumber { get; }
-        public string VersionString { get; }
-    }
-
-    public class PatchDatabase
-    {
-        private static readonly Logger _log = Logger.GetLogger;
-        public Installable GetInstallableIfAvailable(int modKitBuildNumber, string gameMd5, string vanillaExePath)
-        {
-            string fullResourceName = $"G{modKitBuildNumber}_{gameMd5.Substring(0, 8)}.exe";
-            var fullBytes = (byte[])Properties.Resources.ResourceManager.GetObject(fullResourceName);
-
-            if (fullBytes != null)
-            {
-                return new CopyInstallable(fullBytes);
-            }
-
-            string patchResourceName = $"G{modKitBuildNumber}_{gameMd5.Substring(0, 8)}.xdelta";
-            _log.log($"Looking for patch {patchResourceName}");
-            var patchBytes = (byte[])Properties.Resources.ResourceManager.GetObject(patchResourceName);
-
-            if (patchBytes != null)
-            {
-                return new PatchInstallable(patchBytes, vanillaExePath);
-            }
-            else
-            {
-                return null;
-            }
-        }
+        public string PatchVersion { get; }
     }
 
     public class InstallerCore
@@ -70,7 +36,7 @@ namespace InstallerCore
             throw new NotImplementedException();
         }
 
-        public static ScanResult ScanGameInstall(string installDir, ModKitVersion modKitVersion, GameDb gameDb, PatchDatabase patchDb)
+        public static ScanResult ScanGameInstall(string installDir, GamePatchDatabase gameDb)
         {
             _log.WriteLine($"About to scan game directory {installDir}");
 
@@ -84,19 +50,7 @@ namespace InstallerCore
             var catalog = InstallDb.LoadOrEmpty(catalogPath);
 
             bool isExeModded = (catalog.DefaultRecord != null);
-
-            // Check if current modkit version has been installed as stand-alone exe (trust the catalog)
-
-            bool isUpToDateStandaloneInstallPresent = false;
-
-            foreach (var record in catalog.Standalone)
-            {
-                if (record.ModKitBuildNumber == modKitVersion.BuildNumber)
-                {
-                    _log.WriteLine($"Detected stand-alone installation of build {record.ModKitBuildNumber}");
-                    isUpToDateStandaloneInstallPresent = true;
-                }
-            }
+            string moddedVersion = (catalog.DefaultRecord != null ? catalog.DefaultRecord.VersionString : null);
 
             // Figure out game version
 
@@ -125,11 +79,19 @@ namespace InstallerCore
                 _log.WriteLine($"Game IS modded; reported vanillaGameMd5 = {vanillaGameMd5}");
             }
 
+            GamePatchDatabase.GameEntry gameVersion = gameDb.GetGameEntryMd5Hash(vanillaGameMd5);
+
             // Construct actions to offer
-
             var actions = new List<Action>();
+            var installable = gameDb.GetInstallablePatchIfAvailable( gameVersion, vanillaGamePath);
 
-            var installable = patchDb.GetInstallableIfAvailable(modKitVersion.BuildNumber, vanillaGameMd5, vanillaGamePath);
+            // Check if current modkit version has been installed as stand-alone exe (trust the catalog)
+            bool isUpToDateStandaloneInstallPresent = false;
+            if (catalog.Standalone != null)
+            {
+                _log.WriteLine($"Detected stand-alone installation of build {catalog.Standalone.VersionString}");
+                isUpToDateStandaloneInstallPresent = true;
+            }
 
             // offer action InstallModKit if game unmodded and recognized (patch available)
             if (!isExeModded)
@@ -137,7 +99,7 @@ namespace InstallerCore
                 if (installable != null)
                 {
                     _log.WriteLine($"Game not modded & patch available => propose InstallModKit");
-                    actions.Add(new InstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, modKitVersion, installable));
+                    actions.Add(new InstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, installable.PatchVersion, installable));
                 }
                 else
                 {
@@ -147,17 +109,19 @@ namespace InstallerCore
             else
             {
                 _log.WriteLine($"Game modded => propose UninstallModKit");
-                actions.Add(new UninstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, modKitVersion));
+                actions.Add(new UninstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, moddedVersion));
             }
 
             // offer action InstallStandalone if current version not present and patch available
-            string standalonePath = Path.Combine(installDir, $"Gnoll-{modKitVersion.BuildNumber}-{vanillaGameMd5.Substring(0, 8)}.exe");
+            var standaloneFilename = $"Gnoll-{installable.PatchVersion}-{vanillaGameMd5.Substring(0, 8)}.exe";
+            string standalonePath = Path.Combine(installDir, standaloneFilename);
+            string standalone = (isUpToDateStandaloneInstallPresent ? standaloneFilename : null);
             if (!isUpToDateStandaloneInstallPresent)
             {
                 if (installable != null)
                 {
                     _log.WriteLine($"Game not stand-alone modded & patch available => propose InstallStandalone");
-                    actions.Add(new InstallStandalone(catalogPath, standalonePath, vanillaGameMd5, modKitVersion, installable));
+                    actions.Add(new InstallStandalone(catalogPath, standalonePath, vanillaGameMd5, installable.PatchVersion, installable));
                 }
                 else
                 {
@@ -167,13 +131,11 @@ namespace InstallerCore
             else
             {
                 _log.WriteLine($"Game stand-alone modded => propose UninstallStandalone");
-                actions.Add(new UninstallStandalone(catalogPath, standalonePath, vanillaGameMd5, modKitVersion));
+                actions.Add(new UninstallStandalone(catalogPath, standalonePath, vanillaGameMd5, standalone));
             }
 
-            string gnollVersion = (catalog.DefaultRecord != null ? catalog.DefaultRecord.ModKitBuildNumber.ToString() : null);
-            string gameVersionString = gameDb.GetGameVersionStringByMd5Hash(vanillaGameMd5);
-
-            return new ScanResult(gnollVersion, gameVersionString, actions.ToArray(), patchAvailable: (installable != null));
+            return new ScanResult(moddedVersion, gameVersion.Name, actions.ToArray(), patchAvailable: (installable != null), 
+                standalone, (installable!=null? installable.PatchVersion: null));
         }
     }
 }

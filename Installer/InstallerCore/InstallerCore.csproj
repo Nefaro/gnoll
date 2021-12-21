@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
-    <Compile Include="GameDb.cs" />
+    <Compile Include="GamePatchDatabase.cs" />
     <Compile Include="Installable.cs" />
     <Compile Include="InstallDb.cs" />
     <Compile Include="Logger.cs" />
@@ -89,13 +89,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="GameVersions.json" />
     <Compile Include="InstallerCore.cs" />
     <None Include="packages.config" />
     <None Include="Payloads\G1700_016e6239.xdelta" />

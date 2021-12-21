@@ -9,19 +9,19 @@ namespace InstallerGUI
 {
     public partial class Form1 : Form
     {
-        private static ModKitVersion modKitVersion = new ModKitVersion(1900, "G1.9");
-
         private InstallerCore.Action _installModkitAction, _installStandaloneAction,
             _uninstallModkitAction, _uninstallStandaloneAction;
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
+        private static readonly string _appName = $"Gnoll Installer (v1.0)";
+        private GamePatchDatabase _gameDb = new GamePatchDatabase(AppContext.BaseDirectory);
 
         public Form1()
         {
             InitializeComponent();
             DPI_Per_Monitor.TryEnableDPIAware(this, SetUserFonts);
-
-            versionLabel.Text = $"Gnoll {modKitVersion.VersionString} by Nefaro && Minexew";
+            this.Text = _appName;
+            versionLabel.Text = $"{_appName} by Minexew && Nefaro";
             _log.log("Running Gnoll installer ...");
         }
         void SetUserFonts(float scaleFactorX, float scaleFactorY)
@@ -46,13 +46,14 @@ namespace InstallerGUI
                 uninstallModkitButton.Enabled = false;
                 uninstallStandaloneButton.Enabled = false;
                 gameVersionLabel.Text = "?";
-
-                var gameDb = new GameDb();
-                var patchDb = new PatchDatabase();
+                standaloneVersion.Text = "?";
+                selectedPatchVersion.Text = "???";
 
                 string gameDir = gamePathInput.Text;
 
-                var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb);
+                var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, _gameDb);
+
+                _log.log($"Available patch {res.GameVersion}");
 
                 string gameVersionStr = res.GameVersion;
 
@@ -67,9 +68,22 @@ namespace InstallerGUI
 
                 gameVersionLabel.Text = gameVersionStr;
 
+                if (res.StandaloneVersion != null)
+                {
+                    standaloneVersion.Text = res.StandaloneVersion;
+                }
+                else
+                {
+                    standaloneVersion.Text = "Standalone executable not found";
+                }
+
                 if (!res.PatchAvailable)
                 {
                     MessageBox.Show("No patch available for this game version", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else 
+                {
+                    selectedPatchVersion.Text = $"Gnoll {res.PatchVersion}";
                 }
 
                 // Ugh, this code is a dumpster fire... at least it's straightforward
@@ -104,15 +118,16 @@ namespace InstallerGUI
             catch(Exception e)
             {
                 // bad stuff
-                _log.log("ERR: Could not identify game version");
+                _log.log("Error: Could not identify game version");
                 _log.log(e.ToString());
-                MessageBox.Show("Could not identify game version, no patch available", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Could not identify game version, no patch available: \r\nERROR: {e.Message}", 
+                    "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void ShowOk()
         {
-            MessageBox.Show("That went well...", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Great Success!", "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void browseForGame_Click(object sender, EventArgs e)

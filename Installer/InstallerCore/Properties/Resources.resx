@@ -117,17 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="G0000_016e6239.exe" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Payloads\G0000_016e6239.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="G0000_c9f6d4b9.exe" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Payloads\G0000_c9f6d4b9.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="G1900_c9f6d4b9.xdelta" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Payloads\G1900_c9f6d4b9.xdelta;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GameVersions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\GameVersions.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
 </root>

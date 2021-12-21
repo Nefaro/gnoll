@@ -6,11 +6,11 @@ namespace InstallerCLI
 {
     class Program
     {
-        static void AlmostMain(string[] args, StreamWriter logFile)
+        private static readonly Logger _log = Logger.GetLogger;
+
+        static void AlmostMain(string[] args)
         {
-            var modKitVersion = new ModKitVersion(1700, "G1.7");
-            var gameDb = new GameDb();
-            var patchDb = new PatchDatabase();
+            var gameDb = new GamePatchDatabase(AppContext.BaseDirectory);
 
             string gameDir;
 
@@ -24,7 +24,7 @@ namespace InstallerCLI
                 gameDir = Console.ReadLine();
             }
 
-            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, modKitVersion, gameDb, patchDb);
+            var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, gameDb);
 
             Console.WriteLine($"Game version:            {res.GameVersion}");
             Console.WriteLine($"Installed gnoll version: {res.ModKitVersion}");
@@ -58,23 +58,20 @@ namespace InstallerCLI
 
         static void Main(string[] args)
         {
-            using (var logFile = new StreamWriter("GnollInstaller.log", append: true))
+            try
             {
-                try
-                {
-                    AlmostMain(args, logFile);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    logFile.WriteLine(ex.ToString());
-                }
-                finally
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("(Press Enter to exit)");
-                    Console.ReadLine();
-                }
+                AlmostMain(args);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                _log.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                Console.WriteLine();
+                Console.WriteLine("(Press Enter to exit)");
+                Console.ReadLine();
             }
         }
     }

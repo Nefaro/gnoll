@@ -9,13 +9,13 @@ namespace InstallerCore
 
     public class InstallModKit : Action
     {
-        public InstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
+        public InstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, string patchVersion, Installable patch)
         {
             CatalogPath = catalogPath;
             OutputPath = outputPath;
             BackupPath = backupPath;
             VanillaMd5 = vanillaMd5;
-            ModKitVersion = modKitVersion;
+            PatchVersion = patchVersion;
             Patch = patch;
         }
 
@@ -29,31 +29,31 @@ namespace InstallerCore
 
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
-            catalog.DefaultRecord = new InstallRecord(modKitBuildNumber: ModKitVersion.BuildNumber, vanillaMd5: VanillaMd5);
+            catalog.DefaultRecord = new InstallRecord(versionString: PatchVersion, vanillaMd5: VanillaMd5);
             catalog.Save(CatalogPath);
         }
 
         public override string ToString()
         {
-            return $"Install {ModKitVersion.VersionString} to {OutputPath} using {Patch}";
+            return $"Install {PatchVersion} to {OutputPath} using {Patch}";
         }
 
         public string CatalogPath { get; }
         public string OutputPath { get; }
         public string BackupPath { get; }
         public string VanillaMd5 { get; }
-        public ModKitVersion ModKitVersion { get; }
+        public string PatchVersion { get; }
         public Installable Patch { get; }
     }
 
     public class InstallStandalone : Action
     {
-        public InstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion, Installable patch)
+        public InstallStandalone(string catalogPath, string outputPath, string vanillaMd5, string patchVersion, Installable patch)
         {
             CatalogPath = catalogPath;
             OutputPath = outputPath;
             VanillaMd5 = vanillaMd5;
-            ModKitVersion = modKitVersion;
+            PatchVersion = patchVersion;
             Patch = patch;
         }
 
@@ -64,31 +64,31 @@ namespace InstallerCore
 
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
-            catalog.Standalone.Add(new InstallRecord(modKitBuildNumber: ModKitVersion.BuildNumber, vanillaMd5: VanillaMd5));
+            catalog.Standalone = new InstallRecord(versionString: PatchVersion, vanillaMd5: VanillaMd5);
             catalog.Save(CatalogPath);
         }
 
         public override string ToString()
         {
-            return $"Install {ModKitVersion.VersionString} to {OutputPath} using {Patch}";
+            return $"Install {PatchVersion} to {OutputPath} using {Patch}";
         }
 
         public string CatalogPath { get; }
         public string OutputPath { get; }
         public string VanillaMd5 { get; }
-        public ModKitVersion ModKitVersion { get; }
+        public string PatchVersion { get; }
         public Installable Patch { get; }
     }
 
     public class UninstallModKit : Action
     {
-        public UninstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, ModKitVersion modKitVersion)
+        public UninstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, string patchVersion)
         {
             CatalogPath = catalogPath;
             OutputPath = outputPath;
             BackupPath = backupPath;
             VanillaMd5 = vanillaMd5;
-            ModKitVersion = modKitVersion;
+            PatchVersion = patchVersion;
         }
 
         public override void Execute()
@@ -104,24 +104,25 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Un-mod {ModKitVersion.VersionString} ({OutputPath})";
+            return $"Un-mod {PatchVersion} ({OutputPath})";
         }
 
         public string CatalogPath { get; }
         public string OutputPath { get; }
         public string BackupPath { get; }
         public string VanillaMd5 { get; }
-        public ModKitVersion ModKitVersion { get; }
+        public string PatchVersion { get; }
     }
 
     public class UninstallStandalone : Action
     {
-        public UninstallStandalone(string catalogPath, string outputPath, string vanillaMd5, ModKitVersion modKitVersion)
+        private static readonly Logger _log = Logger.GetLogger;
+        public UninstallStandalone(string catalogPath, string outputPath, string vanillaMd5, string patchVersion)
         {
             CatalogPath = catalogPath;
             OutputPath = outputPath;
             VanillaMd5 = vanillaMd5;
-            ModKitVersion = modKitVersion;
+            PatchVersion = patchVersion;
         }
 
         public override void Execute()
@@ -132,26 +133,18 @@ namespace InstallerCore
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
 
-            for (int i = catalog.Standalone.Count - 1; i >= 0; i--)
-            {
-                var entry = catalog.Standalone[i];
-                if (ModKitVersion.BuildNumber == entry.ModKitBuildNumber && VanillaMd5 == entry.VanillaMd5)
-                {
-                    catalog.Standalone.RemoveAt(i);
-                    continue;
-                }
-            }
+            catalog.Standalone = null;
             catalog.Save(CatalogPath);
         }
 
         public override string ToString()
         {
-            return $"Uninstall {ModKitVersion.VersionString} ({OutputPath})";
+            return $"Uninstall {PatchVersion} ({OutputPath})";
         }
 
         public string CatalogPath { get; }
         public string OutputPath { get; }
         public string VanillaMd5 { get; }
-        public ModKitVersion ModKitVersion { get; }
+        public string PatchVersion { get; }
     }
 }

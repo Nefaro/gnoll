@@ -7,15 +7,15 @@ namespace InstallerCore
 {
     public class InstallRecord
     {
-        [JsonPropertyName("modKitBuildNumber")]
-        public int ModKitBuildNumber { get; }
+        [JsonPropertyName("versionString")]
+        public string VersionString { get; }
 
         [JsonPropertyName("vanillaMd5")]
         public string VanillaMd5 { get; }
 
-        public InstallRecord(int modKitBuildNumber, string vanillaMd5)
+        public InstallRecord(string versionString, string vanillaMd5)
         {
-            ModKitBuildNumber = modKitBuildNumber;
+            VersionString = versionString;
             VanillaMd5 = vanillaMd5;
         }
     }
@@ -28,11 +28,10 @@ namespace InstallerCore
         public InstallRecord DefaultRecord { get; set; }
 
         [JsonPropertyName("standalone")]
-        public List<InstallRecord> Standalone { get; set; }
+        public InstallRecord Standalone { get; set; }
 
         public InstallDb()
         {
-            Standalone = new List<InstallRecord>();
         }
 
         public static InstallDb LoadOrEmpty(string fileName)
