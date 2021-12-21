@@ -12,7 +12,7 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
   (Note: Not sure if there exists any Linux tooling for the given operations)
 
 ## Installing via Installer
-We have now an Installer! Take a look in here: [Installation](../../wiki/Installation-via-the-Installer)
+We have now an Installer! Take a look in here: [Installation via Installer](../../wiki/Installation-via-the-Installer)
 
 **Note:** However, one should not be in the habbit of downloading random executables from the internet, as such you can always build the mods yourself.
 
