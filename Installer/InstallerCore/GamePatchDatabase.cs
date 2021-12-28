@@ -14,6 +14,8 @@ namespace InstallerCore
         private GameEntry[] _entries;
         private readonly string _patchFolder;
 
+        public string PatchFolder { get => _patchFolder; }
+
         public GamePatchDatabase(string appFolder)
         {
             // The overall patch directory

@@ -30,11 +30,7 @@ namespace InstallerCore
     public class InstallerCore
     {
         private static readonly Logger _log = Logger.GetLogger;
-
-        public static string[] FindGameInstallDirectories()
-        {
-            throw new NotImplementedException();
-        }
+        private static readonly string _modLoaderFile = "GnollModLoader.dll";
 
         public static ScanResult ScanGameInstall(string installDir, GamePatchDatabase gameDb)
         {
@@ -42,6 +38,8 @@ namespace InstallerCore
 
             string gameExePath = Path.Combine(installDir, "Gnomoria.exe");
             string backupExePath = Path.Combine(installDir, "Gnomoria.orig.exe");
+            string modLoaderTargetPath = Path.Combine(installDir, _modLoaderFile);
+            string modLoaderSourcePath = Path.Combine(gameDb.PatchFolder, _modLoaderFile);
 
             // Load installation catalog (json file)
 
@@ -100,6 +98,14 @@ namespace InstallerCore
                 {
                     _log.WriteLine($"Game not modded & patch available => propose InstallModKit");
                     actions.Add(new InstallModKit(catalogPath, gameExePath, backupExePath, vanillaGameMd5, installable.PatchVersion, installable));
+                    if ( File.Exists(modLoaderSourcePath) )
+                    {
+                        actions.Add(new InstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
+                    }
+                    else
+                    {
+                        _log.WriteLine($"Warning: Mod Loader not found; not installing");
+                    }
                 }
                 else
                 {
@@ -123,6 +129,14 @@ namespace InstallerCore
                     string standalonePath = Path.Combine(installDir, standaloneFilename);
                     _log.WriteLine($"Game not stand-alone modded & patch available => propose InstallStandalone");
                     actions.Add(new InstallStandalone(catalogPath, standalonePath, vanillaGameMd5, installable.PatchVersion, installable));
+                    if (File.Exists(modLoaderSourcePath))
+                    {
+                        actions.Add(new InstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
+                    }
+                    else
+                    {
+                        _log.WriteLine($"Warning: Mod Loader not found; not installing");
+                    }
                 }
                 else
                 {

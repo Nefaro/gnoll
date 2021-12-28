@@ -9,11 +9,14 @@ namespace InstallerGUI
 {
     public partial class Form1 : Form
     {
-        private InstallerCore.Action _installModkitAction, _installStandaloneAction,
-            _uninstallModkitAction, _uninstallStandaloneAction;
+        private InstallerCore.Action _installModkitAction, 
+            _installStandaloneAction,
+            _uninstallModkitAction, 
+            _uninstallStandaloneAction,
+            _installModLoader;
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.0.1)";
+        private static readonly string _appName = $"Gnoll Installer (v1.1)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()
@@ -125,6 +128,11 @@ namespace InstallerGUI
                         uninstallStandaloneButton.Enabled = true;
                         _uninstallStandaloneAction = action;
                     }
+
+                    if (action is InstallModLoader)
+                    {
+                        _installModLoader = action;
+                    }
                 }
             }
             catch(Exception e)
@@ -163,6 +171,11 @@ namespace InstallerGUI
             try
             {
                 _installModkitAction.Execute();
+                if ( _installModLoader != null)
+                {
+                    _log.log("Installing modloader");
+                    _installModLoader.Execute();
+                }
                 ShowOk();
             }
             finally
@@ -176,6 +189,11 @@ namespace InstallerGUI
             try
             {
                 _installStandaloneAction.Execute();
+                if (_installModLoader != null)
+                {
+                    _log.log("Installing modloader");
+                    _installModLoader.Execute();
+                }
                 ShowOk();
             }
             finally

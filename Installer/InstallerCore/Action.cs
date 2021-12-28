@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace InstallerCore
 {
@@ -116,7 +117,6 @@ namespace InstallerCore
 
     public class UninstallStandalone : Action
     {
-        private static readonly Logger _log = Logger.GetLogger;
         public UninstallStandalone(string catalogPath, string outputPath, string vanillaMd5, string patchVersion)
         {
             CatalogPath = catalogPath;
@@ -146,5 +146,45 @@ namespace InstallerCore
         public string OutputPath { get; }
         public string VanillaMd5 { get; }
         public string PatchVersion { get; }
+    }
+
+    public class InstallModLoader : Action
+    {
+        public InstallModLoader(string modLoaderPath, string outputPath)
+        {
+            ModloaderPath = modLoaderPath;
+            OutputPath = outputPath;
+            BackupPath = outputPath + ".bak";
+        }
+
+        public override void Execute()
+        {
+            if ( File.Exists(ModloaderPath) )
+            {
+                if ( File.Exists(OutputPath) )
+                {
+                    // For replace to work, all directories need to be in the same volume
+                    // copy modloader from installer path to game directory (with a temp name)
+                    string temp = Path.Combine(OutputPath + Guid.NewGuid().ToString());
+                    File.Copy(ModloaderPath, temp);
+                    // replace existing (with backup), if exists
+                    File.Replace(temp, OutputPath, BackupPath);
+                }
+                else 
+                {
+                    // copy modloader from given path to output path
+                    File.Copy(ModloaderPath, OutputPath);
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"Install Mod Loader to {OutputPath}";
+        }
+
+        public string ModloaderPath { get; }
+        public string OutputPath { get; }
+        public string BackupPath { get; }
     }
 }
