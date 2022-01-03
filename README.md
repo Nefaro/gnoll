@@ -2,7 +2,7 @@
 
 Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
 
-## Prerequisites:
+## Prerequisites for Manual Install:
 
   - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
   - Python 3.2+ (https://www.python.org/downloads/) 
