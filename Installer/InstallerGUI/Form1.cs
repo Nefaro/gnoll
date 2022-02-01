@@ -13,10 +13,14 @@ namespace InstallerGUI
             _installStandaloneAction,
             _uninstallModkitAction, 
             _uninstallStandaloneAction,
-            _installModLoader;
+            _installModLoaderAction,
+            _uninstallModLoaderAction,
+            _copyModsAction,
+            _deleteModsAction
+            ;
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.1)";
+        private static readonly string _appName = $"Gnoll Installer (v1.9.3)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()
@@ -60,6 +64,7 @@ namespace InstallerGUI
                 installStandaloneButton.Enabled = false;
                 uninstallModkitButton.Enabled = false;
                 uninstallStandaloneButton.Enabled = false;
+                copyModsButton.Enabled = false;
                 gameVersionLabel.Text = "?";
                 standaloneVersion.Text = "?";
                 selectedPatchVersion.Text = "???";
@@ -131,9 +136,24 @@ namespace InstallerGUI
 
                     if (action is InstallModLoader)
                     {
-                        _installModLoader = action;
+                        _installModLoaderAction = action;
+                    }
+                    if (action is UninstallModLoader)
+                    {
+                        _uninstallModLoaderAction = action;
+                    }
+
+                    if (action is CopyModsAction)
+                    {
+                        _copyModsAction = action;
+                    }
+                    if ( action is DeleteModsAction)
+                    {
+                        _deleteModsAction = action;
                     }
                 }
+                copyModsButton.Enabled = _copyModsAction != null && (uninstallStandaloneButton.Enabled || uninstallModkitButton.Enabled);
+                uninstallAll.Enabled = !String.IsNullOrEmpty(gameDir);
             }
             catch(Exception e)
             {
@@ -171,10 +191,27 @@ namespace InstallerGUI
             try
             {
                 _installModkitAction.Execute();
-                if ( _installModLoader != null)
+                if ( _installModLoaderAction != null)
                 {
                     _log.log("Installing modloader");
-                    _installModLoader.Execute();
+                    _installModLoaderAction.Execute();
+                }
+                ShowOk();
+            }
+            finally
+            {
+                RescanGame();
+            }
+        }
+
+        private void copyMods_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_copyModsAction != null)
+                {
+                    _log.log("Copying mods ...");
+                    _copyModsAction.Execute();
                 }
                 ShowOk();
             }
@@ -189,10 +226,10 @@ namespace InstallerGUI
             try
             {
                 _installStandaloneAction.Execute();
-                if (_installModLoader != null)
+                if (_installModLoaderAction != null)
                 {
                     _log.log("Installing modloader");
-                    _installModLoader.Execute();
+                    _installModLoaderAction.Execute();
                 }
                 ShowOk();
             }
@@ -227,6 +264,36 @@ namespace InstallerGUI
                 RescanGame();
             }
         }
+
+        private void uninstallAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _log.log("Uninstalling everything ...");
+                if (_deleteModsAction != null)
+                {
+                    _deleteModsAction.Execute();
+                }
+                if (_uninstallModLoaderAction != null)
+                {
+                    _uninstallModLoaderAction.Execute();
+                }
+                if (_uninstallModkitAction != null)
+                {
+                    _uninstallModkitAction.Execute();
+                }
+                if (_uninstallStandaloneAction != null)
+                {
+                    _uninstallStandaloneAction.Execute();
+                }
+                ShowOk();
+            }
+            finally
+            {
+                RescanGame();
+            }
+        }
+
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             linkLabel1.LinkVisited = true;

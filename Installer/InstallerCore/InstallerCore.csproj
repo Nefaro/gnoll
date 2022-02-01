@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="FileUnblocker.cs" />
     <Compile Include="GamePatchDatabase.cs" />
     <Compile Include="Installable.cs" />
     <Compile Include="InstallDb.cs" />

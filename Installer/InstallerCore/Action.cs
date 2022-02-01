@@ -5,7 +5,15 @@ namespace InstallerCore
 {
     public abstract class Action
     {
-        public abstract void Execute();
+        private static readonly Logger _log = Logger.GetLogger;
+
+        public void Execute()
+        {
+            _log.WriteLine(this.ToString());
+            this.ExecuteImpl();
+        }
+
+        protected abstract void ExecuteImpl();
     }
 
     public class InstallModKit : Action
@@ -20,7 +28,7 @@ namespace InstallerCore
             Patch = patch;
         }
 
-        public override void Execute()
+        protected override void ExecuteImpl()
         {
             // apply patch. do this to a temp file because the patch itself might be referring to the file being replaced! (e.g. Gnomoria.exe)
             string tmpOutputPath = OutputPath + ".tmp";
@@ -36,7 +44,7 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Install {PatchVersion} to {OutputPath} using {Patch}";
+            return $"$$ Install {PatchVersion} to {OutputPath} using {Patch}";
         }
 
         public string CatalogPath { get; }
@@ -58,7 +66,7 @@ namespace InstallerCore
             Patch = patch;
         }
 
-        public override void Execute()
+        protected override void ExecuteImpl()
         {
             // apply patch
             Patch.Install(OutputPath);
@@ -71,7 +79,7 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Install {PatchVersion} to {OutputPath} using {Patch}";
+            return $"$$ Install {PatchVersion} to {OutputPath} using {Patch}";
         }
 
         public string CatalogPath { get; }
@@ -92,7 +100,7 @@ namespace InstallerCore
             PatchVersion = patchVersion;
         }
 
-        public override void Execute()
+        protected override void ExecuteImpl()
         {
             // restore backup
             File.Replace(BackupPath, OutputPath, destinationBackupFileName: null);
@@ -105,7 +113,7 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Un-mod {PatchVersion} ({OutputPath})";
+            return $"$$ Un-mod {PatchVersion} ({OutputPath})";
         }
 
         public string CatalogPath { get; }
@@ -125,7 +133,7 @@ namespace InstallerCore
             PatchVersion = patchVersion;
         }
 
-        public override void Execute()
+        protected override void ExecuteImpl()
         {
             // delete patched executable
             File.Delete(OutputPath);
@@ -139,7 +147,7 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Uninstall {PatchVersion} ({OutputPath})";
+            return $"$$ Uninstall {PatchVersion} ({OutputPath})";
         }
 
         public string CatalogPath { get; }
@@ -157,7 +165,7 @@ namespace InstallerCore
             BackupPath = outputPath + ".bak";
         }
 
-        public override void Execute()
+        protected override void ExecuteImpl()
         {
             if ( File.Exists(ModloaderPath) )
             {
@@ -180,7 +188,117 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"Install Mod Loader to {OutputPath}";
+            return $"$$ Install Mod Loader to {OutputPath}";
+        }
+
+        public string ModloaderPath { get; }
+        public string OutputPath { get; }
+        public string BackupPath { get; }
+    }
+
+    public class CopyModsAction : Action
+    {
+        public CopyModsAction(string modsPath, string outputPath)
+        {
+            ModsPath = modsPath;
+            OutputPath = outputPath;
+            BackupPath = outputPath + ".bak";
+        }
+
+        protected override void ExecuteImpl()
+        {
+            if (Directory.Exists(ModsPath))
+            {
+                if (Directory.Exists(OutputPath))
+                {
+                    // Do backup of existing
+                    CopyFilesRecursively(OutputPath, BackupPath);
+                }
+                // copy mods from given path to output path
+                CopyFilesRecursively(ModsPath, OutputPath);
+                // Unblock the files from the target
+                FileUnblocker.UnblockPath(OutputPath);
+            }
+        }
+
+        private void CopyFilesRecursively(string sourcePath, string targetPath)
+        {
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+            }
+
+            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"$$ Copying Mods to {OutputPath}";
+        }
+
+        public string ModsPath { get; }
+        public string OutputPath { get; }
+        public string BackupPath { get; }
+    }
+
+    public class DeleteModsAction : Action
+    {
+        public DeleteModsAction(string modsPath, string outputPath)
+        {
+            ModsPath = modsPath;
+            OutputPath = outputPath;
+            BackupPath = outputPath + ".bak";
+        }
+
+        protected override void ExecuteImpl()
+        {
+            if (Directory.Exists(BackupPath))
+            {
+                Directory.Delete(BackupPath, true);
+            }
+            if (Directory.Exists(OutputPath))
+            {
+                Directory.Delete(OutputPath, true);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"$$ Cleaning up Mods from {OutputPath} and {BackupPath}";
+        }
+
+        public string ModsPath { get; }
+        public string OutputPath { get; }
+        public string BackupPath { get; }
+    }
+
+    public class UninstallModLoader : Action
+    {
+        public UninstallModLoader(string modLoaderPath, string outputPath)
+        {
+            ModloaderPath = modLoaderPath;
+            OutputPath = outputPath;
+            BackupPath = outputPath + ".bak";
+        }
+
+        protected override void ExecuteImpl()
+        {
+            if (File.Exists(BackupPath))
+            {
+                File.Delete(BackupPath);
+            }
+            if (File.Exists(OutputPath))
+            {
+                File.Delete(OutputPath);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"$$ Uninstall Mod Loader from {OutputPath} and {BackupPath}";
         }
 
         public string ModloaderPath { get; }

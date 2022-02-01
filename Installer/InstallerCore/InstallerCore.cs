@@ -31,6 +31,8 @@ namespace InstallerCore
     {
         private static readonly Logger _log = Logger.GetLogger;
         private static readonly string _modLoaderFile = "GnollModLoader.dll";
+        private static readonly string _modsDirectory = "Gnoll Mods";
+
 
         public static ScanResult ScanGameInstall(string installDir, GamePatchDatabase gameDb)
         {
@@ -40,6 +42,8 @@ namespace InstallerCore
             string backupExePath = Path.Combine(installDir, "Gnomoria.orig.exe");
             string modLoaderTargetPath = Path.Combine(installDir, _modLoaderFile);
             string modLoaderSourcePath = Path.Combine(gameDb.PatchFolder, _modLoaderFile);
+            string modsSourcePath = Path.Combine(gameDb.PatchFolder, _modsDirectory);
+            string modsTargetPath = Path.Combine(installDir, _modsDirectory);
 
             // Load installation catalog (json file)
 
@@ -101,6 +105,7 @@ namespace InstallerCore
                     if ( File.Exists(modLoaderSourcePath) )
                     {
                         actions.Add(new InstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
+                        actions.Add(new UninstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
                     }
                     else
                     {
@@ -132,6 +137,7 @@ namespace InstallerCore
                     if (File.Exists(modLoaderSourcePath))
                     {
                         actions.Add(new InstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
+                        actions.Add(new UninstallModLoader(modLoaderSourcePath, modLoaderTargetPath));
                     }
                     else
                     {
@@ -150,7 +156,15 @@ namespace InstallerCore
                 _log.WriteLine($"Game stand-alone modded => propose UninstallStandalone");
                 actions.Add(new UninstallStandalone(catalogPath, standalonePath, vanillaGameMd5, standalone));
             }
-
+            if ( Directory.Exists(modsSourcePath) )
+            {
+                actions.Add(new CopyModsAction(modsSourcePath, modsTargetPath));
+                actions.Add(new DeleteModsAction(modsSourcePath, modsTargetPath));
+            }
+            else
+            {
+                _log.WriteLine($"Warning: Mods not included in {modsSourcePath}");
+            }
             return new ScanResult(moddedVersion, gameVersion.Name, actions.ToArray(), patchAvailable: (installable != null), 
                 standalone, (installable!=null? installable.PatchVersion: null));
         }
