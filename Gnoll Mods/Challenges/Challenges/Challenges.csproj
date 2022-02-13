@@ -63,13 +63,12 @@
       <HintPath>H:\Steam\steamapps\common\Gnomoria\GnollModLoader.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="GnoMod">
-      <HintPath>H:\Steam\steamapps\common\Gnomoria\GnoMod.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="gnomorialib">
       <HintPath>..\..\..\sdk\gnomorialib.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="GnomoriaSDK-patched">
+      <HintPath>..\..\..\sdk\GnomoriaSDK-patched.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

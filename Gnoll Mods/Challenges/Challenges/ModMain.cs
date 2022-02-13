@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Game;
-using Game.GUI;
+﻿using Game.GUI;
 using Game.GUI.Controls;
 using GnollModLoader;
-using GnollMods.Challenges.Challenge;
 using GnollMods.Challenges.Gui;
-using GnollMods.Challenges.Model;
 
-namespace GnollMods.Challenges 
+namespace GnollMods.Challenges
 {
     internal class ModMain : IGnollMod
     {
