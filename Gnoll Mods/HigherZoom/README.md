@@ -1,0 +1,1 @@
+This mod allows 2 more levels of zooming out. Not really great for playing, but great for having an overview or taking a screenshot.

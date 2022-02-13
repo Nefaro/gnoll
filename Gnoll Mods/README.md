@@ -16,4 +16,5 @@ Currently those mods are:
 - MarketStallSellFilters - Player can now filter own inventory by value and name
 - SeasonalChange - Switches the environment graphics according to current season 
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
-- VeinMiner - Enhances mining in a way tha gnomes digg out the mineral/gem veins by themselves
+- VeinMiner - Enhances mining in a way that gnomes digg out the mineral/gem veins by themselves
+- HigherZoom - Allows 2 more levels of zooming out
