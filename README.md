@@ -6,7 +6,10 @@ Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
 
   - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
   - Python 3.2+ (https://www.python.org/downloads/) 
-  - Windows and .NET Framework 4.8 or newer  
+  - Windows
+  - SKD / .NET Framework 4.8 Tools or newer (for ildasm.exe) 
+  - .NET Framework 4.0 or newer (for ilasm.exe)
+  - Compiler: MSBuild (14.0+) for using (gnomodkit/gnomkit) or Visual Studio 2015+ for building yourself
   - Internet (build script downloads helper tools)
   
   (Note: Not sure if there exists any Linux tooling for the given operations)

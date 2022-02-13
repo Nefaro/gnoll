@@ -13,7 +13,6 @@ namespace GnollModLoader
         public static void ShowConsoleWindow()
         {
             var handle = GetConsoleWindow();
-
             if (handle == IntPtr.Zero)
             {
                 AllocConsole();

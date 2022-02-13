@@ -8,8 +8,13 @@
         "version": 9,
         "versionString":"G1.9",
         "filename": "Gnoll1.9_016e6239.xdelta"
+    },
+    {
+        "version": 10,
+        "versionString":"G1.10",
+        "filename": "Gnoll1.10_016e6239.xdelta"
     }],
-    "latestVersion":"G1.9"
+    "latestVersion":"G1.10"
   },
   {
     "name": "v1.0 (Steam 2019)",
@@ -29,7 +34,12 @@
         "version": 9,
         "versionString":"G1.9",
         "filename": "Gnoll1.9_c9f6d4b9.xdelta"
+    },    
+    {
+        "version": 10,
+        "versionString":"G1.10",
+        "filename": "Gnoll1.10_c9f6d4b9.xdelta"
     }],    
-    "latestVersion":"G1.9"    
+    "latestVersion":"G1.10"
   }
 ]

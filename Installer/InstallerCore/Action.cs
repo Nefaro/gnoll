@@ -156,44 +156,56 @@ namespace InstallerCore
         public string PatchVersion { get; }
     }
 
-    public class InstallModLoader : Action
+    public class InstallModLoaderDependency : Action
     {
-        public InstallModLoader(string modLoaderPath, string outputPath)
+        private static readonly Logger _log = Logger.GetLogger;
+        public InstallModLoaderDependency(string modLoaderPath, string outputPath, bool withBackup)
         {
             ModloaderPath = modLoaderPath;
             OutputPath = outputPath;
             BackupPath = outputPath + ".bak";
+            WithBackup = withBackup;
         }
 
         protected override void ExecuteImpl()
         {
-            if ( File.Exists(ModloaderPath) )
+            this.CopyFile(ModloaderPath, OutputPath, (WithBackup ? BackupPath : null));
+        }
+
+        private void CopyFile(string source, string target, string backup)
+        {
+            if (File.Exists(source))
             {
-                if ( File.Exists(OutputPath) )
+                if (File.Exists(target))
                 {
                     // For replace to work, all directories need to be in the same volume
-                    // copy modloader from installer path to game directory (with a temp name)
-                    string temp = Path.Combine(OutputPath + Guid.NewGuid().ToString());
-                    File.Copy(ModloaderPath, temp);
+                    // copy file from installer path to game directory (with a temp name)
+                    string temp = Path.Combine(target + Guid.NewGuid().ToString());
+                    File.Copy(source, temp);
                     // replace existing (with backup), if exists
-                    File.Replace(temp, OutputPath, BackupPath);
+                    File.Replace(temp, target, backup);
                 }
-                else 
+                else
                 {
-                    // copy modloader from given path to output path
-                    File.Copy(ModloaderPath, OutputPath);
+                    // copy file from given path to output path
+                    File.Copy(source, target);
                 }
+            }
+            else
+            {
+                _log.log($"Tasked with copying a file but source file is missing: {source}");
             }
         }
 
         public override string ToString()
         {
-            return $"$$ Install Mod Loader to {OutputPath}";
+            return $"$$ Install Mod Loader Dependency to {OutputPath}";
         }
 
         public string ModloaderPath { get; }
         public string OutputPath { get; }
         public string BackupPath { get; }
+        public bool WithBackup { get; }
     }
 
     public class CopyModsAction : Action
@@ -275,11 +287,10 @@ namespace InstallerCore
         public string BackupPath { get; }
     }
 
-    public class UninstallModLoader : Action
+    public class UninstallModLoaderDependency : Action
     {
-        public UninstallModLoader(string modLoaderPath, string outputPath)
+        public UninstallModLoaderDependency(string outputPath)
         {
-            ModloaderPath = modLoaderPath;
             OutputPath = outputPath;
             BackupPath = outputPath + ".bak";
         }
@@ -298,10 +309,8 @@ namespace InstallerCore
 
         public override string ToString()
         {
-            return $"$$ Uninstall Mod Loader from {OutputPath} and {BackupPath}";
+            return $"$$ Uninstall Mod Loader Dependency from {OutputPath} and {BackupPath}";
         }
-
-        public string ModloaderPath { get; }
         public string OutputPath { get; }
         public string BackupPath { get; }
     }

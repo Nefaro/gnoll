@@ -12,6 +12,8 @@ namespace GnollModLoader
         public delegate void ExportMenuListInitHandler(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, AddButton context);
         // Called when the ingame HUD (this is the gamefield, NOT the main menu) is complete 
         public delegate void InGameHUDInitHandler(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager);
+        // Called before ingame HUD is constructed (this means world is constructed, UI is missing)
+        public delegate void BeforeInGameHUDInitHandler();
         // Called after the ingame HUD opens a window
         public delegate void InGameHUDShowWindowHandler(Game.GUI.Controls.Window window);
         // Called on every update, after the game's update has run
@@ -82,10 +84,11 @@ namespace GnollModLoader
                 instance.UpdateInGame(realTimeDelta, timeElapsedInGame);
             }
         }
-
+        
         public static void HookMainMenuGuiInit(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager)
         {
             Logger.Log("-- Hook Main Menu Init");
+
             Game.GUI.Controls.Button modButton = window.method_39(manager, GnollMain.NAME);
             modButton.Click += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
@@ -146,8 +149,19 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookInGameHUDInit_before()
+        {
+            Logger.Log("-- Hook Before Ingame HUD Init");
+
+            if (instance.BeforeInGameHudInit != null)
+            {
+                instance.BeforeInGameHudInit();
+            }
+        }
+
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
+        public event BeforeInGameHUDInitHandler BeforeInGameHudInit;
         public event InGameHUDShowWindowHandler InGameShowWindow;
         public event UpdateInGameHandler UpdateInGame;
         public event OnJobCompleteHandler OnJobComplete;

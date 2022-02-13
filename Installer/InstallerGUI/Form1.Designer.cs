@@ -34,8 +34,6 @@ namespace InstallerGUI
             this.label1 = new System.Windows.Forms.Label();
             this.gamePathInput = new System.Windows.Forms.TextBox();
             this.browseForGame = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.gameVersionLabel = new System.Windows.Forms.TextBox();
             this.installModkitButton = new System.Windows.Forms.Button();
             this.installStandaloneButton = new System.Windows.Forms.Button();
             this.uninstallModkitButton = new System.Windows.Forms.Button();
@@ -46,17 +44,18 @@ namespace InstallerGUI
             this.standaloneVersion = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.selectedPatch = new System.Windows.Forms.Label();
             this.selectedPatchVersion = new System.Windows.Forms.Label();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.gameVersionLabel = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.copyModsButton = new System.Windows.Forms.Button();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.versionLabel = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.label5 = new System.Windows.Forms.Label();
             this.uninstallAll = new System.Windows.Forms.Button();
@@ -67,8 +66,8 @@ namespace InstallerGUI
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -116,25 +115,6 @@ namespace InstallerGUI
             this.browseForGame.Text = "Browse...";
             this.browseForGame.UseVisualStyleBackColor = true;
             this.browseForGame.Click += new System.EventHandler(this.browseForGame_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label2.Location = new System.Drawing.Point(3, 3);
-            this.label2.Margin = new System.Windows.Forms.Padding(3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 20);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Detected version:";
-            // 
-            // gameVersionLabel
-            // 
-            this.gameVersionLabel.Location = new System.Drawing.Point(119, 3);
-            this.gameVersionLabel.Name = "gameVersionLabel";
-            this.gameVersionLabel.ReadOnly = true;
-            this.gameVersionLabel.Size = new System.Drawing.Size(232, 20);
-            this.gameVersionLabel.TabIndex = 5;
             // 
             // installModkitButton
             // 
@@ -198,18 +178,17 @@ namespace InstallerGUI
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 9);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel6, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 8);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel7, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel8, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel9, 0, 10);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel5, 0, 12);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel10, 0, 11);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel9, 0, 9);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel5, 0, 11);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel10, 0, 10);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 13;
+            this.tableLayoutPanel1.RowCount = 12;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -222,7 +201,7 @@ namespace InstallerGUI
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(360, 434);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
@@ -244,36 +223,37 @@ namespace InstallerGUI
             // 
             // tableLayoutPanel3
             // 
+            this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.tableLayoutPanel3.Controls.Add(this.standaloneVersion, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 197);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 200);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(360, 29);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(354, 26);
             this.tableLayoutPanel3.TabIndex = 13;
             // 
             // standaloneVersion
             // 
-            this.standaloneVersion.Location = new System.Drawing.Point(121, 3);
+            this.standaloneVersion.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.standaloneVersion.Location = new System.Drawing.Point(126, 3);
             this.standaloneVersion.Name = "standaloneVersion";
             this.standaloneVersion.ReadOnly = true;
-            this.standaloneVersion.Size = new System.Drawing.Size(236, 20);
+            this.standaloneVersion.Size = new System.Drawing.Size(225, 20);
             this.standaloneVersion.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label3.Location = new System.Drawing.Point(6, 3);
-            this.label3.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
+            this.label3.Location = new System.Drawing.Point(3, 3);
+            this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 23);
+            this.label3.Size = new System.Drawing.Size(112, 20);
             this.label3.TabIndex = 16;
             this.label3.Text = "Detected stand-alone:";
             // 
@@ -287,27 +267,13 @@ namespace InstallerGUI
             this.tableLayoutPanel4.Controls.Add(this.installStandaloneButton, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.uninstallModkitButton, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 235);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 232);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel4.Size = new System.Drawing.Size(354, 101);
             this.tableLayoutPanel4.TabIndex = 14;
-            // 
-            // tableLayoutPanel6
-            // 
-            this.tableLayoutPanel6.AutoSize = true;
-            this.tableLayoutPanel6.ColumnCount = 2;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 229);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 1;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(354, 1);
-            this.tableLayoutPanel6.TabIndex = 17;
             // 
             // tableLayoutPanel7
             // 
@@ -350,8 +316,8 @@ namespace InstallerGUI
             // 
             this.tableLayoutPanel8.AutoSize = true;
             this.tableLayoutPanel8.ColumnCount = 2;
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.tableLayoutPanel8.Controls.Add(this.gameVersionLabel, 1, 0);
             this.tableLayoutPanel8.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -362,42 +328,25 @@ namespace InstallerGUI
             this.tableLayoutPanel8.Size = new System.Drawing.Size(354, 26);
             this.tableLayoutPanel8.TabIndex = 19;
             // 
-            // tableLayoutPanel5
+            // gameVersionLabel
             // 
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel5.Controls.Add(this.versionLabel, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.linkLabel1, 1, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 412);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 1;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(354, 33);
-            this.tableLayoutPanel5.TabIndex = 15;
+            this.gameVersionLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameVersionLabel.Location = new System.Drawing.Point(126, 3);
+            this.gameVersionLabel.Name = "gameVersionLabel";
+            this.gameVersionLabel.ReadOnly = true;
+            this.gameVersionLabel.Size = new System.Drawing.Size(225, 20);
+            this.gameVersionLabel.TabIndex = 5;
             // 
-            // versionLabel
+            // label2
             // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.versionLabel.Location = new System.Drawing.Point(3, 0);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(70, 33);
-            this.versionLabel.TabIndex = 10;
-            this.versionLabel.Text = "Gnoll Installer";
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.linkLabel1.Location = new System.Drawing.Point(311, 0);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(40, 33);
-            this.linkLabel1.TabIndex = 11;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "GitHub";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label2.Location = new System.Drawing.Point(3, 3);
+            this.label2.Margin = new System.Windows.Forms.Padding(3);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(91, 20);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Detected version:";
             // 
             // tableLayoutPanel9
             // 
@@ -408,7 +357,7 @@ namespace InstallerGUI
             this.tableLayoutPanel9.Controls.Add(this.label4, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.copyModsButton, 1, 0);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 342);
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(3, 339);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
             this.tableLayoutPanel9.RowCount = 1;
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -437,6 +386,43 @@ namespace InstallerGUI
             this.copyModsButton.UseVisualStyleBackColor = true;
             this.copyModsButton.Click += new System.EventHandler(this.copyMods_Click);
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel5.Controls.Add(this.versionLabel, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.linkLabel1, 1, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 409);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(354, 33);
+            this.tableLayoutPanel5.TabIndex = 15;
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.versionLabel.Location = new System.Drawing.Point(3, 0);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(70, 33);
+            this.versionLabel.TabIndex = 10;
+            this.versionLabel.Text = "Gnoll Installer";
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.linkLabel1.Location = new System.Drawing.Point(311, 0);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(40, 33);
+            this.linkLabel1.TabIndex = 11;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "GitHub";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // tableLayoutPanel10
             // 
             this.tableLayoutPanel10.AutoSize = true;
@@ -446,7 +432,7 @@ namespace InstallerGUI
             this.tableLayoutPanel10.Controls.Add(this.label5, 0, 0);
             this.tableLayoutPanel10.Controls.Add(this.uninstallAll, 1, 0);
             this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 377);
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 374);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
             this.tableLayoutPanel10.RowCount = 1;
             this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -500,10 +486,10 @@ namespace InstallerGUI
             this.tableLayoutPanel7.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel8.PerformLayout();
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel10.PerformLayout();
             this.ResumeLayout(false);
@@ -516,8 +502,6 @@ namespace InstallerGUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox gamePathInput;
         private System.Windows.Forms.Button browseForGame;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox gameVersionLabel;
         private System.Windows.Forms.Button installModkitButton;
         private System.Windows.Forms.Button installStandaloneButton;
         private System.Windows.Forms.Button uninstallModkitButton;
@@ -530,10 +514,8 @@ namespace InstallerGUI
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.TextBox standaloneVersion;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Label selectedPatch;
         private System.Windows.Forms.Label selectedPatchVersion;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
@@ -542,6 +524,9 @@ namespace InstallerGUI
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button uninstallAll;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.TextBox gameVersionLabel;
+        private System.Windows.Forms.Label label2;
     }
 }
 

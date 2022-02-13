@@ -10,6 +10,8 @@ namespace GnollModLoader
     internal class Logger
     {
         private static readonly string PREFIX = "[Gnoll] ";
+        private static readonly string ERROR = "[ERROR] ";
+
         public static void Log(string message, params object[] args)
         {
             System.Console.WriteLine(PREFIX + message, args);
@@ -17,6 +19,11 @@ namespace GnollModLoader
         public static void Log(string message, object arg)
         {
             System.Console.WriteLine(PREFIX + message, arg);
+        }
+
+        public static void Error(string message, params object[] args)
+        {
+            System.Console.WriteLine(PREFIX + ERROR + message, args);
         }
 
     }

@@ -49,6 +49,7 @@ OUTPUT_EXE_FILENAME = 'GnoMod.exe'
 SDK_DLL_PATCHED_FILENAME = os.path.join(SDK_DIR, 'GnomoriaSDK-patched.dll')
 
 MOD_LOADER_PATCH_TEMPLATE = '.\\patch\\GnollModLoader_$gamehash.patch'
+COMPILER_CONFIGURATION = 'Release'
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -88,7 +89,7 @@ def get_ildasm_path():
     return os.path.join(dir, 'ildasm.exe')
 
 def get_msbuild_path():
-    return os.path.join(get_dotnetfx_dir(), 'MSBuild.exe')
+    return os.path.join(config.get('msbuild_dir','MSBuild location (e.g. C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin)'), 'MSBuild.exe')
 
 def get_nuget_path():  
     return os.path.join(CACHE_DIR, 'nuget.exe')
@@ -495,8 +496,7 @@ class TaskMakeMod(Task):
         self.add_dependency(TaskMsbuild(os.path.join(self.solution_dir, self.name + ".sln")))
 
         # install into game directory
-        # self.add_dependency(TaskCopyFile(os.path.join(self.project_dir, 'bin\\Debug', self.dll_name), os.path.join(get_game_mod_dir(), self.dll_name)))
-        self.add_dependency(TaskCopyFileByExtension(os.path.join(self.project_dir, 'bin\\Debug'), os.path.join(get_game_mod_dir()), '.dll'))
+        self.add_dependency(TaskCopyFileByExtension(os.path.join(self.project_dir, 'bin\\x86\\'+COMPILER_CONFIGURATION), os.path.join(get_game_mod_dir()), '.dll'))
         
         mod_data_dir = os.path.join(self.project_dir, DATA_DIR);
         if os.path.exists(mod_data_dir):
@@ -535,7 +535,7 @@ class TaskMakeModLoader(Task):
 
         # build ModLoader
         self.add_dependency(TaskMsbuild(os.path.join(solution_dir, 'GnollModLoader.sln')))
-        self.add_dependency(TaskCopyFile(os.path.join(project_dir, 'bin\\x86\\Debug', modloader_dll), os.path.join(get_game_dir(), modloader_dll)))
+        self.add_dependency(TaskCopyFile(os.path.join(project_dir, 'bin\\x86\\'+COMPILER_CONFIGURATION, modloader_dll), os.path.join(get_game_dir(), modloader_dll)))
 
         # patch ModLoader hooks into GnomoriaSDK
         self.add_dependency(TaskApplyPatch(SDK_IL_FILENAME, WORKING_FILENAME, patch_file))
@@ -599,7 +599,7 @@ class TaskMsbuild(Task):
         return 'msbuild %s' % self.solution
 
     def run(self):
-        check_call([self.msbuild_path, self.solution])
+        check_call([self.msbuild_path, self.solution,'/p:Configuration='+COMPILER_CONFIGURATION,'/p:Platform=x86'])
         
 class TaskGetNuget(Task):
     def __init__(self):

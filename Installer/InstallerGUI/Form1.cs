@@ -1,6 +1,7 @@
 ﻿using InstallerCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -13,14 +14,14 @@ namespace InstallerGUI
             _installStandaloneAction,
             _uninstallModkitAction, 
             _uninstallStandaloneAction,
-            _installModLoaderAction,
-            _uninstallModLoaderAction,
             _copyModsAction,
             _deleteModsAction
             ;
+        private List<InstallerCore.Action> _installModLoaderDependencies = new List<InstallerCore.Action>();
+        private List<InstallerCore.Action> _uninstallModLoaderDependencies = new List<InstallerCore.Action>();
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.9.3)";
+        private static readonly string _appName = $"Gnoll Installer (v1.10.0)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()
@@ -88,9 +89,9 @@ namespace InstallerGUI
 
                 gameVersionLabel.Text = gameVersionStr;
 
-                if (res.StandaloneVersion != null)
+                if (res.OldStandaloneVersion != null)
                 {
-                    standaloneVersion.Text = res.StandaloneVersion;
+                    standaloneVersion.Text = res.OldStandaloneVersion;
                 }
                 else
                 {
@@ -134,13 +135,13 @@ namespace InstallerGUI
                         _uninstallStandaloneAction = action;
                     }
 
-                    if (action is InstallModLoader)
+                    if (action is InstallModLoaderDependency)
                     {
-                        _installModLoaderAction = action;
+                        _installModLoaderDependencies.Add(action);
                     }
-                    if (action is UninstallModLoader)
+                    if (action is UninstallModLoaderDependency)
                     {
-                        _uninstallModLoaderAction = action;
+                        _uninstallModLoaderDependencies.Add(action);
                     }
 
                     if (action is CopyModsAction)
@@ -191,10 +192,13 @@ namespace InstallerGUI
             try
             {
                 _installModkitAction.Execute();
-                if ( _installModLoaderAction != null)
+                if ( _installModLoaderDependencies.Count > 0 )
                 {
-                    _log.log("Installing modloader");
-                    _installModLoaderAction.Execute();
+                    _log.log("Installing modloader dependencies");
+                    foreach(var action in _installModLoaderDependencies)
+                    {
+                        action.Execute();
+                    }
                 }
                 ShowOk();
             }
@@ -226,10 +230,13 @@ namespace InstallerGUI
             try
             {
                 _installStandaloneAction.Execute();
-                if (_installModLoaderAction != null)
+                if (_installModLoaderDependencies.Count > 0)
                 {
-                    _log.log("Installing modloader");
-                    _installModLoaderAction.Execute();
+                    _log.log("Installing modloader dependencies");
+                    foreach (var action in _installModLoaderDependencies)
+                    {
+                        action.Execute();
+                    }
                 }
                 ShowOk();
             }
@@ -274,9 +281,12 @@ namespace InstallerGUI
                 {
                     _deleteModsAction.Execute();
                 }
-                if (_uninstallModLoaderAction != null)
+                if (_uninstallModLoaderDependencies.Count > 0)
                 {
-                    _uninstallModLoaderAction.Execute();
+                    foreach (var action in _uninstallModLoaderDependencies)
+                    {
+                        action.Execute();
+                    }
                 }
                 if (_uninstallModkitAction != null)
                 {

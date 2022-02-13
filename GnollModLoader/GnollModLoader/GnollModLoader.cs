@@ -7,6 +7,7 @@ using Game;
 using Game.GUI;
 using Game.GUI.Controls;
 
+
 namespace GnollModLoader
 {
     public class GnollModLoader
@@ -23,6 +24,21 @@ namespace GnollModLoader
 
         public void LoadModsFrom(string dir)
         {
+            if (GnollMain.Debug)
+            {
+                // Attach debug events before anything else
+                this._hookManager.InGameHUDInit += DEBUG_HookManager_InGameHUDInit;
+                this._hookManager.UpdateInGame += DEBUG_HookManager_UpdateInGame;
+                this._hookManager.OnJobComplete += DEBUG_HookManager_OnJobComplete;
+                this._hookManager.InGameShowWindow += DEBUG_HookManager_InGameShowWindow;
+                this._hookManager.BeforeInGameHudInit += DEBUG_HookManager_BeforeInGameHudInit;
+                this._hookManager.BeforeEntitySpawn += DEBUG_HookManager_BeforeEntitySpawn;
+                this._hookManager.OnEntitySpawn += DEBUG_HookManager_OnEntitySpawn;
+                this._hookManager.MainMenuGuiInit += DEBUG_HookManager_MainMenuGuiInit;
+                this._hookManager.BeforeStartNewGame += DEBUG_HookManager_BeforeStartNewGame;
+                this._hookManager.BeforeStartNewGameAfterReadDefs += DEBUG_HookManager_BeforeStartNewGameAfterReadDefs;
+            }
+
             String mask = "*.dll";
             if (!Directory.Exists(dir))
             {
@@ -34,19 +50,6 @@ namespace GnollModLoader
                 LoadMod(filename);
             }
             this._hookManager.RegisterMods(this.Mods);
-
-            if (GnollMain._debug)
-            {
-                this._hookManager.InGameHUDInit += DEBUG_HookManager_InGameHUDInit;
-                this._hookManager.UpdateInGame += DEBUG_HookManager_UpdateInGame;
-                this._hookManager.OnJobComplete += DEBUG_HookManager_OnJobComplete;
-                this._hookManager.InGameShowWindow += DEBUG_HookManager_InGameShowWindow;
-                this._hookManager.BeforeEntitySpawn += DEBUG_HookManager_BeforeEntitySpawn;
-                this._hookManager.OnEntitySpawn += DEBUG_HookManager_OnEntitySpawn;
-                this._hookManager.MainMenuGuiInit += DEBUG_HookManager_MainMenuGuiInit;
-                this._hookManager.BeforeStartNewGame += DEBUG_HookManager_BeforeStartNewGame;
-                this._hookManager.BeforeStartNewGameAfterReadDefs += DEBUG_HookManager_BeforeStartNewGameAfterReadDefs;
-            }
         }
 
         public bool LoadMod(string path)
@@ -105,6 +108,10 @@ namespace GnollModLoader
         }
 
         private void DEBUG_HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
+        {
+        }
+
+        private void DEBUG_HookManager_BeforeInGameHudInit()
         {
         }
 

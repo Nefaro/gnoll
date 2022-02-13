@@ -57,6 +57,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.2.0\lib\net35\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="gnomorialib">
       <HintPath>..\..\sdk\gnomorialib.dll</HintPath>
     </Reference>
@@ -77,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalPatcher.cs" />
     <Compile Include="GUI\AboutMenuPanel.cs" />
     <Compile Include="GUI\AbstractTabbedWindowPanel.cs" />
     <Compile Include="GUI\ModLoaderMenu.cs" />
@@ -95,6 +99,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
