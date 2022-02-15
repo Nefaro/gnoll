@@ -2,6 +2,17 @@
 
 Fork and repackage of "gnomodkit" from: https://github.com/minexew/gnomodkit
 
+Gnoll is a package or packaging of a group of tools that allows building, loading and running .dll (C# source code level) mods in Gnomoria. Gnoll consist of 4 sets of components:
+- Patches
+- ModLoader
+- Mods themselves
+- Installer
+
+**Patches** are the code changes needed for everything Gnoll to work within Gnomoria. We use manual crafted IL (https://en.wikipedia.org/wiki/Common_Intermediate_Language) patches as well as [Harmony](https://github.com/pardeike/Harmony) for newer patches. 
+**ModLoader** is the component that is hooked into Gnomoria by the patches. It is responsible for being the "glue" between the game and the provided mods.
+**Mods** are the components loaded by ModLoader and add additional functionality or, on some cases, fix or work around bugs.
+**Installer** is the packaging that is released and is responsible for applying the patches, installing the modloader and the mods..
+
 ## Prerequisites for Manual Install:
 
   - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
