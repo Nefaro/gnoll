@@ -13,16 +13,17 @@ namespace GnollMods.HigherZoom
 
         public string Description { get { return "Provides 2 more levels for zooming out."; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.10"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.11"; } }
 
-        public int RequireMinPatchVersion { get { return 10; } }
+        public int RequireMinPatchVersion { get { return 11; } }
 
         public void OnLoad(HookManager hookManager)
         {
-            hookManager.BeforeInGameHudInit += HookManager_BeforeInGameHudInit;
+            hookManager.AfterGameLoaded += HookManager_AfterGameLoaded;
         }
-        private void HookManager_BeforeInGameHudInit()
+        private void HookManager_AfterGameLoaded()
         {
+            // Reset the camera 
             GnomanEmpire.Instance.Camera.float_1 = new float[]
             {
                 0.25f,

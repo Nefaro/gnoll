@@ -21,7 +21,7 @@ namespace InstallerGUI
         private List<InstallerCore.Action> _uninstallModLoaderDependencies = new List<InstallerCore.Action>();
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.10.0)";
+        private static readonly string _appName = $"Gnoll Installer (v1.11.0)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()

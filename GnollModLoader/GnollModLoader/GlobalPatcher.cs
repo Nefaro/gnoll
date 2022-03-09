@@ -22,6 +22,7 @@ namespace GnollModLoader
         {
             Logger.Log("-- Applying patches ...");
             this.ApplyPatch_GnomanEmpire_PlayGame();
+            this.ApplyPatch_GnomanEmpire_LoadGame();
             this.ApplyPatch_GameSettings_ApplyDisplayChanges();
             Logger.Log("-- Applying patches ... DONE");
         }
@@ -30,7 +31,14 @@ namespace GnollModLoader
         {
             var playGame = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.PlayGame));
             var prefixPatch = typeof(Patch_GnomanEmpire_PlayGame).GetMethod(nameof(Patch_GnomanEmpire_PlayGame.Prefix));
-            this.ApplyPatchImpl(playGame, prefixPatch:prefixPatch);
+            this.ApplyPatchImpl(playGame, prefixPatch: prefixPatch);
+        }
+
+        private void ApplyPatch_GnomanEmpire_LoadGame()
+        {
+            var loadGame = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.LoadGame));
+            var postfixPatch = typeof(Patch_GnomanEmpire_LoadGame).GetMethod(nameof(Patch_GnomanEmpire_LoadGame.Postfix));
+            this.ApplyPatchImpl(loadGame, postfixPatch: postfixPatch);
         }
 
         private void ApplyPatch_GameSettings_ApplyDisplayChanges()
@@ -76,6 +84,14 @@ namespace GnollModLoader
         public static void Prefix()
         {
             GnollMain.HookPostInit();
+        }
+    }
+
+    internal class Patch_GnomanEmpire_LoadGame
+    {
+        public static void Postfix()
+        {
+            HookManager.HookLoadSaveGame_after();
         }
     }
 

@@ -26,10 +26,12 @@ namespace GnollModLoader
         public delegate void BeforeEntitySpawnHandler(Game.GameEntity entity);
         // Called after main menu init, before "Exit" button is attached
         public delegate void MainMenuGuiInitHandler(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager);
-        // Calld after new game has configured but before any generation has happened
+        // Called after new game has configured but before any generation has happened
         public delegate void BeforeStartNewGameHandler(CreateWorldOptions worldOptions);
-        // Calld after new game has configured and after mod defs have been read in, but before any generation
+        // Called after new game has configured and after mod defs have been read in, but before any generation
         public delegate void BeforeStartNewGameAfterReadDefsHandler(CreateWorldOptions worldOptions);
+        // Called after a savegame has been loaded
+        public delegate void AfterGameLoadedHandler();
 
         private List<IGnollMod> _listOfMods;
 
@@ -151,11 +153,17 @@ namespace GnollModLoader
 
         public static void HookInGameHUDInit_before()
         {
-            Logger.Log("-- Hook Before Ingame HUD Init");
-
             if (instance.BeforeInGameHudInit != null)
             {
                 instance.BeforeInGameHudInit();
+            }
+        }
+
+        public static void HookLoadSaveGame_after()
+        {
+            if (instance.AfterGameLoaded != null)
+            {
+                instance.AfterGameLoaded();
             }
         }
 
@@ -170,6 +178,7 @@ namespace GnollModLoader
         public event MainMenuGuiInitHandler MainMenuGuiInit;
         public event BeforeStartNewGameHandler BeforeStartNewGame;
         public event BeforeStartNewGameAfterReadDefsHandler BeforeStartNewGameAfterReadDefs;
+        public event AfterGameLoadedHandler AfterGameLoaded;
 
         private static HookManager instance;
     }
