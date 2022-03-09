@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Game;
 using GnollModLoader.GUI;
 
@@ -32,6 +33,8 @@ namespace GnollModLoader
         public delegate void BeforeStartNewGameAfterReadDefsHandler(CreateWorldOptions worldOptions);
         // Called after a savegame has been loaded
         public delegate void AfterGameLoadedHandler();
+        // Called before a game is being saved
+        public delegate void BeforeGameSavedHandler();
 
         private List<IGnollMod> _listOfMods;
 
@@ -159,11 +162,19 @@ namespace GnollModLoader
             }
         }
 
-        public static void HookLoadSaveGame_after()
+        public static void HookLoadGame_after()
         {
             if (instance.AfterGameLoaded != null)
             {
                 instance.AfterGameLoaded();
+            }
+        }
+
+        internal static void HookSaveGame_before()
+        {
+            if (instance.BeforeGameSaved != null)
+            {
+                instance.BeforeGameSaved();
             }
         }
 
@@ -179,6 +190,7 @@ namespace GnollModLoader
         public event BeforeStartNewGameHandler BeforeStartNewGame;
         public event BeforeStartNewGameAfterReadDefsHandler BeforeStartNewGameAfterReadDefs;
         public event AfterGameLoadedHandler AfterGameLoaded;
+        public event BeforeGameSavedHandler BeforeGameSaved;
 
         private static HookManager instance;
     }
