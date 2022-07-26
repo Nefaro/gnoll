@@ -14,7 +14,7 @@ Gnoll is a package or packaging of a group of tools that allows building, loadin
 
 **Mods** are the components loaded by ModLoader and add additional functionality or, on some cases, fix or work around bugs.
 
-**Installer** is the packaging that is released and is responsible for applying the patches, installing the modloader and the mods..
+**Installer** is the packaging that is released and is responsible for applying the patches, installing the modloader and the mods.
 
 ## Prerequisites for Manual Install:
 
