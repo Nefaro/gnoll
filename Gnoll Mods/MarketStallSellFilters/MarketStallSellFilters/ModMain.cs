@@ -19,6 +19,12 @@ namespace GnollMods.MarketStallSellFilters
 
         private List<AvailableGood> goodsCache = new List<AvailableGood>();
 
+        private Label labelFilterValue;
+        private TextBox filterValue;
+        private Label labelFilterName;
+        private TextBox filterName;
+
+
         public void OnLoad(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
@@ -57,34 +63,36 @@ namespace GnollMods.MarketStallSellFilters
                                 break;
                             }
                         }
-                        Label labelFilterValue = new Label(window.Manager);
+                        System.Console.WriteLine($" Trade UI Width {stallTraderUI.tradePanelUI_2.Width}");
+
+                        labelFilterValue = new Label(window.Manager);
                         labelFilterValue.Init();
                         labelFilterValue.Top = stallTraderUI.tradePanelUI_2.Top + stallTraderUI.tradePanelUI_2.Height + stallTraderUI.tradePanelUI_2.Margins.Bottom + labelFilterValue.Margins.Top; ;
                         labelFilterValue.Left = stallTraderUI.tradePanelUI_2.Left;
-                        labelFilterValue.Width = 160;
+                        labelFilterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width/3);
                         labelFilterValue.Text = string.Format("Hide cheaper than:");
                         stallTraderUI.Add(labelFilterValue);
 
-                        TextBox filterValue = new TextBox(window.Manager);
+                        filterValue = new TextBox(window.Manager);
                         filterValue.Init();
                         filterValue.Top = labelFilterValue.Top;
                         filterValue.Left = labelFilterValue.Left + labelFilterValue.Width + filterValue.Margins.Horizontal;
-                        filterValue.Width = 50;
+                        filterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 10);
                         stallTraderUI.Add(filterValue);
 
-                        Label labelFilterName = new Label(window.Manager);
+                        labelFilterName = new Label(window.Manager);
                         labelFilterName.Init();
                         labelFilterName.Top = labelFilterValue.Top;
                         labelFilterName.Left = filterValue.Left + filterValue.Width + labelFilterName.Margins.Horizontal;
-                        labelFilterName.Width = 140;
-                        labelFilterName.Text = string.Format("Filter item name:");
+                        labelFilterName.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 4);
+                        labelFilterName.Text = string.Format("Filter by name:");
                         stallTraderUI.Add(labelFilterName);
 
-                        TextBox filterName = new TextBox(window.Manager);
+                        filterName = new TextBox(window.Manager);
                         filterName.Init();
                         filterName.Top = labelFilterValue.Top;
                         filterName.Left = labelFilterName.Left + labelFilterName.Width + filterName.Margins.Horizontal;
-                        filterName.Width = 100;
+                        filterName.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 5) - 10;
                         filterName.Text = "";
                         stallTraderUI.Add(filterName);
 
@@ -138,8 +146,39 @@ namespace GnollMods.MarketStallSellFilters
                             stallTraderUI.list_0 = filteredItems;
                             stallTraderUI.tradePanelUI_2.BuildItems(filteredItems, merchant.TradeGoods, false);
                         };
+
+                        marketStallUI.Resize += MarketStallUI_Resize;
+
                         break;
                     }
+                }
+            }
+        }
+
+        private void MarketStallUI_Resize(object sender, ResizeEventArgs e)
+        {
+            MarketStallUI marketStallUI = sender as MarketStallUI;
+            foreach (TabbedWindowPanel panel in ((TabbedWindow)marketStallUI).list_0)
+            {
+                MarketStallTradeUI stallTraderUI = panel as MarketStallTradeUI;
+                // check, that we are opening the trader ui and that we have trade items view (which means, trader is at post)
+                if (stallTraderUI != null && stallTraderUI.tradePanelUI_2 != null)
+                {
+                    labelFilterValue.Top = stallTraderUI.tradePanelUI_2.Top + stallTraderUI.tradePanelUI_2.Height + stallTraderUI.tradePanelUI_2.Margins.Bottom + labelFilterValue.Margins.Top; ;
+                    labelFilterValue.Left = stallTraderUI.tradePanelUI_2.Left;
+                    labelFilterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 3);
+
+                    filterValue.Top = labelFilterValue.Top;
+                    filterValue.Left = labelFilterValue.Left + labelFilterValue.Width + filterValue.Margins.Horizontal;
+                    filterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 10);
+
+                    labelFilterName.Top = labelFilterValue.Top;
+                    labelFilterName.Left = filterValue.Left + filterValue.Width + labelFilterName.Margins.Horizontal;
+                    labelFilterName.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 4);
+
+                    filterName.Top = labelFilterValue.Top;
+                    filterName.Left = labelFilterName.Left + labelFilterName.Width + filterName.Margins.Horizontal;
+                    filterName.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 5) - 10;
                 }
             }
         }
