@@ -46,7 +46,8 @@ namespace GnollMods.MarketStallSellFilters
                 foreach (TabbedWindowPanel panel in ((TabbedWindow)window).list_0)
                 {
                     MarketStallTradeUI stallTraderUI = panel as MarketStallTradeUI;
-                    if (stallTraderUI != null)
+                    // check, that we are opening the trader ui and that we have trade items view (which means, trader is at post)
+                    if (stallTraderUI != null && stallTraderUI.tradePanelUI_2 != null)
                     {
                         foreach (var control in stallTraderUI.clipBox_0.ControlsList)
                         {
