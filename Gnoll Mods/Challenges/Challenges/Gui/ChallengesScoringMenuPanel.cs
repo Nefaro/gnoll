@@ -75,6 +75,7 @@ namespace GnollMods.Challenges.Gui
 
             listBox.ItemIndexChanged += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
+                RemoveScoresFromPanel();
                 if (listBox.ItemIndex <= ModMain.Instance.ChallengeManager.Challenges.Count)
                 {
                     ChallengesPerChallengeScores challengeScores;
@@ -83,10 +84,6 @@ namespace GnollMods.Challenges.Gui
                     if (challengeScores != null)
                     {
                         ApplyScoresToPanel(challengeScores);
-                    }
-                    else
-                    {
-                        RemoveScoresFromPanel();
                     }
                 }
             };
