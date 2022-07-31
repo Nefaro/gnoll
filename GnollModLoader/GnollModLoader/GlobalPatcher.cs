@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game;
 using HarmonyLib;
 
@@ -21,10 +22,18 @@ namespace GnollModLoader
         public void PerformPatching()
         {
             Logger.Log("-- Applying patches ...");
-            this.ApplyPatch_GnomanEmpire_PlayGame();
-            this.ApplyPatch_GnomanEmpire_LoadGame();
-            this.ApplyPatch_GnomanEmpire_SaveGame();
-            this.ApplyPatch_GameSettings_ApplyDisplayChanges();
+
+            List<Action> patches = new List<Action> { 
+                ApplyPatch_GnomanEmpire_PlayGame,
+                ApplyPatch_GnomanEmpire_LoadGame,
+                ApplyPatch_GnomanEmpire_SaveGame,
+                ApplyPatch_GameSettings_ApplyDisplayChanges
+             };
+
+            foreach (Action d in patches)
+            {
+                d.Invoke();
+            }            
             Logger.Log("-- Applying patches ... DONE");
         }
 
@@ -44,17 +53,30 @@ namespace GnollModLoader
 
         private void ApplyPatch_GnomanEmpire_SaveGame()
         {
-            var saveGame = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.SaveGame));
+            // SaveGame is a threaded method, "method_5" is the real, single threaded, save game method
+            var saveGame = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.method_5));
             var prefixPatch = typeof(Patch_GnomanEmpire_SaveGame).GetMethod(nameof(Patch_GnomanEmpire_SaveGame.Prefix));
-            this.ApplyPatchImpl(saveGame, prefixPatch: prefixPatch);
+            var postfixPatch = typeof(Patch_GnomanEmpire_SaveGame).GetMethod(nameof(Patch_GnomanEmpire_SaveGame.Postfix));
+            this.ApplyPatchImpl(saveGame, prefixPatch: prefixPatch, postfixPatch: postfixPatch);
         }
 
         private void ApplyPatch_GameSettings_ApplyDisplayChanges()
         {
-            var playGame = typeof(GameSettings).GetMethod(nameof(GameSettings.ApplyDisplayChanges));
-            var prefixPatch = typeof(Patch_GameSettings_ApplyDisplayChanges).GetMethod(nameof(Patch_GnomanEmpire_PlayGame.Prefix));
-            this.ApplyPatchImpl(playGame, prefixPatch: prefixPatch);
+            var orig = typeof(GameSettings).GetMethod(nameof(GameSettings.ApplyDisplayChanges));
+            var prefixPatch = typeof(Patch_GameSettings_ApplyDisplayChanges).GetMethod(nameof(Patch_GameSettings_ApplyDisplayChanges.Prefix));
+            this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
         }
+
+        /* 
+        // Experimental
+        private void ApplyPatch_Faction_PlayerSpawnStrength()
+        {
+            var orig = typeof(Faction).GetMethod(nameof(Faction.PlayerSpawnStrength));
+            var prefixPatch = typeof(Patch_Faction_PlayerSpawnStrength).GetMethod(nameof(Patch_Faction_PlayerSpawnStrength.Prefix));
+            var postfixPatch = typeof(Patch_Faction_PlayerSpawnStrength).GetMethod(nameof(Patch_Faction_PlayerSpawnStrength.Postfix));
+            this.ApplyPatchImpl(orig, prefixPatch: prefixPatch, postfixPatch: postfixPatch);
+        }
+        */
 
         private void ApplyPatchImpl(System.Reflection.MethodInfo original, System.Reflection.MethodInfo prefixPatch = null, System.Reflection.MethodInfo postfixPatch = null)
         {
@@ -70,6 +92,7 @@ namespace GnollModLoader
                     Logger.Error($"-- Failed to apply patch '{patchName}': Cannot find original method");
                 }
                 harmony.Patch(original, (prefixPatch != null ? new HarmonyMethod(prefixPatch) : null), (postfixPatch != null ? new HarmonyMethod(postfixPatch) : null));
+                Logger.Log($"-- Patched {original.FullDescription()}");
             }
             catch (Exception e)
             {
@@ -109,5 +132,31 @@ namespace GnollModLoader
         {
             HookManager.HookSaveGame_before();
         }
+
+        public static void Postfix()
+        {
+            HookManager.HookSaveGame_after();
+        }
     }
+
+    // Experimental population amount override
+    // Leaving in for future work ...
+    /*
+    internal class Patch_Faction_PlayerSpawnStrength
+    {
+        public static void Prefix()
+        {
+            
+        }
+
+        public static void Postfix(ref float __result, bool modified, bool applyVariance)
+        {
+            if (modified)
+            {
+                Logger.Log($"-- Original strength {__result}");
+                __result = __result + 57;
+                Logger.Log($"-- Calculated strength {__result}");
+            }
+        }
+    }*/
 }

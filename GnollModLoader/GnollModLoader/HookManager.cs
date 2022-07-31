@@ -35,6 +35,8 @@ namespace GnollModLoader
         public delegate void AfterGameLoadedHandler();
         // Called before a game is being saved
         public delegate void BeforeGameSavedHandler();
+        // Called after a game is being saved
+        public delegate void AfterGameSavedHandler();
 
         private List<IGnollMod> _listOfMods;
 
@@ -169,7 +171,6 @@ namespace GnollModLoader
                 instance.AfterGameLoaded();
             }
         }
-
         internal static void HookSaveGame_before()
         {
             if (instance.BeforeGameSaved != null)
@@ -177,6 +178,14 @@ namespace GnollModLoader
                 instance.BeforeGameSaved();
             }
         }
+        internal static void HookSaveGame_after()
+        {
+            if (instance.AfterGameSaved != null)
+            {
+                instance.AfterGameSaved();
+            }
+        }
+
 
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;
@@ -191,6 +200,7 @@ namespace GnollModLoader
         public event BeforeStartNewGameAfterReadDefsHandler BeforeStartNewGameAfterReadDefs;
         public event AfterGameLoadedHandler AfterGameLoaded;
         public event BeforeGameSavedHandler BeforeGameSaved;
+        public event AfterGameSavedHandler AfterGameSaved;
 
         private static HookManager instance;
     }

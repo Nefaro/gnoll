@@ -63,7 +63,6 @@ namespace GnollMods.MarketStallSellFilters
                                 break;
                             }
                         }
-                        System.Console.WriteLine($" Trade UI Width {stallTraderUI.tradePanelUI_2.Width}");
 
                         labelFilterValue = new Label(window.Manager);
                         labelFilterValue.Init();

@@ -13,7 +13,7 @@ namespace GnollModLoader
         private const string MAJOR_VERSION = "G1";
 
         // for easier validation
-        public const uint PATCH_VERSION = 11;
+        public const uint PATCH_VERSION = 12;
 
         public const string NAME = "Gnoll Mod Loader";
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
