@@ -1,0 +1,3 @@
+This mod trys to fix a crash that happens when you alt-tab out of fullscreen. If you are using borderless or windowed view, then you can disable this mod.
+The issue is, that during an alt-tab the rendering of 2 frames get ... merged. That's basically a race condition in a single threaded environment ... which is weird.
+The fix is, that we are checking if a render method is ongoing and if it is, we will skip a frame. This avoids the alt-tab frame merge.

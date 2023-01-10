@@ -18,3 +18,4 @@ Currently those mods are:
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
 - VeinMiner - Enhances mining in a way that gnomes digg out the mineral/gem veins by themselves
 - HigherZoom - Allows 2 more levels of zooming out
+- FixFullscreenAltTab - Trying to fix the crash that happens when alt-tabbing out of fullscreen
