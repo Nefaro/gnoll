@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit vG1.12 -- https://github.com/Nefaro/gnoll')
+print('gnomodkit vG1.13 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse
@@ -473,6 +473,7 @@ class TaskMakeAllFieldsPublic(Task):
                 line = line.replace('.field private', '.field public')
                 line = line.replace('.field family', '.field public')
                 line = line.replace('.method private', '.method public')
+                line = line.replace('.method family', '.method public')
                 print(line, end='', file=output)
 
 class TaskMakeMod(Task):

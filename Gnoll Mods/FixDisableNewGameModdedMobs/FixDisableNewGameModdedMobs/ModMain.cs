@@ -11,10 +11,25 @@ namespace GnollMods.FixDisableNewGameModdedMobs
     {
         public string Name { get { return "FixDisableNewGameModdedMobs"; } }
         public string Description { get { return "Fixes disabling modded enemies on new game start"; } }
-        public string BuiltWithLoaderVersion { get { return "G1.8"; } }
-        public int RequireMinPatchVersion { get { return 8; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
-        public void OnLoad(HookManager hookManager)
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.BeforeStartNewGameAfterReadDefs -= HookManager_BeforeStartNewGame;
+        }
+
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.BeforeStartNewGameAfterReadDefs += HookManager_BeforeStartNewGame;
         }

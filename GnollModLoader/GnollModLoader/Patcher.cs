@@ -1,40 +1,64 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Game;
+using Game.Common;
+using Game.GUI;
+using Game.GUI.Controls;
+using GameLibrary;
 using HarmonyLib;
+using LibNoise.Xna.Operator;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using SevenZip;
+using static HarmonyLib.Code;
 
 namespace GnollModLoader
 {
     /**
-     * This patcher is global to the whole game.
+     * This patcher runs Harmony patches.
      * It will be executed as soon as possible.
      */
-    public class GlobalPatcher
+    public class Patcher
     {
+        public static readonly Boolean SKIP_CHAIN = false;
+        public static readonly Boolean CONTINUE_CHAIN = true;
+
         private readonly Harmony harmony = new Harmony("com.github.nefaro.gnoll");
         private readonly HookManager hookManager;
 
-        public GlobalPatcher(HookManager hookManager)
+        public Patcher(HookManager hookManager)
         {
             this.hookManager = hookManager;
         }
 
         public void PerformPatching()
         {
-            Logger.Log("-- Applying patches ...");
+            Logger.Log("Applying patches ...");
 
-            List<Action> patches = new List<Action> { 
+            List<Action> patches = new List<Action> {
+                // Experimental
+                //ApplyPatch_Faction_PlayerSpawnStrength,
+
+                // Debug
+
+                // Real patches
                 ApplyPatch_GnomanEmpire_PlayGame,
                 ApplyPatch_GnomanEmpire_LoadGame,
                 ApplyPatch_GnomanEmpire_SaveGame,
-                ApplyPatch_GameSettings_ApplyDisplayChanges
-             };
+                ApplyPatch_GameSettings_ApplyDisplayChanges,
+                ApplyPatch_MainMenuWindow
+            };
 
             foreach (Action d in patches)
             {
                 d.Invoke();
-            }            
-            Logger.Log("-- Applying patches ... DONE");
+            }
+            Logger.Log("Applying patches ... DONE");
         }
 
         private void ApplyPatch_GnomanEmpire_PlayGame()
@@ -53,7 +77,7 @@ namespace GnollModLoader
 
         private void ApplyPatch_GnomanEmpire_SaveGame()
         {
-            // SaveGame is a threaded method, "method_5" is the real, single threaded, save game method
+            // SaveGame is a threaded method, "method_5" is the real, single threaded save game method
             var saveGame = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.method_5));
             var prefixPatch = typeof(Patch_GnomanEmpire_SaveGame).GetMethod(nameof(Patch_GnomanEmpire_SaveGame.Prefix));
             var postfixPatch = typeof(Patch_GnomanEmpire_SaveGame).GetMethod(nameof(Patch_GnomanEmpire_SaveGame.Postfix));
@@ -67,8 +91,23 @@ namespace GnollModLoader
             this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
         }
 
-        /* 
+        private void ApplyPatch_MainMenuWindow()
+        {
+            var orig = typeof(MainMenuWindow).GetConstructor(new Type[] { typeof(Manager) });
+            var postfixPatch = typeof(Patch_MainMenuWindow).GetMethod(nameof(Patch_MainMenuWindow.Ctor_Postfix));
+            this.ApplyPatchImpl(orig, postfixPatch: postfixPatch);
+        }
+
+        /*
+        private void ApplyPatch_Button()
+        {
+            var orig = typeof(Button).GetConstructor(new Type[] {typeof(Manager)});
+            var postfixPatch = typeof(Patch_Button).GetMethod(nameof(Patch_Button.Postfix_ctor));
+            this.ApplyPatchImpl(orig, postfixPatch: postfixPatch);
+        }*/
+
         // Experimental
+        /*
         private void ApplyPatch_Faction_PlayerSpawnStrength()
         {
             var orig = typeof(Faction).GetMethod(nameof(Faction.PlayerSpawnStrength));
@@ -78,25 +117,47 @@ namespace GnollModLoader
         }
         */
 
-        private void ApplyPatchImpl(System.Reflection.MethodInfo original, System.Reflection.MethodInfo prefixPatch = null, System.Reflection.MethodInfo postfixPatch = null)
+
+        // Debugging
+
+        public void ApplyDirectPatch(System.Reflection.MethodBase original,
+            System.Reflection.MethodInfo prefixPatch = null,
+            System.Reflection.MethodInfo postfixPatch = null,
+            System.Reflection.MethodInfo finalizer = null)
         {
-            if ( prefixPatch == null && postfixPatch == null )
+            // Currently exactly the same signature
+            // Need to think if it needs a bit more validation
+            this.ApplyPatchImpl(original, prefixPatch, postfixPatch, finalizer);
+        }
+
+        private void ApplyPatchImpl(System.Reflection.MethodBase original, 
+            System.Reflection.MethodInfo prefixPatch = null, 
+            System.Reflection.MethodInfo postfixPatch = null,
+            System.Reflection.MethodInfo finalizer = null)
+        {
+            if (prefixPatch == null && postfixPatch == null && finalizer == null)
             {
-                Logger.Error($"-- Failed to apply patch: Prefix and Postfix patch are 'null'");
+                Logger.Error($"!! Failed to apply patch: Prefix and Postfix patch are 'null'");
             }
-            var patchName = (prefixPatch ?? postfixPatch).DeclaringType.Name;
+            var patchName = (prefixPatch ?? postfixPatch ?? finalizer).DeclaringType.Name;
             try
             {
                 if (original == null)
                 {
-                    Logger.Error($"-- Failed to apply patch '{patchName}': Cannot find original method");
+                    Logger.Error($"!! Failed to apply patch '{patchName}': Cannot find original method");
                 }
-                harmony.Patch(original, (prefixPatch != null ? new HarmonyMethod(prefixPatch) : null), (postfixPatch != null ? new HarmonyMethod(postfixPatch) : null));
+                harmony.Patch(original, 
+                    (prefixPatch != null ? new HarmonyMethod(prefixPatch) : null), 
+                    (postfixPatch != null ? new HarmonyMethod(postfixPatch) : null),
+                    null,
+                    (finalizer != null ?  new HarmonyMethod(finalizer) : null)
+                    );
+
                 Logger.Log($"-- Patched {original.FullDescription()}");
             }
             catch (Exception e)
             {
-                Logger.Error($"-- Failed to apply patch '{patchName}': {e}");
+                Logger.Error($"!! Failed to apply patch '{patchName}': {e}");
             }
         }
     }
@@ -139,14 +200,21 @@ namespace GnollModLoader
         }
     }
 
+    internal class Patch_MainMenuWindow
+    {
+        public static void Ctor_Postfix(ref MainMenuWindow __instance)
+        {
+            GnollMain.HookGnollMainMenu_after(__instance);
+        }
+    }
+
     // Experimental population amount override
     // Leaving in for future work ...
-    /*
     internal class Patch_Faction_PlayerSpawnStrength
     {
         public static void Prefix()
         {
-            
+
         }
 
         public static void Postfix(ref float __result, bool modified, bool applyVariance)
@@ -154,9 +222,9 @@ namespace GnollModLoader
             if (modified)
             {
                 Logger.Log($"-- Original strength {__result}");
-                __result = __result + 57;
+                __result = 81;
                 Logger.Log($"-- Calculated strength {__result}");
             }
         }
-    }*/
+    }
 }

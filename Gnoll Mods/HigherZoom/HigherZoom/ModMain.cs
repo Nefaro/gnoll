@@ -13,19 +13,37 @@ namespace GnollMods.HigherZoom
 
         public string Description { get { return "Provides 3 more levels for zooming out."; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.12"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 12; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private int _tempCameraSelection;
         private float _tempCameraZoom;
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.AfterGameLoaded += HookManager_AfterGameLoaded;
             hookManager.BeforeInGameHudInit += HookManager_BeforeInGameHudInit;
             hookManager.BeforeGameSaved += HookManager_BeforeGameSaved;
             hookManager.AfterGameSaved += HookManager_AfterGameSaved;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.AfterGameLoaded -= HookManager_AfterGameLoaded;
+            hookManager.BeforeInGameHudInit -= HookManager_BeforeInGameHudInit;
+            hookManager.BeforeGameSaved -= HookManager_BeforeGameSaved;
+            hookManager.AfterGameSaved -= HookManager_AfterGameSaved;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_BeforeGameSaved()
@@ -75,5 +93,7 @@ namespace GnollMods.HigherZoom
             };
             GnomanEmpire.Instance.Camera.int_0 = 4;
         }
+
+
     }
 }

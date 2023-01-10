@@ -36,7 +36,7 @@ namespace GnollMods.Challenges.Challenge
 
         public override string ChallengeObjective()
         {
-            return "Collect and store fruit";
+            return "Collect and store mushrooms";
         }
 
         public override string ChallengeTimeframe()

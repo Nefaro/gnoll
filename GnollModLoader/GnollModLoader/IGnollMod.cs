@@ -10,7 +10,18 @@ namespace GnollModLoader
     // detecting Gnoll Mods
     public interface IGnollMod
     {
-        void OnLoad(HookManager hookManager);
+        // Called when the mod is enabled
+        void OnEnable(HookManager hookManager);
+
+        // Called when the mod is disabled
+        void OnDisable(HookManager hookManager);
+
+        // If the mod should be enabled by default
+        bool IsDefaultEnabled();
+
+        // If the mod requires the game to restart 
+        // when toggling enable/disable
+        bool NeedsRestartOnToggle();
 
         // Name of the mod, 1-liner, visible from the ui
         string Name { get; }

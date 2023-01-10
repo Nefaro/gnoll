@@ -12,16 +12,31 @@ namespace GnollMods.VeinMiner
         public static ModMain instance;
         public string Name { get { return  "VeinMiner"; } }
         public string Description { get { return  "Allows the miner to mine out a discovered vein of ore or gems."; } }
-        public string BuiltWithLoaderVersion { get { return  "G1.2"; } }
-        public int RequireMinPatchVersion { get { return 2; } }
+        public string BuiltWithLoaderVersion { get { return  "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
         public ModMain()
         {
             instance = this;
         }
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.OnJobComplete += HookManager_OnJobComplete;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.OnJobComplete -= HookManager_OnJobComplete;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_OnJobComplete(Game.Job job, Game.Character character)

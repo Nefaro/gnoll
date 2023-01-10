@@ -97,11 +97,26 @@ namespace GnollMods.FasterEntityProcessing
         public string Name { get { return "FasterEntityProcessing"; } }
         public string Description { get { return "Replaces some of the internal structures for the game update to run faster"; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.4"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 4; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
-        public void OnLoad(HookManager hookManager)
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHUDInit;
+        }
+
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
         }

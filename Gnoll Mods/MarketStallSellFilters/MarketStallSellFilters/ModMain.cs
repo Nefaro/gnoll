@@ -14,8 +14,8 @@ namespace GnollMods.MarketStallSellFilters
     {
         public string Name { get { return "MarketStallSellFilters"; } }
         public string Description { get { return "Market stall gets value and name filters for player items"; } }
-        public string BuiltWithLoaderVersion { get { return "G1.7"; } }
-        public int RequireMinPatchVersion { get { return 7; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private List<AvailableGood> goodsCache = new List<AvailableGood>();
 
@@ -24,12 +24,28 @@ namespace GnollMods.MarketStallSellFilters
         private Label labelFilterName;
         private TextBox filterName;
 
-
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
             hookManager.InGameShowWindow += HookManager_InGameShowWindow;
             hookManager.BeforeEntitySpawn += HookManager_BeforeEntitySpawn;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHUDInit;
+            hookManager.InGameShowWindow -= HookManager_InGameShowWindow;
+            hookManager.BeforeEntitySpawn -= HookManager_BeforeEntitySpawn;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_BeforeEntitySpawn(Game.GameEntity entity)

@@ -13,8 +13,8 @@ namespace GnollMods.FixStuckWheelbarrow
     {
         public string Name { get { return "FixStuckWheelbarrow"; } }
         public string Description { get { return "Fixes a hauler being stuck on place with a full wheelbarrow"; } }
-        public string BuiltWithLoaderVersion { get { return "G1.5"; } }
-        public int RequireMinPatchVersion { get { return 5; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         // Behavior "path" to where we need to end up
         private IEnumerable<Type> GetTargetTypesForPlayerCharacter()
@@ -26,12 +26,6 @@ namespace GnollMods.FixStuckWheelbarrow
             yield return typeof(GatherComponentsWithWheelBarrow);
             yield return typeof(GatherAllThenDropOffWB);
             yield return typeof(GetNextComponentWB);
-        }
-
-        public void OnLoad(HookManager hookManager)
-        {
-            hookManager.InGameHUDInit += HookManager_InGameHUDInit;
-            hookManager.OnEntitySpawn += HookManager_OnEntitySpawn;
         }
 
         private void HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
@@ -92,6 +86,28 @@ namespace GnollMods.FixStuckWheelbarrow
                 return TaskResult.Success;
             }
             return TaskResult.Failure;
+        }
+
+        public void OnEnable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit += HookManager_InGameHUDInit;
+            hookManager.OnEntitySpawn += HookManager_OnEntitySpawn;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHUDInit;
+            hookManager.OnEntitySpawn -= HookManager_OnEntitySpawn;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
     }
 }

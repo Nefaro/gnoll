@@ -13,8 +13,8 @@ namespace GnollMods.GoblinRaidsFpsBoost
     {
         public string Name { get { return "GoblinRaidsFpsBoost"; } }
         public string Description { get { return "Causes the Goblins to think less during the raids, boosting the FPS."; } }
-        public string BuiltWithLoaderVersion { get { return "G1.5"; } }
-        public int RequireMinPatchVersion { get { return 5; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private const float TOLERANCE = 0.002f;
         private readonly Random random = new Random();
@@ -27,10 +27,27 @@ namespace GnollMods.GoblinRaidsFpsBoost
             yield return typeof(FindAccessibleGoods);
             yield return typeof(FindValuable);
         }
-        public void OnLoad(HookManager hookManager)
+
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHudInit;
             hookManager.OnEntitySpawn += HookManager_OnEntitySpawn;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHudInit;
+            hookManager.OnEntitySpawn -= HookManager_OnEntitySpawn;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_InGameHudInit(InGameHUD inGameHUD, Manager manager)

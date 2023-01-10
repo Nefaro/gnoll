@@ -22,7 +22,7 @@ namespace GnollMods.Challenges.Gui
         private ScoreTablePanel _large;
         private ScoreTablePanel _huge;
 
-        public ChallengesScoringMenuPanel(HookManager hookManager, Manager manager, Dictionary<String, ChallengesPerChallengeScores> scores) : base(manager)
+        public ChallengesScoringMenuPanel(Manager manager, Dictionary<String, ChallengesPerChallengeScores> scores) : base(manager)
         {
             this.Width = 630;
             this.Height = 320;

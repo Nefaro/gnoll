@@ -13,11 +13,15 @@ namespace GnollModLoader.GUI
     // Gnoll Mods menu at the main menu
     public class ModLoaderMenu : Panel
     {
+        private readonly ModManager _modManager;
+
         private TabControl _tabControl;
         private List<TabbedWindowPanel> _tabbedWindowList;
 
-        public ModLoaderMenu(Manager manager, List<IGnollMod> listOfMods) : base(manager)
+        public ModLoaderMenu(Manager manager, ModManager modManager) : base(manager)
         {
+            this._modManager = modManager;
+
             this.Init();
             this.Width = this.Manager.ScreenWidth;
             this.Height = this.Manager.ScreenHeight;
@@ -34,8 +38,8 @@ namespace GnollModLoader.GUI
             this.CenterTabControl();
             GnomanEmpire.Instance.Graphics.DeviceReset += new System.EventHandler<System.EventArgs>(this.OnDeviceReset);
 
+            this.AddTabPanel("Mods", new ModsMenuPanel(this.Manager, this._modManager));
             this.AddTabPanel("About", new AboutMenuPanel(this.Manager));
-            this.AddTabPanel("Mods", new ModsMenuPanel(this.Manager, listOfMods));
         }
 
         private void OnPanelChanged(object sender, Game.GUI.Controls.EventArgs e)
@@ -81,11 +85,12 @@ namespace GnollModLoader.GUI
             panel.Height = this._tabControl.ClientHeight - panel.Margins.Vertical;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
             if (!disposing)
                 return;
+
             GnomanEmpire.Instance.Graphics.DeviceReset -= new System.EventHandler<System.EventArgs>(this.OnDeviceReset);
             this._tabControl = null;
             this._tabbedWindowList.Clear();

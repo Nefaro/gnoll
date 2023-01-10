@@ -20,7 +20,7 @@ namespace GnollMods.Challenges.Gui
         private TabControl _tabControl;
         private List<TabbedWindowPanel> _tabbedWindowList;
 
-        public ChallengesMenu(HookManager hookManager, Manager manager, ChallengesScores scores) : base(manager)
+        public ChallengesMenu(Manager manager, ChallengesScores scores) : base(manager)
         {
             this.Init();
             this.Width = this.Manager.ScreenWidth;
@@ -39,9 +39,9 @@ namespace GnollMods.Challenges.Gui
             this.CenterTabControl();
             GnomanEmpire.Instance.Graphics.DeviceReset += new System.EventHandler<System.EventArgs>(this.OnDeviceReset);
 
-            this.AddTabPanel("Challenges", new ChallengesSelectMenuPanel(hookManager, manager));
-            this.AddTabPanel("Scoring (no mods)", new ChallengesScoringMenuPanel(hookManager, manager, scores.VanillaScores));
-            this.AddTabPanel("Scoring (with mods)", new ChallengesScoringMenuPanel(hookManager, manager, scores.ModdedScores));
+            this.AddTabPanel("Challenges", new ChallengesSelectMenuPanel(manager));
+            this.AddTabPanel("Scoring (no mods)", new ChallengesScoringMenuPanel(manager, scores.VanillaScores));
+            this.AddTabPanel("Scoring (with mods)", new ChallengesScoringMenuPanel(manager, scores.ModdedScores));
         }
 
         private void OnDeviceReset(object sender, System.EventArgs e)
@@ -91,7 +91,5 @@ namespace GnollMods.Challenges.Gui
             panel.Anchor = Anchors.All;
             panel.Height = this._tabControl.ClientHeight - panel.Margins.Vertical;
         }
-
-
     }
 }

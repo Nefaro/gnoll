@@ -20,22 +20,36 @@ namespace GnollMods.IdleTrackerMod
 
         public string Description { get { return "Tracks idling workers and makes them visible"; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 1; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         public ModMain()
         {
             instance = this;
         }
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
             hookManager.UpdateInGame += HookManager_UpdateInGame;
         }
 
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHUDInit;
+            hookManager.UpdateInGame -= HookManager_UpdateInGame;
+        }
 
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
+        }
 
         private void HookManager_UpdateInGame(float realTimeDelta, float gameTimeDelta)
         {
@@ -96,7 +110,6 @@ namespace GnollMods.IdleTrackerMod
 
             _idleTrackerPanel.Visible = true;
         }
-
 
     }
 }

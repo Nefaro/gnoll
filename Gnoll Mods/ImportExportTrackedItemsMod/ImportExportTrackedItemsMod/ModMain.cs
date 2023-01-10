@@ -19,12 +19,28 @@ namespace GnollMods.ImportExportTrackedItemsMod
 
         public string Description { get { return "Imports and Exports tracked items"; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 1; } }
-        public void OnLoad(HookManager hookManager)
+        public int RequireMinPatchVersion { get { return 13; } }
+
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.ExportMenuListInit += HookManager_ExportMenuListInit;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.ExportMenuListInit -= HookManager_ExportMenuListInit;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_ExportMenuListInit(Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager, HookManager.AddButton addButton)

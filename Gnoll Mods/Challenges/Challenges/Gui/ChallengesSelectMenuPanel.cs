@@ -13,7 +13,7 @@ namespace GnollMods.Challenges.Gui
 {
     class ChallengesSelectMenuPanel : AbstractTabbedWindowPanel
     {
-        public ChallengesSelectMenuPanel(HookManager hookManager, Manager manager) : base(manager)
+        public ChallengesSelectMenuPanel(Manager manager) : base(manager)
         {
             this.Width = 630;
             this.Height = 320;

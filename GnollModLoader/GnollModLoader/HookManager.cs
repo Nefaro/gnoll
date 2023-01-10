@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game;
+using Game.GUI;
 using GnollModLoader.GUI;
 
 namespace GnollModLoader
@@ -38,16 +39,9 @@ namespace GnollModLoader
         // Called after a game is being saved
         public delegate void AfterGameSavedHandler();
 
-        private List<IGnollMod> _listOfMods;
-
-        public HookManager()
+        public HookManager( )
         {
             instance = this;
-        }
-
-        public void RegisterMods(List<IGnollMod> listOfMods)
-        {
-            this._listOfMods = listOfMods;
         }
 
         public static int HookImportExportListInit(int Y, Game.GUI.ImportExportMenu importExportMenu, Game.GUI.Controls.Manager manager)
@@ -95,13 +89,6 @@ namespace GnollModLoader
         public static void HookMainMenuGuiInit(Game.GUI.MainMenuWindow window, Game.GUI.Controls.Manager manager)
         {
             Logger.Log("-- Hook Main Menu Init");
-
-            Game.GUI.Controls.Button modButton = window.method_39(manager, GnollMain.NAME);
-            modButton.Click += (object sender, Game.GUI.Controls.EventArgs e) =>
-            {
-                Game.GnomanEmpire.Instance.GuiManager.MenuStack.PushWindow(new ModLoaderMenu(Game.GnomanEmpire.Instance.GuiManager.Manager, instance._listOfMods));
-            };
-            window.panel_0.Add(modButton);
             if (instance.MainMenuGuiInit != null)
             {
                 instance.MainMenuGuiInit(window, manager);
@@ -185,7 +172,6 @@ namespace GnollModLoader
                 instance.AfterGameSaved();
             }
         }
-
 
         public event ExportMenuListInitHandler ExportMenuListInit;
         public event InGameHUDInitHandler InGameHUDInit;

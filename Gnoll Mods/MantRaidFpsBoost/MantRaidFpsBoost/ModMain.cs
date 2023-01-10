@@ -13,8 +13,8 @@ namespace GnollMods.MantRaidFpsBoost
     {
         public string Name { get { return "MantRaidFpsBoost"; } }
         public string Description { get { return "Causes the Mants to think less during the raids, boosting the FPS."; } }
-        public string BuiltWithLoaderVersion { get { return "G1.6"; } }
-        public int RequireMinPatchVersion { get { return 6; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private const float TOLERANCE = 0.002f;
         private readonly Random random = new Random();
@@ -26,10 +26,27 @@ namespace GnollMods.MantRaidFpsBoost
             yield return typeof(StealFood);
             yield return typeof(FindFoodOrDrink);
         }
-        public void OnLoad(HookManager hookManager)
+        
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHudInit;
             hookManager.OnEntitySpawn += HookManager_OnEntitySpawn;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHudInit;
+            hookManager.OnEntitySpawn -= HookManager_OnEntitySpawn;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_InGameHudInit(InGameHUD inGameHUD, Manager manager)
@@ -125,5 +142,6 @@ namespace GnollMods.MantRaidFpsBoost
         {
             return (float)(random.NextDouble() * 0.5); 
         }
+
     }
 }

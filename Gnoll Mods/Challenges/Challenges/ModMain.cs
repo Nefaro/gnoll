@@ -11,10 +11,8 @@ namespace GnollMods.Challenges
         public static ModMain Instance { get { return _instance; } }
         public string Name { get { return "Challenges"; } }
         public string Description { get { return "Introduces 'Challenges' game mode: a game with objectives."; } }
-        public string BuiltWithLoaderVersion { get { return "G1.8"; } }
-        public int RequireMinPatchVersion { get { return 8; } }
-
-        private HookManager _hookManager;
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private ChallengesManager _challengesManager;
         public ChallengesManager ChallengeManager {  get { return _challengesManager; } }
@@ -25,12 +23,18 @@ namespace GnollMods.Challenges
             _challengesManager = new ChallengesManager();
         }
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.MainMenuGuiInit += HookManager_MainMenuGuiInit;
             hookManager.InGameHUDInit += _challengesManager.HookManager_InGameHUDInit;
             hookManager.BeforeStartNewGameAfterReadDefs += _challengesManager.HookManager_BeforeStartNewGameAfterReadDefs;
-            this._hookManager = hookManager;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.MainMenuGuiInit -= HookManager_MainMenuGuiInit;
+            hookManager.InGameHUDInit -= _challengesManager.HookManager_InGameHUDInit;
+            hookManager.BeforeStartNewGameAfterReadDefs -= _challengesManager.HookManager_BeforeStartNewGameAfterReadDefs;
         }
 
         private void HookManager_MainMenuGuiInit(MainMenuWindow window, Manager manager)
@@ -40,9 +44,19 @@ namespace GnollMods.Challenges
             {
                 _challengesManager.Reset();
                 var scores = _challengesManager.LoadAllScores();
-                Game.GnomanEmpire.Instance.GuiManager.MenuStack.PushWindow(new ChallengesMenu(_hookManager, Game.GnomanEmpire.Instance.GuiManager.Manager, scores));
+                Game.GnomanEmpire.Instance.GuiManager.MenuStack.PushWindow(new ChallengesMenu(Game.GnomanEmpire.Instance.GuiManager.Manager, scores));
             };
             window.panel_0.Add(modButton);
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return true;
         }
     }
 }

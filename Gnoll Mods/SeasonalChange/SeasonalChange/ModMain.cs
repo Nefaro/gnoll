@@ -20,13 +20,28 @@ namespace GnollMods.SeasonalChange
         public string Name { get { return "SeasonalChange"; } }
         public string Description { get { return "Changes the textures depending on the current season"; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 1; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHudInit;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHudInit;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_InGameHudInit(InGameHUD inGameHUD, Manager manager)
@@ -109,5 +124,6 @@ namespace GnollMods.SeasonalChange
             Game.GnomanEmpire.Instance.gameDefs_0.PackTextures();
             Game.GnomanEmpire.Instance.world_0.Region.Map.TileSet.mTexture = Game.GnomanEmpire.Instance.gameDefs_0.Tilesheet;
         }
+
     }
 }

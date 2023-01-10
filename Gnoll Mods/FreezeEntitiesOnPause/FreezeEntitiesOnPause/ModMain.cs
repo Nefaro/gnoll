@@ -11,13 +11,29 @@ namespace GnollMods.FreezeEntitiesOnPause
     {
         public string Name { get { return "FreezeEntitiesOnPause"; } }
         public string Description { get { return "Causes everyone to stop thinking when the game is paused"; } }
-        public string BuiltWithLoaderVersion { get { return "G1.5"; } }
-        public int RequireMinPatchVersion { get { return 5; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
-        public void OnLoad(HookManager hookManager)
+        public void OnEnable(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHudInit;
             hookManager.OnEntitySpawn += HookManager_OnEntitySpawn;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHudInit;
+            hookManager.OnEntitySpawn -= HookManager_OnEntitySpawn;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_InGameHudInit(InGameHUD inGameHUD, Manager manager)
@@ -52,5 +68,7 @@ namespace GnollMods.FreezeEntitiesOnPause
             }
             return TaskResult.Failure;
         }
+
+
     }
 }

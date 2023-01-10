@@ -15,13 +15,8 @@ namespace GnollMods.BuildListCache
 
         public string Name { get { return "BuildListCache"; } }
         public string Description { get { return "This mod caches and displays the last used items in the construction window"; } }
-        public string BuiltWithLoaderVersion { get { return "G1.5"; } }
-        public int RequireMinPatchVersion { get { return 5; } }
-
-        public void OnLoad(HookManager hookManager)
-        {
-            hookManager.InGameShowWindow += HookManager_InGameShowWindow;
-        }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private void HookManager_InGameShowWindow(Window window)
         {
@@ -122,6 +117,25 @@ namespace GnollMods.BuildListCache
             return queue;
         }
 
+        public void OnEnable(HookManager hookManager)
+        {
+            hookManager.InGameShowWindow += HookManager_InGameShowWindow;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameShowWindow -= HookManager_InGameShowWindow;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
+        }
     }
 
     class CacheItem

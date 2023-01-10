@@ -14,16 +14,16 @@ namespace GnollModLoader
 
         public static void Log(string message, params object[] args)
         {
-            System.Console.WriteLine(PREFIX + message, args);
+            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + message, args);
         }
         public static void Log(string message, object arg)
         {
-            System.Console.WriteLine(PREFIX + message, arg);
+            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + message, arg);
         }
 
         public static void Error(string message, params object[] args)
         {
-            System.Console.WriteLine(PREFIX + ERROR + message, args);
+            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + ERROR + message, args);
         }
 
     }

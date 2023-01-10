@@ -9,3 +9,7 @@
 ignore/
 **/packages/
 **/publish/
+GnollModLoader/local/
+Installer/InstallerGUI/cert.pfx
+.config.gog.json
+.config.steam.json

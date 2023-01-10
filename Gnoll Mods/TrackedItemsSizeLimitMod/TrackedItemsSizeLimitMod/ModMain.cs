@@ -12,24 +12,41 @@ namespace GnollMods.TrackedItemsSizeLimitMod
 {
     class ModMain : IGnollMod
     {
-        public static ModMain instance;
-
         public string Name { get { return "TrackedItemsSizeLimitMod"; } }
 
         public string Description { get { return "Increases the limit of how many items can be tracked on the main HUD"; } }
 
-        public string BuiltWithLoaderVersion { get { return "G1.1"; } }
+        public string BuiltWithLoaderVersion { get { return "G1.13"; } }
 
-        public int RequireMinPatchVersion { get { return 1; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         public ModMain()
         {
-            instance = this;
         }
 
         public void OnLoad(HookManager hookManager)
         {
             hookManager.InGameHUDInit += HookManager_InGameHUDInit;
+        }
+
+        public void OnEnable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit += HookManager_InGameHUDInit;
+        }
+
+        public void OnDisable(HookManager hookManager)
+        {
+            hookManager.InGameHUDInit -= HookManager_InGameHUDInit;
+        }
+
+        public bool IsDefaultEnabled()
+        {
+            return true;
+        }
+
+        public bool NeedsRestartOnToggle()
+        {
+            return false;
         }
 
         private void HookManager_InGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
@@ -92,5 +109,6 @@ namespace GnollMods.TrackedItemsSizeLimitMod
             });
             return clone;
         }
+
     }
 }
