@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace InstallerGUI
@@ -21,12 +22,12 @@ namespace InstallerGUI
         private List<InstallerCore.Action> _uninstallModLoaderDependencies = new List<InstallerCore.Action>();
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.12.0)";
+        private static readonly string _appName = $"Gnoll Installer (v1.13.0)";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()
         {
-            _log.log("Running Gnoll Installer ...");
+            _log.Log("Running Gnoll Installer ...");
             try
             {
                 InitializeComponent();
@@ -37,8 +38,8 @@ namespace InstallerGUI
             }
             catch(Exception e)
             {
-                _log.log("Running Gnoll Installer ... FAILED");
-                _log.log(e.ToString());
+                _log.Error("Running Gnoll Installer ... FAILED");
+                _log.Error(e.ToString());
                 MessageBox.Show($"Cannot run Gnoll Installer: \r\nERROR: {e.Message}",
                     "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
@@ -74,7 +75,7 @@ namespace InstallerGUI
 
                 var res = InstallerCore.InstallerCore.ScanGameInstall(gameDir, _gameDb);
 
-                _log.log($"Available patch {res.GameVersion}");
+                _log.Log($"Available patch {res.GameVersion}");
 
                 string gameVersionStr = res.GameVersion;
 
@@ -106,9 +107,9 @@ namespace InstallerGUI
                 {
                     selectedPatchVersion.Text = $"Gnoll {res.PatchVersion}";
                 }
-
+                _installModLoaderDependencies.Clear();
+                _uninstallModLoaderDependencies.Clear();
                 // Ugh, this code is a dumpster fire... at least it's straightforward
-
                 foreach (var action in res.AvailableActions)
                 {
                     if (action is InstallModKit)
@@ -159,8 +160,8 @@ namespace InstallerGUI
             catch(Exception e)
             {
                 // bad stuff
-                _log.log("Error: Could not identify game version");
-                _log.log(e.ToString());
+                _log.Error("Error: Could not identify game version");
+                _log.Error(e.ToString());
                 MessageBox.Show($"Could not identify game version, no patch available: \r\nERROR: {e.Message}", 
                     "Gnoll", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -194,7 +195,7 @@ namespace InstallerGUI
                 _installModkitAction.Execute();
                 if ( _installModLoaderDependencies.Count > 0 )
                 {
-                    _log.log("Installing modloader dependencies");
+                    _log.Log("Installing modloader dependencies");
                     foreach(var action in _installModLoaderDependencies)
                     {
                         action.Execute();
@@ -214,7 +215,7 @@ namespace InstallerGUI
             {
                 if (_copyModsAction != null)
                 {
-                    _log.log("Copying mods ...");
+                    _log.Log("Copying mods ...");
                     _copyModsAction.Execute();
                 }
                 ShowOk();
@@ -232,7 +233,7 @@ namespace InstallerGUI
                 _installStandaloneAction.Execute();
                 if (_installModLoaderDependencies.Count > 0)
                 {
-                    _log.log("Installing modloader dependencies");
+                    _log.Log("Installing modloader dependencies");
                     foreach (var action in _installModLoaderDependencies)
                     {
                         action.Execute();
@@ -276,7 +277,7 @@ namespace InstallerGUI
         {
             try
             {
-                _log.log("Uninstalling everything ...");
+                _log.Log("Uninstalling everything ...");
                 if (_deleteModsAction != null)
                 {
                     _deleteModsAction.Execute();

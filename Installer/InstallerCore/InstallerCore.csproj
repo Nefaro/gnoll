@@ -116,17 +116,9 @@
     <None Include="app.config" />
     <Compile Include="InstallerCore.cs" />
     <None Include="packages.config" />
-    <None Include="Payloads\G1700_016e6239.xdelta" />
-    <None Include="Payloads\G1900_c9f6d4b9.xdelta" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Payloads\G1700_016e6239_full.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Payloads\G0000_016e6239.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Payloads\G0000_c9f6d4b9.exe" />
+    <Folder Include="Payloads\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets')" />

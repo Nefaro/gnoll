@@ -61,7 +61,7 @@ namespace GnollMods.Challenges.Gui
             this._tabControl.Top = (this.Height - this._tabControl.Height) / 2;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
             if (!disposing)

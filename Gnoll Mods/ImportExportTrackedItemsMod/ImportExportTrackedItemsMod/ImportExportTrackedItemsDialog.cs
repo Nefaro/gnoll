@@ -33,7 +33,7 @@ namespace GnollMods.ImportExportTrackedItemsMod
             this.AddPage("Export", new ExportTrackedItemsDialog(this.Manager));
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 

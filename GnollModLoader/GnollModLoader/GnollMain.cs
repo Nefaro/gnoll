@@ -27,7 +27,7 @@ namespace GnollModLoader
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
 
-        private static bool debug = true;
+        private static bool debug = false;
         public static bool Debug => debug;
         public static string VERSION
         {

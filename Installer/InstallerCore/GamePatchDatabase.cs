@@ -19,16 +19,16 @@ namespace InstallerCore
         public GamePatchDatabase(string appFolder)
         {
             // The overall patch directory
-            _log.log($"App folder: {appFolder}");
+            _log.Log($"App folder: {appFolder}");
             this._patchFolder = Path.Combine(appFolder, _patchFolderName);
-            _log.log($"Patch folder: {_patchFolder}");
+            _log.Log($"Patch folder: {_patchFolder}");
             // Load the patch info 
             string jsonString =  File.ReadAllText(Path.Combine(_patchFolder, _patchDatabaseName));
             this._entries = JsonSerializer.Deserialize<GameEntry[]>(jsonString);
             foreach(var ent in this._entries)
             {
-                _log.log($"Entry: {ent.Name} - {ent.Md5sum}");
-                _log.log($"Entry patches: {ent.Patches.Count}");
+                _log.Log($"Entry: {ent.Name} - {ent.Md5sum}");
+                _log.Log($"Entry patches: {ent.Patches.Count}");
             }
         }
 
@@ -86,7 +86,7 @@ namespace InstallerCore
 
             if ( !File.Exists(patchFile) )
             {
-                _log.log($"Error: Cannot find patch file ( { patchFile })");
+                _log.Log($"Error: Cannot find patch file ( { patchFile })");
                 throw new FileNotFoundException($"Cannot find patch file '{Path.GetFileName(patchFile)}'. Is the database corrupt?");
             }
 
@@ -99,7 +99,7 @@ namespace InstallerCore
 
         public PatchEntry GetLatestPatch(GameEntry gameEntry)
         {
-            _log.log($"Finding patch for: {gameEntry.Name} - {gameEntry.Md5sum}");
+            _log.Log($"Finding patch for: {gameEntry.Name} - {gameEntry.Md5sum}");
             // try to find the latest patch
             if (!string.IsNullOrEmpty(gameEntry.LatestPatch))
             {
@@ -110,7 +110,7 @@ namespace InstallerCore
                         var patchFile = Path.Combine(this._patchFolder, patch.Filename);
                         if (File.Exists(patchFile))
                         {
-                            _log.log($"Picked (latest) patch: {patch.VersionString}");
+                            _log.Log($"Picked (latest) patch: {patch.VersionString}");
                             return patch;
                         }
                     }
@@ -123,10 +123,10 @@ namespace InstallerCore
                 gameEntry.Patches.Sort(
                     delegate (PatchEntry x, PatchEntry y) { return y.Version.CompareTo(x.Version); });
 
-                _log.log("Sorted patches:");
+                _log.Log("Sorted patches:");
                 foreach (var patch in gameEntry.Patches)
                 {
-                    _log.log($" -- {patch.VersionString}");
+                    _log.Log($" -- {patch.VersionString}");
                 }
 
                 return gameEntry.Patches[0];

@@ -31,9 +31,19 @@ namespace InstallerCore
             LOGFILE.Flush();
         }
 
-        public void log(String msg)
+        public void Log(String msg)
         {
             this.WriteLine(msg);
+        }
+
+        public void Warn(String msg)
+        {
+            this.WriteLine("!! " + msg);
+        }
+
+        public void Error(String msg)
+        {
+            this.WriteLine("¤¤ " + msg);
         }
     }
 }

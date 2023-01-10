@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace InstallerCore
@@ -9,7 +10,7 @@ namespace InstallerCore
 
         public void Execute()
         {
-            _log.WriteLine(this.ToString());
+            _log.Log(this.ToString());
             this.ExecuteImpl();
         }
 
@@ -91,6 +92,7 @@ namespace InstallerCore
 
     public class UninstallModKit : Action
     {
+        private static readonly Logger _log = Logger.GetLogger;
         public UninstallModKit(string catalogPath, string outputPath, string backupPath, string vanillaMd5, string patchVersion)
         {
             CatalogPath = catalogPath;
@@ -103,7 +105,14 @@ namespace InstallerCore
         protected override void ExecuteImpl()
         {
             // restore backup
-            File.Replace(BackupPath, OutputPath, destinationBackupFileName: null);
+            if (File.Exists(BackupPath))
+            {
+                File.Replace(BackupPath, OutputPath, destinationBackupFileName: null);
+            }
+            else
+            {
+                _log.Warn($"Trying to restore backup but file is missing: {BackupPath}");
+            }
 
             // update catalog
             var catalog = InstallDb.LoadOrEmpty(CatalogPath);
@@ -193,13 +202,32 @@ namespace InstallerCore
             }
             else
             {
-                _log.log($"Tasked with copying a file but source file is missing: {source}");
+                _log.Error($"Tasked with copying a file but source file is missing: {source}");
             }
         }
 
         public override string ToString()
         {
             return $"$$ Install Mod Loader Dependency to {OutputPath}";
+        }
+
+        // For List.Contains
+        public override bool Equals(object obj)
+        {
+            return obj is InstallModLoaderDependency dependency &&
+                   ModloaderPath == dependency.ModloaderPath &&
+                   OutputPath == dependency.OutputPath &&
+                   BackupPath == dependency.BackupPath &&
+                   WithBackup == dependency.WithBackup;
+        }
+        public override int GetHashCode()
+        {
+            int hashCode = 971104037;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ModloaderPath);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(OutputPath);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(BackupPath);
+            hashCode = hashCode * -1521134295 + WithBackup.GetHashCode();
+            return hashCode;
         }
 
         public string ModloaderPath { get; }
