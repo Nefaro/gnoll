@@ -8,7 +8,7 @@ Currently those mods are:
 - FixStuckWheelbarrow - A fix for when a gnomes/automata gets stuck, because the wheelbarrow is full
 - FixDisableNewGameModdedMobs - This fixes situation where new game start would only disable vanilla enemis and leave modded enemies enabled
 - FreezeEntitiesOnPause - Pauses the thinking process for characters when the game itself is paused, gives FPS boost during game pause
-- GoblinRaidsFpsBoost - Slows down the thinking process for goblins, that are outside of the gates and cannot come in, gives FPS boost
+- GoblinRaidsFpsBoost - Slows down the thinking process for goblins who are outside of the gates or otherwise stuck and cannot reach their target, gives FPS boost
 - IdleTrackerMod - Tracks and show idle gnomes
 - ImportExportTrackedItemsMod - Allows to export and import the tracked item list, that is shown in the main HUD
 - MantRaidFpsBoost - Helps in situations where Mants cannot get into your fortress, gives FPS boost

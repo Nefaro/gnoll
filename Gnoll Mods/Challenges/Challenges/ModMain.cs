@@ -9,6 +9,9 @@ namespace GnollMods.Challenges
     {
         private static ModMain _instance;
         public static ModMain Instance { get { return _instance; } }
+
+        private static ModsLogger _logger;
+        public static ModsLogger Logger { get { return _logger; } }
         public string Name { get { return "Challenges"; } }
         public string Description { get { return "Introduces 'Challenges' game mode: a game with objectives."; } }
         public string BuiltWithLoaderVersion { get { return "G1.13"; } }
@@ -21,6 +24,7 @@ namespace GnollMods.Challenges
         {
             _instance = this;
             _challengesManager = new ChallengesManager();
+            _logger = ModsLogger.getLogger(this);
         }
 
         public void OnEnable(HookManager hookManager)

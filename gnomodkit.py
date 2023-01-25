@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit vG1.13 -- https://github.com/Nefaro/gnoll')
+print('gnomodkit vG1.14 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse
@@ -18,6 +18,7 @@ CACHE_DIR = 'cache'
 SDK_DIR = 'sdk'
 MODS_DIR = 'Gnoll Mods'
 DATA_DIR = 'Data'
+SCRIPTS_DIR = 'Scripts'
 
 CONFIG_FILENAME = '.config.json'
 
@@ -32,7 +33,7 @@ GNOMORIA_HASH_GOG = '016e623994628aba2a3cb8cd4cfe2412'
 # Gnomoria v1.0 Steam
 GNOMORIA_HASH_STEAM = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
 
-GNOMORIA_DIST_FILE = 'Gnomoria.exe';
+GNOMORIA_DIST_FILE = 'Gnomoria.orig.exe';
 # for SDK
 DEOBFUSCATED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.exe')
 DISASSEMBLED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.il')
@@ -503,6 +504,11 @@ class TaskMakeMod(Task):
         if os.path.exists(mod_data_dir):
             # if mod has Data directory, install that as well
             self.add_dependency(TaskCopyFile(mod_data_dir, os.path.join(get_game_mod_dir(), self.name, DATA_DIR)))
+            
+        script_data_dir = os.path.join(self.project_dir, SCRIPTS_DIR);
+        if os.path.exists(script_data_dir):
+            # if mod has Scripts directory, install that as well
+            self.add_dependency(TaskCopyFile(script_data_dir, os.path.join(get_game_mod_dir(), self.name, SCRIPTS_DIR)))            
 
 class TaskMakeAllMods(Task):
     def __init__(self):

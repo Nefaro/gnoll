@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using Game;
 using Game.GUI;
 using Game.GUI.Controls;
@@ -27,7 +28,7 @@ namespace GnollModLoader
             String mask = "*.dll";
             if (!Directory.Exists(dir))
             {
-                Logger.Error("!! Mod directory missing; no mods loaded");
+                Logger.Error("Mod directory missing; no mods loaded");
                 return;
             }
             foreach (String filename in Directory.EnumerateFiles(dir, mask, SearchOption.AllDirectories))
@@ -46,7 +47,7 @@ namespace GnollModLoader
                 // Only load classes that implement the given interface
                 var searchType = typeof(IGnollMod);
 
-                foreach (var type in this.GetAssemblyTypes(assembly))
+                foreach (var type in this.getAssemblyTypes(assembly))
                 {
                     if (searchType.IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
                     {
@@ -54,7 +55,7 @@ namespace GnollModLoader
                         if ( GnollMain.PATCH_VERSION >= mod.RequireMinPatchVersion )
                         {
                             Logger.Log("++ Instantiating mod: " + mod.Name);
-                            this._modManager.RegisterMod(mod);
+                            this._modManager.RegisterMod(mod, assembly);
                             return true;
                         }
                         else
@@ -68,15 +69,15 @@ namespace GnollModLoader
             }
             catch (System.TypeLoadException e)
             {
-                Logger.Error("!! Trying to load mod from '{0}' failed with exception");
-                Logger.Error("!! {0}", e);
+                Logger.Error("Trying to load mod from '{0}' failed with exception");
+                Logger.Error("{0}", e);
                 return false;
             }
             Logger.Log("-- No mods found from '{0}'", path);
             return false;
         }
 
-        private IEnumerable<Type> GetAssemblyTypes(Assembly assembly)
+        private IEnumerable<Type> getAssemblyTypes(Assembly assembly)
         {
             if (assembly == null) throw new ArgumentNullException("assembly");
             try

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Game;
 using GnollModLoader.Model;
@@ -20,20 +22,22 @@ namespace GnollModLoader
         private readonly Modlist _modlist;
         private readonly ISet<String> _waitingRestart;
         private readonly Patcher _patcher;
+        private readonly LuaManager _luaManager;
         public List<IGnollMod> Mods { get { return _modsList; } }
 
-        public ModManager(HookManager hookManager, Patcher patcher)
+        public ModManager(HookManager hookManager, Patcher patcher, LuaManager luaManager)
         {
             this._hookManager = hookManager;
             this._patcher = patcher;
             this._modlist = this.tryLoadModlistFile();
             this._waitingRestart = new HashSet<String>();
+            this._luaManager = luaManager;
         }
 
-        public void RegisterMod(IGnollMod mod)
+        public void RegisterMod(IGnollMod mod, Assembly modAssembly)
         {
             _modsList.Add(mod);
-            if ( this.IsModEnabled(mod))
+            if ( this.IsModEnabled(mod) )
             {
                 mod.OnEnable(this._hookManager);
                 if ( mod is IHasDirectPatch )
@@ -42,7 +46,13 @@ namespace GnollModLoader
                     var withPatch = mod as IHasDirectPatch;
                     withPatch.ApplyPatch(this._patcher);
                 }
+                if ( mod is IHasLuaScripts )
+                {
+                    Logger.Log("-- Mod has scripts");
+                    this._luaManager.RegisterMod(mod, modAssembly);
+                }
             }
+            Assembly.GetAssembly(mod.GetType());
         }
 
         public bool IsModEnabled(IGnollMod mod)
@@ -83,8 +93,8 @@ namespace GnollModLoader
             }
             catch(Exception e)
             {
-                Logger.Error($"!! Enabling mod {mod.Name} failed; try restarting the game");
-                Logger.Error($"!! -- {e}");
+                Logger.Error($"Enabling mod {mod.Name} failed; try restarting the game");
+                Logger.Error($"-- {e}");
             }
         }
 
@@ -94,6 +104,7 @@ namespace GnollModLoader
             {
                 Logger.Log($"-- Disabling mod {mod.Name} ...");
                 mod.OnDisable(this._hookManager);
+                _luaManager.UnloadMod(mod);
                 Logger.Log($"-- Disabling mod {mod.Name} ... DONE");
                 this.storeModStatus(mod, false);
                 if (mod.NeedsRestartOnToggle())
@@ -103,8 +114,8 @@ namespace GnollModLoader
             }
             catch (Exception e)
             {
-                Logger.Error($"!! Disabling mod {mod.Name} failed; try restarting the game");
-                Logger.Error($"!! -- {e}");
+                Logger.Error($"Disabling mod {mod.Name} failed; try restarting the game");
+                Logger.Error($"-- {e}");
             }
         }
 

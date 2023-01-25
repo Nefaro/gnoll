@@ -15,8 +15,6 @@ namespace GnollMods.Challenges.Gui
 {
     public class ChallengesMenu : Panel
     {
-        
-
         private TabControl _tabControl;
         private List<TabbedWindowPanel> _tabbedWindowList;
 

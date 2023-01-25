@@ -5,6 +5,8 @@ using System.Text;
 using Game;
 using Game.GUI;
 using Game.GUI.Controls;
+using GameLibrary;
+using GnollModLoader;
 using GnollMods.Challenges.Challenge;
 using GnollMods.Challenges.Gui;
 using GnollMods.Challenges.Model;
@@ -30,8 +32,6 @@ namespace GnollMods.Challenges
             { 192, "Huge"},
         };
 
-        public Dictionary<int, string> SizeMap { get { return _sizeMap; } }
-
         private static readonly List<string> _metalDepth = new List<string>()
         {
             "Shallow",
@@ -53,12 +53,12 @@ namespace GnollMods.Challenges
             new ChitinHuntChallenge(),
             new MushroomsChallenge()
         };
+        private bool _isNewStart = false;
 
+        public Dictionary<int, string> SizeMap { get { return _sizeMap; } }
         public IList<IChallenge> Challenges { get { return _challenges; } }
-
         public IChallenge ActiveChallenge { get; set; }
 
-        private bool _isNewStart = false;
         internal void StartChallenge(int challengeIdx)
         {
             if (challengeIdx < Challenges.Count)
@@ -81,7 +81,7 @@ namespace GnollMods.Challenges
             var finished = this.IsChallengeFinished();
             if ( finished )
             {
-                System.Console.WriteLine(" -- Challenge end reached!");
+                ModMain.Logger.Log(" -- Challenge end reached!");
                 var inGameHud = GnomanEmpire.Instance.GuiManager.InGameHUD_0;
                 var manager = GnomanEmpire.Instance.GuiManager.Manager;
 
@@ -118,6 +118,8 @@ namespace GnollMods.Challenges
 
         internal void HookManager_InGameHUDInit(InGameHUD inGameHUD, Manager manager)
         {
+            ModMain.Logger.Log("Attaching LUA button");
+
             this.AssignActiveChallenge();
             if (this.ActiveChallenge == null)
                 return;
@@ -137,7 +139,7 @@ namespace GnollMods.Challenges
                 {
                     // Active challenge
                     // Day start = sunrise
-                    System.Console.WriteLine(" -- Day start event handler attached");
+                    ModMain.Logger.Log(" -- Day start event handler attached");
                     Game.GnomanEmpire.Instance.Region.OnDayStart += OnDayStart;
                     // just in case the challenge has already finished
                     this.IsChallengeFinished();
@@ -164,7 +166,7 @@ namespace GnollMods.Challenges
                 // No tag = not a challenge
                 if (!hasTags)
                 {
-                    System.Console.WriteLine("-- Found no tags; challenges disabled");
+                    ModMain.Logger.Log("-- Found no tags; challenges disabled");
                     this.ActiveChallenge = null;
                     return;
                 }
@@ -177,7 +179,7 @@ namespace GnollMods.Challenges
                     if (settings.Contains(FormatStartTag(challenge)))
                     {
                         this.ActiveChallenge = challenge;
-                        System.Console.WriteLine("-- Found current challenge: {0}", this.ActiveChallenge);
+                        ModMain.Logger.Log("-- Found current challenge: {0}", this.ActiveChallenge);
                         break;
                     }
                 }
@@ -215,19 +217,19 @@ namespace GnollMods.Challenges
 
             IChallenge challenge = this.ActiveChallenge;
 
-            System.Console.WriteLine(" -- Save scores called");
+            ModMain.Logger.Log(" -- Save scores called");
 
             ChallengesScores scoreData = this.LoadScores(this.ActiveChallenge);
             List<ModFolder> modList = new List<ModFolder>(GnomanEmpire.Instance.GameDefs.ModFolders);
 
             if (modList.Count == 1 && modList[0].SteamWorkshopItemID == 0)
             {
-                System.Console.WriteLine("-- -- Saving vanilla scores");
+                ModMain.Logger.Log("-- -- Saving vanilla scores");
                 scoreData.VanillaScores = this.BuildScores(challenge, scoreData.VanillaScores);
             }
             else
             {
-                System.Console.WriteLine("-- -- Saving modded scores");
+                ModMain.Logger.Log("-- -- Saving modded scores");
                 scoreData.ModdedScores = this.BuildScores(challenge, scoreData.ModdedScores);
             }
 
@@ -235,7 +237,7 @@ namespace GnollMods.Challenges
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(scoreData, Newtonsoft.Json.Formatting.Indented);
             string filename = string.Format(SCORE_FILE, challenge.ChallengeName().ToLower());
-            System.Console.WriteLine(" -- -- saving scores to {0}", filename);
+            ModMain.Logger.Log(" -- -- saving scores to {0}", filename);
             System.IO.File.WriteAllText(filename, json);
         }
 
@@ -274,8 +276,8 @@ namespace GnollMods.Challenges
                 BaseMod = "" + GnomanEmpire.Instance.GameDefs.BaseModFolder.SteamWorkshopItemID,
                 ModList =
                 new List<ModFolder>(GnomanEmpire.Instance.GameDefs.ModFolders)
-                .Select(mod => mod.Folder)
-                .ToList(),
+                    .Select(mod => mod.Folder)
+                    .ToList(),
                 Date = DateTime.Now.ToString()
             };
             if (GnomanEmpire.Instance.World.DifficultySettings.int_0 < _metalDepth.Count)
@@ -305,7 +307,7 @@ namespace GnollMods.Challenges
 
         public ChallengesScores LoadAllScores()
         {
-            System.Console.WriteLine(" -- Loading scores");
+            ModMain.Logger.Log(" -- Loading scores");
             ChallengesScores scores = new ChallengesScores();
             foreach (var challenge in _challenges)
             {
@@ -327,7 +329,7 @@ namespace GnollMods.Challenges
 
         public ChallengesScores LoadScores(IChallenge challenge)
         {
-            System.Console.WriteLine(" -- Loading scores");
+            ModMain.Logger.Log(" -- Loading scores");
             ChallengesScores scores = new ChallengesScores();
             string filename = string.Format(SCORE_FILE, challenge.ChallengeName().ToLower());
             if (System.IO.File.Exists(filename))

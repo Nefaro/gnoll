@@ -38,12 +38,12 @@ namespace InstallerCore
 
         public void Warn(String msg)
         {
-            this.WriteLine("!! " + msg);
+            this.WriteLine("?? " + msg);
         }
 
         public void Error(String msg)
         {
-            this.WriteLine("¤¤ " + msg);
+            this.WriteLine("!! " + msg);
         }
     }
 }

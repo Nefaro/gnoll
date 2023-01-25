@@ -18,7 +18,7 @@ namespace GnollModLoader
         private const string MAJOR_VERSION = "G1";
 
         // for easier validation
-        public const uint PATCH_VERSION = 13;
+        public const uint PATCH_VERSION = 14;
 
         public const string NAME = "Gnoll Mod Loader";
         public const string SHORT_NAME = "Gnoll";
@@ -27,7 +27,7 @@ namespace GnollModLoader
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
 
-        private static bool debug = false;
+        private static bool debug = true;
         public static bool Debug => debug;
         public static string VERSION
         {
@@ -37,6 +37,7 @@ namespace GnollModLoader
         static HookManager hookManager;
         static ModLoader modLoader;
         static ModManager modManager;
+        static LuaManager luaManager;
 
         private GnollMain()
         {
@@ -60,13 +61,18 @@ namespace GnollModLoader
             // Attach debug hooks before mods are loaded
             tryAttachDebugHooks(hookManager);
 
+            // Experimental
+            luaManager = new LuaManager(hookManager);
+
             // Mod manager runs AFTER patches have been applied
-            modManager = new ModManager(hookManager, patcher);
+            modManager = new ModManager(hookManager, patcher, luaManager);
             modLoader = new ModLoader(modManager);
             modLoader.LoadModsFrom(MODS_DIR);
 
             // hook up gnoll main menu
             hookManager.MainMenuGuiInit += HookGnollMainMenu;
+            // hook up LUA debug button
+            hookManager.InGameHUDInit += luaManager.HookInGameHudInit;
         }
 
         // Called after the game has initialized and game settings have been read in,

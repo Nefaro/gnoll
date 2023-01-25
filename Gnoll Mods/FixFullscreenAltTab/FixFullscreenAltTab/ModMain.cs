@@ -11,7 +11,7 @@ namespace GnollMods.FixFullscreenAltTab
     internal class ModsMain : IGnollMod, IHasDirectPatch
     {
         public string Name { get { return "FixFullscreenAltTab"; } }
-        public string Description { get { return "This mod trys to fix the alt-tab craching issue. Disable this, if you don't use fullscreen."; } }
+        public string Description { get { return "This mod trys to fix the alt-tab crashing issue. Disable this, if you don't use fullscreen."; } }
         public string BuiltWithLoaderVersion { get { return "G1.13"; } }
         public int RequireMinPatchVersion { get { return 13; } }
 
