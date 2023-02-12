@@ -13,6 +13,8 @@ using System.Reflection;
 using System.IO;
 using System.Collections;
 using System.Linq.Expressions;
+using GnollModLoader.Lua;
+using GnollModLoader.Model;
 
 namespace GnollModLoader
 {
@@ -31,7 +33,6 @@ namespace GnollModLoader
 
         public void init()
         {
-
             var loader = Script.DefaultOptions.ScriptLoader;
             Script.DefaultOptions.DebugPrint = s => { LuaLogger.Log(Newtonsoft.Json.JsonConvert.ToString(s)); };
 
@@ -47,11 +48,28 @@ namespace GnollModLoader
                 Logger.Error("Script null");
                 return;
             }*/
+            UserData.RegisterProxyType<GameDefsProxy, GameDefs>(t => new GameDefsProxy(t));
+            UserData.RegisterProxyType<GolemSpawnDefProxy, GolemSpawnDef>(t => new GolemSpawnDefProxy(t));
+
+            UserData.RegisterProxyType<CharacterSettingsProxy, CharacterSettings>(t => new CharacterSettingsProxy(t));
+            UserData.RegisterProxyType<GoblinSettingsProxy, GoblinSettings>(t => new GoblinSettingsProxy(t));
+            UserData.RegisterProxyType<GolemSettingsProxy, GolemSettings>(t => new GolemSettingsProxy(t));
+            UserData.RegisterProxyType<GrassSettingsProxy, GrassSettings>(t => new GrassSettingsProxy(t));
+            UserData.RegisterProxyType<ItemSettingsProxy, Game.ItemSettings>(t => new ItemSettingsProxy(t));
+            UserData.RegisterProxyType<JobSettingsProxy, Game.JobSettings>(t => new JobSettingsProxy(t));
+            UserData.RegisterProxyType<JobSettingProxy, GameLibrary.JobSetting>(t => new JobSettingProxy(t));
+            UserData.RegisterProxyType<LiquidSettingsProxy, LiquidSettings>(t => new LiquidSettingsProxy(t));
+            UserData.RegisterProxyType<MantSettingsProxy, MantSettings>(t => new MantSettingsProxy(t));
+            UserData.RegisterProxyType<MechanismSettingsProxy, Game.MechanismSettings>(t => new MechanismSettingsProxy(t));
+
+
+            UserData.RegisterProxyType<TradeModifierProxy, TradeModifier>(t => new TradeModifierProxy(t));
+            UserData.RegisterProxyType<ScaledSkillProxy, ScaledSkill>(t => new ScaledSkillProxy(t));
+
 
             UserData.RegisterType<Game.Item>();
             UserData.RegisterType<Game.Character>();
             UserData.RegisterType<Game.GameEntity>();
-            UserData.RegisterType<Game.GameDefs>();
             UserData.RegisterType<GameLibrary.ItemDef>();
             UserData.RegisterType<GameLibrary.PlantDef>();
             UserData.RegisterType<GameLibrary.MaterialProperty>();
@@ -69,14 +87,25 @@ namespace GnollModLoader
                 }*/
             };
 
-            this._hookManager.BeforeStartNewGameAfterReadDefs += (Game.CreateWorldOptions options) =>
+            this._hookManager.BeforeStartNewGameAfterReadDefs += this.hookLuaOnGameDefsLoaded;
+        }
+
+        public void HookInGameHudInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
+        {
+            if (GnollMain.Debug)
             {
-                foreach (var entry in this._registry)
-                {
-                    var script = entry.Value.Item2;
-                    runLuaFunction(script, "OnGameDefsLoaded", GnomanEmpire.Instance.GameDefs);
-                }
-            };
+                Logger.Log("Attaching LUA button");
+                this.AttachIngameUI(inGameHUD, manager);
+            }
+        }
+
+        private void hookLuaOnGameDefsLoaded(Game.CreateWorldOptions options)
+        {
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnGameDefsLoaded", GnomanEmpire.Instance.GameDefs);
+            }
         }
 
         private static void runLuaFunction(Script script, string functionName, params object[] args)
@@ -93,15 +122,6 @@ namespace GnollModLoader
             catch (Exception ex)
             {
                 Logger.Error($"LUA Error: {ex}");
-            }
-        }
-
-        public void HookInGameHudInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
-        {
-            if (GnollMain.Debug)
-            {
-                Logger.Log("Attaching LUA button");
-                this.AttachIngameUI(inGameHUD, manager);
             }
         }
 
@@ -126,6 +146,7 @@ namespace GnollModLoader
                     Logger.Error($"-- {ex}");
                 }
             }
+            this.hookLuaOnGameDefsLoaded(null);
         }
 
         private Script loadAndGetScript(string scriptPath)
