@@ -26,11 +26,10 @@
     },
     {
         "version": 13,
-        "versionString":"G1.13",
-        "filename": "Gnoll1.13_016e6239.xdelta"
-    }     
-    ],
-    "latestVersion":"G1.13"
+        "versionString":"G1.13.1",
+        "filename": "Gnoll1.13.1_016e6239.xdelta"
+    }],
+    "latestVersion":"G1.13.1"
   },
   {
     "name": "v1.0 (Steam 2019)",
