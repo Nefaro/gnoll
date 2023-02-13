@@ -16,6 +16,11 @@ Gnoll is a package or packaging of a group of tools that allows building, loadin
 
 **Installer** is the packaging that is released and is responsible for applying the patches, installing the modloader and the mods.
 
+## Installing via Installer (the suggested way)
+Take a look in here: [Installation via Installer](../../wiki/Installation-via-the-Installer)
+
+**Note:** However, one should not be in the habbit of downloading random executables from the internet, as such you can always build the mods yourself.
+
 ## Prerequisites for Manual Install:
 
   - Gnomoria v1.0 (Steam: https://store.steampowered.com/app/224500/Gnomoria/, GoG: https://www.gog.com/game/gnomoria)
@@ -27,11 +32,6 @@ Gnoll is a package or packaging of a group of tools that allows building, loadin
   - Internet (build script downloads helper tools)
   
   (Note: Not sure if there exists any Linux tooling for the given operations)
-
-## Installing via Installer
-We have now an Installer! Take a look in here: [Installation via Installer](../../wiki/Installation-via-the-Installer)
-
-**Note:** However, one should not be in the habbit of downloading random executables from the internet, as such you can always build the mods yourself.
 
 ## Steam Workshop Mods
 

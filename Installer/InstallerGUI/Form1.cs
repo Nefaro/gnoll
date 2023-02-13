@@ -11,6 +11,7 @@ namespace InstallerGUI
 {
     public partial class Form1 : Form
     {
+
         private InstallerCore.Action _installModkitAction, 
             _installStandaloneAction,
             _uninstallModkitAction, 
@@ -22,7 +23,7 @@ namespace InstallerGUI
         private List<InstallerCore.Action> _uninstallModLoaderDependencies = new List<InstallerCore.Action>();
 
         private static readonly Logger _log = InstallerCore.Logger.GetLogger;
-        private static readonly string _appName = $"Gnoll Installer (v1.13.0)";
+        private static readonly string _appName = $"Gnoll Installer ({InstallerCore.InstallerCore.GNOLL_VERSION})";
         private readonly GamePatchDatabase _gameDb;
 
         public Form1()

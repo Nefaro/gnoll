@@ -7,32 +7,10 @@ using System.Security.Cryptography;
 
 namespace InstallerCore
 {
-    public class ScanResult
-    {
-        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions, 
-            bool patchAvailable, string oldStandaloneVersion, string newStandaloneVersion, string patchVersion)
-        {
-            ModKitVersion = gnollVersion;
-            GameVersion = gameVersion;
-            AvailableActions = availableActions;
-            PatchAvailable = patchAvailable;
-            OldStandaloneVersion = oldStandaloneVersion;
-            NewStandaloneVersion = newStandaloneVersion;
-            PatchVersion = patchVersion;
-        }
-
-        public string ModKitVersion { get; }
-        public string GameVersion { get; }
-        public string OldStandaloneVersion { get; }
-        public string NewStandaloneVersion { get; }
-        public Action[] AvailableActions { get; }
-        public bool PatchAvailable { get; }
-
-        public string PatchVersion { get; }
-    }
-
     public class InstallerCore
     {
+        public static readonly String GNOLL_VERSION = "v1.13.1";
+
         private static readonly Logger _log = Logger.GetLogger;
         private static readonly string _modLoaderFile = "GnollModLoader.dll";
         private static readonly List<String> _modLoaderDependencies = new List<string>()
@@ -209,5 +187,28 @@ namespace InstallerCore
                 actions.Add(newAction);
             }
         }
+    }
+
+    public class ScanResult
+    {
+        public ScanResult(string gnollVersion, string gameVersion, Action[] availableActions,
+            bool patchAvailable, string oldStandaloneVersion, string newStandaloneVersion, string patchVersion)
+        {
+            ModKitVersion = gnollVersion;
+            GameVersion = gameVersion;
+            AvailableActions = availableActions;
+            PatchAvailable = patchAvailable;
+            OldStandaloneVersion = oldStandaloneVersion;
+            NewStandaloneVersion = newStandaloneVersion;
+            PatchVersion = patchVersion;
+        }
+
+        public string ModKitVersion { get; }
+        public string GameVersion { get; }
+        public string OldStandaloneVersion { get; }
+        public string NewStandaloneVersion { get; }
+        public Action[] AvailableActions { get; }
+        public bool PatchAvailable { get; }
+        public string PatchVersion { get; }
     }
 }
