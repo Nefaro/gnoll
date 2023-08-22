@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
@@ -15,7 +12,6 @@ namespace GnollModLoader.Lua
         {
             this._target = target;
         }
-
         public HashSet<string> Axles => _target.hashSet_0;
         public HashSet<string> Switches => _target.hashSet_1;
         public HashSet<string> Traps => _target.hashSet_2;

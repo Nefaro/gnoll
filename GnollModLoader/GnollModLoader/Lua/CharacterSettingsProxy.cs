@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using Game;
+﻿using System.Collections.Generic;
 using GameLibrary;
 using MoonSharp.Interpreter;
 
@@ -20,10 +15,10 @@ namespace GnollModLoader.Lua
         }
 
         public List<string> CombatSkills => _target.CombatSkills;
-        public List<string> LaborSkills => _target.LaborSkills;
         public List<string> DefaultAllowedSkills => _target.DefaultAllowedSkills;
-        public string DodgeSkill => _target.DodgeSkill;
-        public string ZombieRaceID => _target.ZombieRaceID;
-        public TradeModifier[] DefaultTradeModifiers => _target.DefaultTradeModifiers;
+        public TradeModifier[] DefaultTradeModifiers { get => _target.DefaultTradeModifiers; set => _target.DefaultTradeModifiers = value; }
+        public string DodgeSkill { get => _target.DodgeSkill; set => _target.DodgeSkill = value; }
+        public List<string> LaborSkills => _target.LaborSkills;
+        public string ZombieRaceID { get => _target.ZombieRaceID; set => _target.ZombieRaceID = value; }
     }
 }

@@ -35,6 +35,7 @@ namespace GnollModLoader
             {
                 LoadMod(filename);
             }
+            Logger.Log("Loading mods ... DONE");
         }
 
         public bool LoadMod(string path)

@@ -1,6 +1,6 @@
 print("Hello from Lua init script")
 
-require "test2"
+require "OnScriptValidation"
 
 function OnEntitySpawn(entity)
 
@@ -19,6 +19,7 @@ function OnGameDefsLoaded(gameDefs)
                 print("WOOD: " .. formatting .. tostring(v) .. " (TYPE = " .. v.Type ..")")
                 v.Value = idx
                 print(" -- Value: " .. v.Value)
+                print(" -- Name xx: " .. v.Name)
             else
             end
             idx = idx + 1

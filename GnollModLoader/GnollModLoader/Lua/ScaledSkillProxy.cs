@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GameLibrary;
-using Microsoft.Xna.Framework.Content;
+﻿using GameLibrary;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
@@ -17,7 +12,8 @@ namespace GnollModLoader.Lua
         {
             this._target = target;
         }
-        public string SkillID => _target.SkillID;
-        public float SkillIncreaseScale => _target.SkillIncreaseScale;
+
+        public string SkillID { get => _target.SkillID; set => _target.SkillID = value; }
+        public float SkillIncreaseScale { get => _target.SkillIncreaseScale; set => _target.SkillIncreaseScale = value; }
     }
 }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GameLibrary;
-using Microsoft.Xna.Framework.Content;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
@@ -19,7 +15,7 @@ namespace GnollModLoader.Lua
         }
 
         public List<string> DesirableItemIDs => _target.DesirableItemIDs;
-        public List<string> MaterialIDs => _target.MaterialIDs;
         public Dictionary<string, uint> InsultAmounts => _target.InsultAmounts;
+        public List<string> MaterialIDs => _target.MaterialIDs;
     }
 }

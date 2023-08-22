@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GameLibrary;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
 {
     internal class GolemSettingsProxy
-    {
+    { 
         private GolemSettings _target;
 
         [MoonSharpHidden]
@@ -17,8 +14,7 @@ namespace GnollModLoader.Lua
             this._target = target;
         }
 
-        public string CoreItemID => _target.CoreItemID;
-
+        public string CoreItemID { get => _target.CoreItemID; set => _target.CoreItemID = value; }
         public List<GolemSpawnDef> GolemSpawnDefs => _target.GolemSpawnDefs;
     }
 }

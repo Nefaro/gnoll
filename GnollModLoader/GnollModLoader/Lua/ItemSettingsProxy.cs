@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Game;
+﻿using System.Collections.Generic;
 using GameLibrary;
 using MoonSharp.Interpreter;
 
@@ -19,13 +15,12 @@ namespace GnollModLoader.Lua
         }
         public HashSet<string> Armor => _target.Armor;
         public List<string> ArtificialLimbMaterialIDs => _target.ArtificialLimbMaterialIDs;
-        public string CorpseItemID => _target.CorpseItemID;
-        public WeaponDef DefaultWeapon => _target.DefaultWeapon;
+        public string CorpseItemID { get => _target.string_0; set => _target.string_0 = value; }
+        public WeaponDef DefaultWeapon { get => _target.weaponDef_0; set => _target.weaponDef_0 = value; }
         public HashSet<string> Drinks => _target.Drinks;
-
         public HashSet<string> Food => _target.Food;
         public HashSet<string> Furniture => _target.Furniture;
-        public string LimbItemID => _target.LimbItemID;
+        public string LimbItemID { get => _target.string_1; set => _target.string_1 = value; }
         public Dictionary<string, string> StorageIDs => _target.StorageIDs;
         public HashSet<string> TransportContainers => _target.TransportContainers;
         public HashSet<string> Weapons => _target.Weapons;

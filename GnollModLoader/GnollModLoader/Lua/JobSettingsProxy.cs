@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GameLibrary;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
@@ -18,8 +15,8 @@ namespace GnollModLoader.Lua
             this._target = target;
         }
 
-        public string DefaultJobSkillID => _target.DefaultJobSkillID;
-        public Color HeightIndicatorColor =>_target.HeightIndicatorColor;
-        public Dictionary<JobType, JobSettingProxy> JobSettingPerJobType => _target.dictionary_0;
+        public string DefaultJobSkillID { get => _target.string_0; set => _target.string_0 = value; }
+        public Color HeightIndicatorColor { get => _target.color_0; set => _target.color_0 = value; }
+        public Dictionary<JobType, JobSetting> JobSettingPerJobType => _target.dictionary_0;
     }
 }

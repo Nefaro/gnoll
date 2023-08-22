@@ -15,7 +15,7 @@ namespace GnollModLoader
 {
     public class GnollMain
     {
-        private const string MAJOR_VERSION = "G1";
+        private const string MAJOR_VERSION = "1";
         private const string BUGFIX_VERSION = ".1";
 
         // for easier validation
@@ -106,7 +106,8 @@ namespace GnollModLoader
         private static string getMainPageLabel()
         {
             // Keep the Main Page Label always short, we have a length restriction
-            return $" {GnollMain.SHORT_NAME} ({GnollMain.MAJOR_VERSION + "." + GnollMain.PATCH_VERSION})";
+            //return $" {GnollMain.SHORT_NAME} ({GnollMain.MAJOR_VERSION + "." + GnollMain.PATCH_VERSION})";
+            return $" {GnollMain.SHORT_NAME} {GnollMain.VERSION}";
         }
 
         private static void tryAttachDebugHooks(HookManager hookManager)

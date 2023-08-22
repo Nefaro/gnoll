@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GameLibrary;
+﻿using GameLibrary;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
@@ -17,8 +13,7 @@ namespace GnollModLoader.Lua
             this._target = target;
         }
 
-        public string ItemID => _target.ItemID;
-
-        public uint Amount => _target.Amount;
+        public uint Amount { get => _target.Amount; set => _target.Amount = value; }
+        public string ItemID { get => _target.ItemID; set => _target.ItemID = value; }
     }
 }

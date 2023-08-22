@@ -1,32 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GameLibrary;
-using GnollModLoader.Model;
-using Microsoft.Xna.Framework.Content;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua
 {
     internal class JobSettingProxy
     {
-        private GameLibrary.JobSetting _target;
+        private JobSetting _target;
 
         [MoonSharpHidden]
-        public JobSettingProxy(GameLibrary.JobSetting target)
+        public JobSettingProxy(JobSetting target)
         {
             this._target = target;
         }
 
-        public JobType JobType { get { return _target.Type; } }
-
-        public string SkillID => _target.SkillID;
-
-        public int RequiredSkillLevel => _target.RequiredSkillLevel;
-        public float SkillIncreaseScale => _target.SkillIncreaseScale;
         public List<ScaledSkill> AdditionalSkillIDs => _target.AdditionalSkillIDs;
-        public string RequiredToolItemID => _target.RequiredToolItemID;
         public List<string> ConstructionIDs => _target.ConstructionIDs;
+        public JobType Type { get => _target.Type; set => _target.Type = value; }
+        public int RequiredSkillLevel { get => _target.RequiredSkillLevel; set => _target.RequiredSkillLevel = value; }
+        public string RequiredToolItemID { get => _target.RequiredToolItemID; set => _target.RequiredToolItemID = value; }
+        public string SkillID { get => _target.SkillID; set => _target.SkillID = value; }
+        public float SkillIncreaseScale { get => _target.SkillIncreaseScale; set => _target.SkillIncreaseScale = value; }
     }
 }
