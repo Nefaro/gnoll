@@ -6,6 +6,8 @@ function OnEntitySpawn(entity)
 
 end
 
+g_valueMapping = {}
+
 function OnGameDefsLoaded(gameDefs)
     print "Gamedefs is NOT nil"
     --local tbl = gameDefs.PlantSettings.MaterialIDToPlantIDs;
@@ -19,10 +21,15 @@ function OnGameDefsLoaded(gameDefs)
                 print("WOOD: " .. formatting .. tostring(v) .. " (TYPE = " .. v.Type ..")")
                 v.Value = idx
                 print(" -- Value: " .. v.Value)
-                print(" -- Name xx: " .. v.Name)
+                print(" -- Name: " .. v.Name)
+                g_valueMapping[v.Name] = v.Value
             else
             end
             idx = idx + 1
-        end            
+        end
     end
+end
+
+function OnSave(saver)
+    saver.Save(g_valueMapping)
 end

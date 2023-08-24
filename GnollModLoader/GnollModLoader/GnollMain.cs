@@ -39,6 +39,7 @@ namespace GnollModLoader
         static ModLoader modLoader;
         static ModManager modManager;
         static LuaManager luaManager;
+        static SaveGameManager saveGameManager;
 
         private GnollMain()
         {
@@ -63,7 +64,8 @@ namespace GnollModLoader
             tryAttachDebugHooks(hookManager);
 
             // Experimental
-            luaManager = new LuaManager(hookManager);
+            saveGameManager = new SaveGameManager();
+            luaManager = new LuaManager(hookManager, saveGameManager);
 
             // Mod manager runs AFTER patches have been applied
             modManager = new ModManager(hookManager, patcher, luaManager);
@@ -72,8 +74,10 @@ namespace GnollModLoader
 
             // hook up gnoll main menu
             hookManager.MainMenuGuiInit += HookGnollMainMenu;
-            // hook up LUA debug button
+            // hook up LUA debug buttons
             hookManager.InGameHUDInit += luaManager.HookInGameHudInit;
+            // hook game saving event
+            hookManager.AfterGameSaved += saveGameManager.HookAfterGameSaved;
         }
 
         // Called after the game has initialized and game settings have been read in,

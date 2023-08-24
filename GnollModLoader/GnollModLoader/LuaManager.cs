@@ -11,9 +11,26 @@ using System.Reflection;
 using System.IO;
 using GnollModLoader.Lua;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json.Linq;
+using Microsoft.Win32;
+using static GameLibrary.PlantDef;
+using static GnollModLoader.SaveGameManager;
 
 namespace GnollModLoader
 {
+    internal class SaverProxy
+    {
+        private Saver _target;
+
+        [MoonSharpHidden]
+        public SaverProxy(Saver target)
+        {
+            this._target = target;
+        }
+
+        public void Save(Dictionary<object, object> obj) => _target.Save(obj);
+    }
+
     public class LuaManager
     {
         private readonly static string SCRIPT_DIR_NAME = "Scripts";
@@ -28,9 +45,11 @@ namespace GnollModLoader
         private readonly Dictionary<String, Tuple<String,Script>> _registry = new Dictionary<String, Tuple<String, Script>> ();
 
         private HookManager _hookManager;
-        public LuaManager(HookManager hookManager) 
+        private SaveGameManager _saveGameManager;
+        public LuaManager(HookManager hookManager, SaveGameManager saveGameManager) 
         {
             this._hookManager = hookManager;
+            this._saveGameManager = saveGameManager;
             this.init();
         }
 
@@ -133,6 +152,9 @@ namespace GnollModLoader
             UserData.RegisterType<Game.Character>();
             UserData.RegisterType<Game.GameEntity>();
 
+            // hiding the internal functionality
+            UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
+
             this._hookManager.OnEntitySpawn += (Game.GameEntity entity) =>
             {
                 //Logger.Log($"Entity type {entity.Name()}");
@@ -146,25 +168,32 @@ namespace GnollModLoader
             };
 
             this._hookManager.BeforeStartNewGameAfterReadDefs += this.hookLuaOnGameDefsLoaded;
+            this._hookManager.AfterGameLoaded += this.hookLuaOnSaveGameLoaded;
         }
 
         public void HookInGameHudInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
             if (GnollMain.Debug)
             {
-                Logger.Log("Attaching Lua button");
+                Logger.Log("Attaching Lua buttons");
                 this.AttachIngameUI(inGameHUD, manager);
             }
         }
 
         private void hookLuaOnGameDefsLoaded(Game.CreateWorldOptions options)
         {
+            Logger.Log("Hooking: hookLuaOnGameDefsLoaded");
             foreach (var entry in this._registry)
             {
                 var script = entry.Value.Item2;
                 runLuaFunction(script, "OnGameDefsLoaded", GnomanEmpire.Instance.GameDefs);
             }
         }
+        private void hookLuaOnSaveGameLoaded()
+        {
+            throw new NotImplementedException();
+        }
+
         private void runValidationScripts()
         {
             foreach (var entry in this._registry)
@@ -172,10 +201,19 @@ namespace GnollModLoader
                 var script = entry.Value.Item2;
                 runLuaFunction(script, "OnRunScriptValidation", GnomanEmpire.Instance.GameDefs);
             }
+
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnSave", _saveGameManager.SaverForMod(entry.Key));
+            }
         }
 
         private static void runLuaFunction(Script script, string functionName, params object[] args)
         {
+            if (script == null)
+                return;
+
             try
             {
                 var func = script.Globals[functionName];
@@ -208,33 +246,42 @@ namespace GnollModLoader
                 }
                 catch (Exception ex)
                 {
+                    this._registry[key] = new Tuple<string, Script>(value.Item1, null);
                     Logger.Error($"Reloading script for '{key}' failed");
                     Logger.Error($"-- {ex}");
                 }
             }
-            //this.hookLuaOnGameDefsLoaded(null);
+            this.hookLuaOnGameDefsLoaded(null);
         }
 
         private Script loadAndGetScript(string scriptPath)
         {
-            Script script = new Script(DEFAULT_CORE_MODULES);
-            /*
-            ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
-                Path.GetDirectoryName(scriptPath) + "\\?",
-                Path.GetDirectoryName(scriptPath) + "\\?.lua" };
-            */
-            ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
-                "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
-                "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua" };
+            try { 
+                Script script = new Script(DEFAULT_CORE_MODULES);
+                /*
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                    Path.GetDirectoryName(scriptPath) + "\\?",
+                    Path.GetDirectoryName(scriptPath) + "\\?.lua" };
+                */
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                    "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
+                    "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua" };
 
-            Logger.Log("Module paths: ");
-            foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
-            {
-                Logger.Log($" -- {path}");
+                Logger.Log("Module paths: ");
+                foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
+                {
+                    Logger.Log($" -- {path}");
+                }
+
+                script.DoFile(scriptPath);
+                return script;
             }
-
-            script.DoFile(scriptPath);
-            return script;
+            catch(Exception ex)
+            {
+                Logger.Error($"Init script with path '{scriptPath}' failed");
+                Logger.Error($"-- {ex}");
+                return null;
+            }
         }
 
         private void AttachIngameUI(InGameHUD inGameHUD, Manager manager)
@@ -271,10 +318,14 @@ namespace GnollModLoader
                 if (System.IO.File.Exists(initScript))
                 {
                     var script = this.loadAndGetScript(initScript);
+                    this._registry[mod.Name] = new Tuple<string, Script>(initScript, script);
                     if (script != null)
                     {
-                        this._registry[mod.Name] = new Tuple<string, Script>(initScript, script);
                         Logger.Log($"-- Init script for '{mod.Name}' loaded successfully");
+                    }
+                    else
+                    {
+                        Logger.Error($"Init script for mod '{mod.Name}' failed");
                     }
                 }
                 else
