@@ -11,7 +11,6 @@ namespace GnollModLoader.Model
         {
             ModStatus = new Dictionary<string, bool>();
         }
-
         public Dictionary<String, bool> ModStatus{ get; set; }
     }
 }

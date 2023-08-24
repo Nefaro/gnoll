@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using Game.GUI;
 using Game.GUI.Controls;
 using Microsoft.Xna.Framework;
@@ -17,9 +14,9 @@ namespace GnollModLoader.GUI
         private readonly ModManager _modManager;
         private int _height;
 
-        private static readonly Microsoft.Xna.Framework.Color STATUS_COLOR_DISABLED = Microsoft.Xna.Framework.Color.DarkRed;
-        private static readonly Microsoft.Xna.Framework.Color STATUS_COLOR_ENABLED = Microsoft.Xna.Framework.Color.LimeGreen;
-        private static readonly Microsoft.Xna.Framework.Color STATUS_COLOR_RESTART_REQUIRED = Microsoft.Xna.Framework.Color.Orange;
+        private static readonly Color STATUS_COLOR_DISABLED = Color.DarkRed;
+        private static readonly Color STATUS_COLOR_ENABLED = Color.LimeGreen;
+        private static readonly Color STATUS_COLOR_RESTART_REQUIRED = Color.Orange;
 
         public ModsMenuPanel(Manager manager, ModManager modManager) : base(manager)
         {
