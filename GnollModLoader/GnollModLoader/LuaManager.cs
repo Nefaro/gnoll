@@ -31,6 +31,19 @@ namespace GnollModLoader
         public void Save(Dictionary<object, object> obj) => _target.Save(obj);
     }
 
+    internal class LoaderProxy
+    {
+        private Loader _target;
+
+        [MoonSharpHidden]
+        public LoaderProxy(Loader target)
+        {
+            this._target = target;
+        }
+
+        public Dictionary<object, object> Load() => _target.Load();
+    }
+
     public class LuaManager
     {
         private readonly static string SCRIPT_DIR_NAME = "Scripts";
@@ -154,6 +167,7 @@ namespace GnollModLoader
 
             // hiding the internal functionality
             UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
+            UserData.RegisterProxyType<LoaderProxy, Loader>(t => new LoaderProxy(t));
 
             this._hookManager.OnEntitySpawn += (Game.GameEntity entity) =>
             {
@@ -168,8 +182,10 @@ namespace GnollModLoader
             };
 
             this._hookManager.BeforeStartNewGameAfterReadDefs += this.hookLuaOnGameDefsLoaded;
-            this._hookManager.AfterGameLoaded += this.hookLuaOnSaveGameLoaded;
+            this._hookManager.AfterGameLoaded += this.hookLuaOnGameLoad;
+            this._hookManager.AfterGameSaved += this.hookLuaOnGameSave;
         }
+
 
         public void HookInGameHudInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
@@ -186,12 +202,32 @@ namespace GnollModLoader
             foreach (var entry in this._registry)
             {
                 var script = entry.Value.Item2;
-                runLuaFunction(script, "OnGameDefsLoaded", GnomanEmpire.Instance.GameDefs);
+                runLuaFunction(script, "OnGameDefinitionsInitialized", GnomanEmpire.Instance.GameDefs);
             }
         }
-        private void hookLuaOnSaveGameLoaded()
+        private void hookLuaOnGameLoad()
         {
-            throw new NotImplementedException();
+            Logger.Log("Hooking: After save game loaded");
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnSaveGameLoaded", _saveGameManager.LoaderForMod(entry.Key));
+            }
+            Logger.Log("Hooking: After save game definitions loaded");
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnDefinitionsLoaded", GnomanEmpire.Instance.GameDefs);
+            }
+        }
+
+        private void hookLuaOnGameSave()
+        {
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnGameSave", _saveGameManager.SaverForMod(entry.Key));
+            }
         }
 
         private void runValidationScripts()
@@ -201,18 +237,14 @@ namespace GnollModLoader
                 var script = entry.Value.Item2;
                 runLuaFunction(script, "OnRunScriptValidation", GnomanEmpire.Instance.GameDefs);
             }
-
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnSave", _saveGameManager.SaverForMod(entry.Key));
-            }
         }
 
         private static void runLuaFunction(Script script, string functionName, params object[] args)
         {
             if (script == null)
+            {
                 return;
+            }
 
             try
             {
@@ -251,7 +283,6 @@ namespace GnollModLoader
                     Logger.Error($"-- {ex}");
                 }
             }
-            this.hookLuaOnGameDefsLoaded(null);
         }
 
         private Script loadAndGetScript(string scriptPath)
@@ -264,8 +295,8 @@ namespace GnollModLoader
                     Path.GetDirectoryName(scriptPath) + "\\?.lua" };
                 */
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
-                    "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
-                    "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua" };
+                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
+                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua" };                
 
                 Logger.Log("Module paths: ");
                 foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
@@ -313,7 +344,7 @@ namespace GnollModLoader
             try
             {
                 //var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
-                var initScript = "C:\\Users\\svenson\\workspace\\gnoll\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
+                var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
                 Logger.Log($"-- Trying to load Lua init script: {initScript}");
                 if (System.IO.File.Exists(initScript))
                 {

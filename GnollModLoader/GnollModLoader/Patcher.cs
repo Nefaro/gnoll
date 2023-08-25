@@ -217,6 +217,8 @@ namespace GnollModLoader
 
         public static bool Prefix(ref GnomanEmpire __instance, string fileName, bool fallenKingdom = false)
         {
+            /* 
+            // XXX: DEBUG STUFF
             Logger.Log($"Load Game");
             __instance.string_0 = fileName;
             FileStream fileStream = null;
@@ -270,6 +272,8 @@ namespace GnollModLoader
             Logger.Log($"GAM Region {GnomanEmpire.Instance.Region.GetHashCode()}");
             Logger.Log($"Region TileSelectionManager {GnomanEmpire.Instance.Region.TileSelectionManager}");
             return Patcher.SKIP_CHAIN;
+            */
+            return Patcher.CONTINUE_CHAIN;
         }
 
         public static void Postfix()

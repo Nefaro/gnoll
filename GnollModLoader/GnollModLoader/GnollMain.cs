@@ -63,8 +63,14 @@ namespace GnollModLoader
             // Attach debug hooks before mods are loaded
             tryAttachDebugHooks(hookManager);
 
-            // Experimental
             saveGameManager = new SaveGameManager();
+
+            // hook save game load event
+            // NOTE: SaveGameManager needs to be first one on the "load" path, 
+            // since other mods depend on the data being already available
+            // Needs to be before Lua manager, since that also has its own hooks
+            hookManager.AfterGameLoaded += saveGameManager.HookAfterGameLoaded;
+
             luaManager = new LuaManager(hookManager, saveGameManager);
 
             // Mod manager runs AFTER patches have been applied
@@ -72,12 +78,14 @@ namespace GnollModLoader
             modLoader = new ModLoader(modManager);
             modLoader.LoadModsFrom(MODS_DIR);
 
-            // hook up gnoll main menu
+            // hook up Gnoll main menu
             hookManager.MainMenuGuiInit += HookGnollMainMenu;
-            // hook up LUA debug buttons
+            // hook up Lua debug buttons
             hookManager.InGameHUDInit += luaManager.HookInGameHudInit;
             // hook game saving event
+            // NOTE: SaveGameManager needs to be last one on the "save" path
             hookManager.AfterGameSaved += saveGameManager.HookAfterGameSaved;
+            
         }
 
         // Called after the game has initialized and game settings have been read in,
@@ -109,8 +117,6 @@ namespace GnollModLoader
 
         private static string getMainPageLabel()
         {
-            // Keep the Main Page Label always short, we have a length restriction
-            //return $" {GnollMain.SHORT_NAME} ({GnollMain.MAJOR_VERSION + "." + GnollMain.PATCH_VERSION})";
             return $" {GnollMain.SHORT_NAME} {GnollMain.VERSION}";
         }
 
