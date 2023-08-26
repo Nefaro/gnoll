@@ -1,16 +1,11 @@
-print("Hello from Lua init script")
-
 require "OnScriptValidation"
 
 function OnEntitySpawn(entity)
-
 end
 
 g_valueMapping = {}
 
 function OnGameDefinitionsInitialized(gameDefs)
-    print "Gamedefs is NOT nil"
-    --local tbl = gameDefs.PlantSettings.MaterialIDToPlantIDs;
     _generateNewValues(gameDefs)
     _assignNewValues(gameDefs)
 end

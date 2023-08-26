@@ -77,11 +77,10 @@ namespace GnollModLoader
             modManager = new ModManager(hookManager, patcher, luaManager);
             modLoader = new ModLoader(modManager);
             modLoader.LoadModsFrom(MODS_DIR);
+            luaManager.RunInitScripts();
 
             // hook up Gnoll main menu
             hookManager.MainMenuGuiInit += HookGnollMainMenu;
-            // hook up Lua debug buttons
-            hookManager.InGameHUDInit += luaManager.HookInGameHudInit;
             // hook game saving event
             // NOTE: SaveGameManager needs to be last one on the "save" path
             hookManager.AfterGameSaved += saveGameManager.HookAfterGameSaved;

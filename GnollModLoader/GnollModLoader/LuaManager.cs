@@ -11,41 +11,13 @@ using System.Reflection;
 using System.IO;
 using GnollModLoader.Lua;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json.Linq;
-using Microsoft.Win32;
-using static GameLibrary.PlantDef;
 using static GnollModLoader.SaveGameManager;
 
 namespace GnollModLoader
 {
-    internal class SaverProxy
-    {
-        private Saver _target;
-
-        [MoonSharpHidden]
-        public SaverProxy(Saver target)
-        {
-            this._target = target;
-        }
-
-        public void Save(Dictionary<object, object> obj) => _target.Save(obj);
-    }
-
-    internal class LoaderProxy
-    {
-        private Loader _target;
-
-        [MoonSharpHidden]
-        public LoaderProxy(Loader target)
-        {
-            this._target = target;
-        }
-
-        public Dictionary<object, object> Load() => _target.Load();
-    }
-
     public class LuaManager
     {
+        private readonly static string LUA_SUPPORT_MOD_NAME = "LuaSupport";
         private readonly static string SCRIPT_DIR_NAME = "Scripts";
         private readonly static CoreModules DEFAULT_CORE_MODULES = CoreModules.Preset_HardSandbox |
                 CoreModules.Json |
@@ -59,6 +31,7 @@ namespace GnollModLoader
 
         private HookManager _hookManager;
         private SaveGameManager _saveGameManager;
+        private string _luaSupportInitScript;
         public LuaManager(HookManager hookManager, SaveGameManager saveGameManager) 
         {
             this._hookManager = hookManager;
@@ -168,26 +141,107 @@ namespace GnollModLoader
             // hiding the internal functionality
             UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
             UserData.RegisterProxyType<LoaderProxy, Loader>(t => new LoaderProxy(t));
-
-            this._hookManager.OnEntitySpawn += (Game.GameEntity entity) =>
+        }
+        internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
+        {
+            var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
+            //var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
+            if ( LUA_SUPPORT_MOD_NAME == mod.Name)
             {
-                //Logger.Log($"Entity type {entity.Name()}");
-                /*
-                var func = script.Globals["OnEntitySpawn"];
-                if (func != null )
+                // LuaSupport mod gets registered only if it's enabled
+                _luaSupportInitScript = initScript;
+            }
+            else
+            {
+                this._registry[mod.Name] = new Tuple<string, Script>(initScript, null);
+            }
+        }
+
+        internal void RunInitScripts()
+        {
+            if( !verifyLuaIntegrationEnabled() )
+            {
+                Logger.Log("Lua Support DISABLED");
+                return;
+            }
+
+            foreach (var modName in new List<string>(this._registry.Keys))
+            {
+                var initScript = this._registry[modName].Item1;
+                try
                 {
-                    //Logger.Log($"Calling OnEntitySpawn for: {entity.Name()}");
-                    script.Call(func, entity);
-                }*/
-            };
+                    Logger.Log($"-- Trying to load Lua init script: {initScript}");
+                    if (File.Exists(initScript))
+                    {
+                        var script = this.loadAndGetScript(initScript);
+                        this._registry[modName] = new Tuple<string, Script>(initScript, script);
+                        if (script != null)
+                        {
+                            Logger.Log($"-- Init script for '{modName}' loaded successfully");
+                        }
+                        else
+                        {
+                            Logger.Error($"Init script for mod '{modName}' failed");
+                        }
+                    }
+                    else
+                    {
+                        Logger.Warn($"Mod registered for script loading but init script missing: {initScript}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Init script for mod '{modName}' failed");
+                    Logger.Error($"-- {ex}");
+                }
+            }
+        }
+
+        internal void UnloadMod(IGnollMod mod)
+        {
+            try
+            {
+                Logger.Log($"-- Unloading mod '{mod.Name}' from script handler");
+                this._registry.Remove(mod.Name);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Unloading mod '{mod.Name}' failed");
+                Logger.Error($"-- {ex}");
+            }
+        }
+        private bool verifyLuaIntegrationEnabled()
+        {
+            // verify that the Lua ingeration should be enabled
+            // for this check if "LuaSuppot" mod is enabled
+            if ( _luaSupportInitScript == null )
+            {
+                return false;
+            }
+            // if enabled, then hook up all the events and whatnot
+            this._hookManager.InGameHUDInit += this.hookInGameHudInit;
 
             this._hookManager.BeforeStartNewGameAfterReadDefs += this.hookLuaOnGameDefsLoaded;
             this._hookManager.AfterGameLoaded += this.hookLuaOnGameLoad;
             this._hookManager.AfterGameSaved += this.hookLuaOnGameSave;
+
+            this._hookManager.OnEntitySpawn += this.hookLuaOnEntitySpawn;
+            return true;
         }
 
+        private void hookLuaOnEntitySpawn(GameEntity entity)
+        {
+            //Logger.Log($"Entity type {entity.Name()}");
+            /*
+            var func = script.Globals["OnEntitySpawn"];
+            if (func != null )
+            {
+                //Logger.Log($"Calling OnEntitySpawn for: {entity.Name()}");
+                script.Call(func, entity);
+            }*/
+        }
 
-        public void HookInGameHudInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
+        private void hookInGameHudInit(InGameHUD inGameHUD, Manager manager)
         {
             if (GnollMain.Debug)
             {
@@ -196,7 +250,7 @@ namespace GnollModLoader
             }
         }
 
-        private void hookLuaOnGameDefsLoaded(Game.CreateWorldOptions options)
+        private void hookLuaOnGameDefsLoaded(CreateWorldOptions options)
         {
             Logger.Log("Hooking: hookLuaOnGameDefsLoaded");
             foreach (var entry in this._registry)
@@ -289,15 +343,21 @@ namespace GnollModLoader
         {
             try { 
                 Script script = new Script(DEFAULT_CORE_MODULES);
-                /*
+                
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Path.GetDirectoryName(scriptPath) + "\\?",
-                    Path.GetDirectoryName(scriptPath) + "\\?.lua" };
-                */
+                    Path.GetDirectoryName(scriptPath) + "\\?.lua",
+                    Path.GetDirectoryName(_luaSupportInitScript) + "\\?",
+                    Path.GetDirectoryName(_luaSupportInitScript) + "\\?.lua"
+                };
+
+                /*
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
-                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua" };                
-
+                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua",
+                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?",
+                    Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?.lua"             
+                */
                 Logger.Log("Module paths: ");
                 foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
                 {
@@ -339,51 +399,6 @@ namespace GnollModLoader
             glass.panel_0.Left = (glass.Width - glass.panel_0.Width) / 2;
         }
 
-        internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
-        {
-            try
-            {
-                //var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
-                var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
-                Logger.Log($"-- Trying to load Lua init script: {initScript}");
-                if (System.IO.File.Exists(initScript))
-                {
-                    var script = this.loadAndGetScript(initScript);
-                    this._registry[mod.Name] = new Tuple<string, Script>(initScript, script);
-                    if (script != null)
-                    {
-                        Logger.Log($"-- Init script for '{mod.Name}' loaded successfully");
-                    }
-                    else
-                    {
-                        Logger.Error($"Init script for mod '{mod.Name}' failed");
-                    }
-                }
-                else
-                {
-                    Logger.Warn($"Mod registered for script loading but init script missing: {initScript}");
-                }
-            }
-            catch(Exception ex)
-            {
-                Logger.Error($"Init script for mod '{mod.Name}' failed");
-                Logger.Error($"-- {ex}");
-            }
-        }
-        internal void UnloadMod(IGnollMod mod)
-        {
-            try
-            {
-                Logger.Log($"-- Unloading mod '{mod.Name}' from script handler");
-                this._registry.Remove(mod.Name);
-            }
-            catch(Exception ex)
-            {
-                Logger.Error($"Unloading mod '{mod.Name}' failed");
-                Logger.Error($"-- {ex}");
-            }
-        }
-
         private string generatePathForMod(Assembly modAssembly, string subDirectory)
         {
             string assembly = Path.GetDirectoryName(modAssembly.Location);
@@ -391,6 +406,33 @@ namespace GnollModLoader
             string folder = assembly + "\\" + dll + "\\" + subDirectory;
             return folder;
         }
+
+
+    }
+
+    internal class SaverProxy
+    {
+        private Saver _target;
+
+        [MoonSharpHidden]
+        public SaverProxy(Saver target)
+        {
+            this._target = target;
+        }
+
+        public void Save(Dictionary<object, object> obj) => _target.Save(obj);
+    }
+    internal class LoaderProxy
+    {
+        private Loader _target;
+
+        [MoonSharpHidden]
+        public LoaderProxy(Loader target)
+        {
+            this._target = target;
+        }
+
+        public Dictionary<object, object> Load() => _target.Load();
     }
 
 }
