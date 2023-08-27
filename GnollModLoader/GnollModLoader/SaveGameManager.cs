@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Game;
 using GnollModLoader.Model;
+using static GnollModLoader.SaveGameManager;
 
 namespace GnollModLoader
 {
@@ -129,7 +130,12 @@ namespace GnollModLoader
             }
             public Dictionary<object, object> Load()
             {
-                return _saveData[this._modName];
+                Dictionary<object, object> loadedData;
+                if (_saveData.TryGetValue(this._modName, out loadedData))
+                {
+                    return loadedData;
+                }
+                return new Dictionary<object, object>();
             }
         }
     }
