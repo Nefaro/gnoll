@@ -55,7 +55,8 @@ namespace GnollModLoader
                 ApplyPatch_GnomanEmpire_LoadGame,
                 ApplyPatch_GnomanEmpire_SaveGame,
                 ApplyPatch_GameSettings_ApplyDisplayChanges,
-                ApplyPatch_MainMenuWindow
+                ApplyPatch_MainMenuWindow,
+                ApplyPatch_AIDirector_Embark
             };
 
             foreach (Action d in patches)
@@ -63,6 +64,13 @@ namespace GnollModLoader
                 d.Invoke();
             }
             Logger.Log("Applying patches ... DONE");
+        }
+
+        private void ApplyPatch_AIDirector_Embark()
+        {
+            var embark = typeof(AIDirector).GetMethod(nameof(AIDirector.Embark));
+            var postfixPatch = typeof(Patch_AIDirector_Embark).GetMethod(nameof(Patch_AIDirector_Embark.Postfix));
+            this.ApplyPatchImpl(embark, postfixPatch: postfixPatch);
         }
 
         private void ApplyPatch_GnomanEmpire_PlayGame()
@@ -532,9 +540,6 @@ namespace GnollModLoader
             {
                 __instance.method_7(false);
             }
-
-
-
         }
     }
 
@@ -549,9 +554,9 @@ namespace GnollModLoader
         }
     }
 
-        // Experimental population amount override
-        // Leaving in for future work ...
-        internal class Patch_Faction_PlayerSpawnStrength
+    // Experimental population amount override
+    // Leaving in for future work ...
+    internal class Patch_Faction_PlayerSpawnStrength
     {
         public static void Prefix()
         {
@@ -566,6 +571,14 @@ namespace GnollModLoader
                 __result = 81;
                 Logger.Log($"-- Calculated strength {__result}");
             }
+        }
+    }
+
+    internal class Patch_AIDirector_Embark
+    {
+        public static void Postfix()
+        {
+            HookManager.HookOnStartNewGame_afterEmbark();
         }
     }
 }

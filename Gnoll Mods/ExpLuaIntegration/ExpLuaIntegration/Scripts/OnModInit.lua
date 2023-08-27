@@ -5,9 +5,26 @@ end
 
 g_valueMapping = {}
 
-function OnGameDefinitionsInitialized(gameDefs)
+if ( _GNOMORIA ~= nil and _GNOMORIA['CurrentSeason']) then
+    local Season = require "Season"
+    for season, idx in pairs(Season) do
+        if ( idx == _GNOMORIA['CurrentSeason'] ) then
+            print("Current season " .. season)
+        end
+    end
+else
+    print("_GNOMORIA table is missing")
+end
+
+
+function OnNewGameStarted()
+    gameDefs = _GNOMORIA['GameDefs']
+    if ( gameDefs == nil ) then
+        print("GameDefs is null")
+    end
+    
     _generateNewValues(gameDefs)
-    _assignNewValues(gameDefs)
+    _assignNewValues(gameDefs)    
 end
 
 function _generateNewValues(gameDefs) 
@@ -29,15 +46,16 @@ function _generateNewValues(gameDefs)
 end
 
 function _assignNewValues(gameDefs)
+    require "MaterialType"
     print("_assignNewValues");
     for k, v in pairs(gameDefs.Materials) do
-        if ( v.Type == 4 )  then
+        if ( v.Type == MaterialType.Wood )  then
             formatting = k .. " => "            
             if (gameDefs.PlantSettings.MaterialIDToPlantIDs[k] ~= nil and g_valueMapping[v.Name] ~= nil) then 
                 print("WOOD: " .. formatting .. tostring(v) .. " (TYPE = " .. v.Type ..")")
                 print(" -- Name: " .. v.Name)
                 print(" -- Current Value: " .. v.Value)
-                v.Value = g_valueMapping[v.Name];                
+                v.Value = g_valueMapping[v.Name]                
                 print(" -- New Value: " .. v.Value)                
             end
         end
@@ -55,9 +73,15 @@ function OnSaveGameLoaded(loader)
         print(" -- Value: " .. v)
         print(" -- Name: " .. k)
     end
+    gameDefs = _GNOMORIA['GameDefs']    
+    _assignNewValues(gameDefs)    
 end
 
-function OnDefinitionsLoaded(gameDefs)
-    print("OnDefinitionsLoaded");
-    _assignNewValues(gameDefs)
+function OnSeasonChange(season)
+    local Season = require "Season"
+    for ses, idx in pairs(Season) do
+        if ( idx == season ) then
+            print("Season changed to " .. ses)
+        end
+    end
 end

@@ -32,6 +32,8 @@ namespace GnollModLoader
         public delegate void BeforeStartNewGameHandler(CreateWorldOptions worldOptions);
         // Called after new game has configured and after mod defs have been read in, but before any generation
         public delegate void BeforeStartNewGameAfterReadDefsHandler(CreateWorldOptions worldOptions);
+        // Called after new game has configured, world created and starting faction placed
+        public delegate void BeforeStartNewGameAfterEmbarkHandler();
         // Called after a savegame has been loaded
         public delegate void AfterGameLoadedHandler();
         // Called before a game is being saved
@@ -143,6 +145,14 @@ namespace GnollModLoader
             }
         }
 
+        public static void HookOnStartNewGame_afterEmbark() 
+        { 
+            if ( instance.BeforeStartNewGameAfterEmbark != null )
+            {
+                instance.BeforeStartNewGameAfterEmbark();
+            }
+        }
+
         public static void HookInGameHUDInit_before()
         {
             if (instance.BeforeInGameHudInit != null)
@@ -184,6 +194,7 @@ namespace GnollModLoader
         public event MainMenuGuiInitHandler MainMenuGuiInit;
         public event BeforeStartNewGameHandler BeforeStartNewGame;
         public event BeforeStartNewGameAfterReadDefsHandler BeforeStartNewGameAfterReadDefs;
+        public event BeforeStartNewGameAfterEmbarkHandler BeforeStartNewGameAfterEmbark;
         public event AfterGameLoadedHandler AfterGameLoaded;
         public event BeforeGameSavedHandler BeforeGameSaved;
         public event AfterGameSavedHandler AfterGameSaved;

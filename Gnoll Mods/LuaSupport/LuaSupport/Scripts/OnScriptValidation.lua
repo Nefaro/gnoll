@@ -1,7 +1,18 @@
 print("Hello from ScriptValidation IMPORT")
 
-function OnRunScriptValidation(gameDefs)
+function OnRunScriptValidation()
     print "Running Validation Script"
+    
+    if ( _GNOMORIA == nil ) then
+        print("!! Validation failure: _GNOMORIA table is missing; cannot continue")
+        return
+    end
+    
+    gameDefs = _GNOMORIA['GameDefs']
+    if ( gameDefs == nil ) then
+        print("!! Validation failure: GameDefs in _GNOMORIA table is missing; cannot continue")
+        return
+    end    
     
     print "Validating 'gameDefs' members ... "
     local tbl = nil;
