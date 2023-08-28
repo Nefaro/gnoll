@@ -9,10 +9,10 @@ using MoonSharp.Interpreter.Loaders;
 using GameLibrary;
 using System.Reflection;
 using System.IO;
-using GnollModLoader.Lua;
+using GnollModLoader.Lua.Proxy;
 using Microsoft.Xna.Framework;
 using static GnollModLoader.SaveGameManager;
-using System.Security.Policy;
+using GnollModLoader.Lua;
 
 namespace GnollModLoader
 {
@@ -20,7 +20,6 @@ namespace GnollModLoader
     {
         private readonly static string LUA_SUPPORT_MOD_NAME = "LuaSupport";
         private readonly static string SCRIPT_DIR_NAME = "Scripts";
-        private readonly static string GNOMORIA_GLOBAL_TABLE_NAME = "_GNOMORIA";
         private readonly static CoreModules DEFAULT_CORE_MODULES = CoreModules.Preset_HardSandbox |
                 CoreModules.Json |
                 CoreModules.ErrorHandling |
@@ -31,14 +30,17 @@ namespace GnollModLoader
 
         private readonly Dictionary<String, Tuple<String,Script>> _registry = new Dictionary<String, Tuple<String, Script>> ();
 
-        private HookManager _hookManager;
-        private SaveGameManager _saveGameManager;
+        private readonly HookManager _hookManager;
+        private readonly SaveGameManager _saveGameManager;
+        private readonly LuaHookManager _luaHookManager;
+
         private string _luaSupportInitScript;
         public LuaManager(HookManager hookManager, SaveGameManager saveGameManager) 
         {
             this._hookManager = hookManager;
             this._saveGameManager = saveGameManager;
             this.init();
+            this._luaHookManager = new LuaHookManager(hookManager, this);
         }
 
         public void init()
@@ -119,19 +121,19 @@ namespace GnollModLoader
             UserData.RegisterProxyType<WorkshopTilePartProxy, WorkshopTilePart>(t => new WorkshopTilePartProxy(t));
             UserData.RegisterProxyType<WorkshopTileProxy, WorkshopTile>(t => new WorkshopTileProxy(t));
 
-            UserData.RegisterProxyType<Lua.NewGameSettings.ContainerSettingsProxy, NewGameSettings.ContainerGenSettings>(t => new Lua.NewGameSettings.ContainerSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.DefaultProfessionProxy, NewGameSettings.DefaultProfession>(t => new Lua.NewGameSettings.DefaultProfessionProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.EnemyRaceGroupProxy, NewGameSettings.EnemyRaceGroup>(t => new Lua.NewGameSettings.EnemyRaceGroupProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.FarmAnimalProxy, NewGameSettings.FarmAnimal>(t => new Lua.NewGameSettings.FarmAnimalProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.ItemGenSettingsProxy, NewGameSettings.ItemGenSettings>(t => new Lua.NewGameSettings.ItemGenSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.ItemSettingsProxy, NewGameSettings.ItemSettings>(t => new Lua.NewGameSettings.ItemSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.NewGameSettings.SettlerProxy, NewGameSettings.Settler>(t => new Lua.NewGameSettings.SettlerProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ContainerSettingsProxy, NewGameSettings.ContainerGenSettings>(t => new Lua.Proxy.NewGameSettings.ContainerSettingsProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.DefaultProfessionProxy, NewGameSettings.DefaultProfession>(t => new Lua.Proxy.NewGameSettings.DefaultProfessionProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.EnemyRaceGroupProxy, NewGameSettings.EnemyRaceGroup>(t => new Lua.Proxy.NewGameSettings.EnemyRaceGroupProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.FarmAnimalProxy, NewGameSettings.FarmAnimal>(t => new Lua.Proxy.NewGameSettings.FarmAnimalProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ItemGenSettingsProxy, NewGameSettings.ItemGenSettings>(t => new Lua.Proxy.NewGameSettings.ItemGenSettingsProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ItemSettingsProxy, NewGameSettings.ItemSettings>(t => new Lua.Proxy.NewGameSettings.ItemSettingsProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.SettlerProxy, NewGameSettings.Settler>(t => new Lua.Proxy.NewGameSettings.SettlerProxy(t));
 
-            UserData.RegisterProxyType<Lua.PlantDef.HarvestedItemProxy, PlantDef.HarvestedItem>(t => new Lua.PlantDef.HarvestedItemProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.PlantDef.HarvestedItemProxy, PlantDef.HarvestedItem>(t => new Lua.Proxy.PlantDef.HarvestedItemProxy(t));
 
-            UserData.RegisterProxyType<Lua.TerraingSettings.GrowthSettingsProxy, GameLibrary.TerrainSettings.GrowthSettings>(t => new Lua.TerraingSettings.GrowthSettingsProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.TerraingSettings.GrowthSettingsProxy, GameLibrary.TerrainSettings.GrowthSettings>(t => new Lua.Proxy.TerraingSettings.GrowthSettingsProxy(t));
 
-            UserData.RegisterProxyType<Lua.UniformSettings.UniformProxy, GameLibrary.UniformSettings.Uniform>(t => new Lua.UniformSettings.UniformProxy(t));
+            UserData.RegisterProxyType<Lua.Proxy.UniformSettings.UniformProxy, GameLibrary.UniformSettings.Uniform>(t => new Lua.Proxy.UniformSettings.UniformProxy(t));
 
             UserData.RegisterProxyType<CreateWorldOptionsProxy, CreateWorldOptions>(t => new CreateWorldOptionsProxy(t));
 
@@ -139,8 +141,10 @@ namespace GnollModLoader
             UserData.RegisterType<Vector3>();
             UserData.RegisterType<Vector2>();
 
-            UserData.RegisterType<Game.Character>();
-            UserData.RegisterType<Game.GameEntity>();
+            UserData.RegisterType<GnomoriaGlobalTable>();
+
+            //UserData.RegisterType<Game.Character>();
+            //UserData.RegisterType<Game.GameEntity>();
 
             // hiding the internal functionality
             UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
@@ -148,8 +152,8 @@ namespace GnollModLoader
         }
         internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
         {
-            var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
-            //var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
+            //var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
+            var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
             if ( LUA_SUPPORT_MOD_NAME == mod.Name)
             {
                 // LuaSupport mod gets registered only if it's enabled
@@ -200,6 +204,14 @@ namespace GnollModLoader
                 }
             }
         }
+        public void RunLuaFunction(string functionName, params object[] args)
+        {
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, functionName, args);
+            }
+        }
 
         internal void UnloadMod(IGnollMod mod)
         {
@@ -222,124 +234,19 @@ namespace GnollModLoader
             {
                 return false;
             }
-            // A bit of bookkeeping before initializing everything
-            this._hookManager.AfterGameLoaded += this.hookOnGameWorldInit;
-            this._hookManager.BeforeStartNewGameAfterEmbark += this.hookOnGameWorldInit;
-
             // if debug, hook up Lua debug buttons
             this._hookManager.InGameHUDInit += this.hookInGameHudInit;
 
-            // Not gonna expose that right now
-            // this._hookManager.BeforeStartNewGameAfterReadDefs += this.hookLuaOnNewGameStartBeforeWorldGenerated;
+            this._luaHookManager.AttachHooks();
 
-            this._hookManager.BeforeStartNewGameAfterEmbark += this.hookLuaOnNewGameStarted;
+            // some special hooks that require to be here
             this._hookManager.AfterGameLoaded += this.hookLuaOnGameLoaded;
             this._hookManager.AfterGameSaved += this.hookLuaOnGameSave;
-
-            this._hookManager.OnEntitySpawn += this.hookLuaOnEntitySpawned;
 
             return true;
         }
 
-        // Runs once the world has been loaded
-        private void hookOnGameWorldInit()
-        {
-            // Gnomoria events can be hooked up after the world has loaded
-            GnomanEmpire.Instance.Region.OnSeasonChange += this.hookLuaOnSeasonChanged;
-
-            attachGnomoriaGlobalTable();
-        }
-
-        private void attachGnomoriaGlobalTable()
-        {
-            Logger.Log("Attaching Gnomoria table to Lua global");
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                script.Globals[GNOMORIA_GLOBAL_TABLE_NAME] = buildGnomoriaTable();
-            }
-        }
-
-        private Dictionary<string, object> buildGnomoriaTable()
-        {
-            Dictionary<string, object> gnomoriaGlobalTable = new Dictionary<string, object>();
-            // not everything is available all the time
-            if (GnomanEmpire.Instance.GameDefs != null)
-                gnomoriaGlobalTable["GameDefs"] = GnomanEmpire.Instance.GameDefs;
-
-            if (GnomanEmpire.Instance.World != null)
-                gnomoriaGlobalTable["CurrentSeason"] = GnomanEmpire.Instance.Region.Season();
-
-            return gnomoriaGlobalTable;
-        }
-
-        private void hookLuaOnEntitySpawned(GameEntity entity)
-        {
-            //Logger.Log($"Entity type {entity.Name()}");
-            /*
-            var func = script.Globals["OnEntitySpawn"];
-            if (func != null )
-            {
-                //Logger.Log($"Calling OnEntitySpawn for: {entity.Name()}");
-                script.Call(func, entity);
-            }*/
-        }
-
-        private void hookInGameHudInit(InGameHUD inGameHUD, Manager manager)
-        {
-            if (GnollMain.Debug)
-            {
-                Logger.Log("Attaching Lua buttons");
-                this.AttachIngameUI(inGameHUD, manager);
-            }
-        }
-
-        private void hookLuaOnNewGameStarted()
-        {
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnNewGameStarted");
-            }
-        }
-
-        private void hookLuaOnGameLoaded()
-        {
-
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnSaveGameLoaded", _saveGameManager.LoaderForMod(entry.Key));
-            }
-        }
-
-        private void hookLuaOnGameSave()
-        {
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnGameSave", _saveGameManager.SaverForMod(entry.Key));
-            }
-        }
-        private void hookLuaOnSeasonChanged(object sender, System.EventArgs e)
-        {
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnSeasonChange", GnomanEmpire.Instance.Region.Season());
-            }
-        }
-
-        private void runValidationScripts()
-        {
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnRunScriptValidation");
-            }
-        }
-
-        private static void runLuaFunction(Script script, string functionName, params object[] args)
+        private void runLuaFunction(Script script, string functionName, params object[] args)
         {
             if (script == null)
             {
@@ -358,6 +265,15 @@ namespace GnollModLoader
             catch (Exception ex)
             {
                 Logger.Error($"LUA Error: {ex}");
+            }
+        }
+
+        private void runValidationScripts()
+        {
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnRunScriptValidation");
             }
         }
 
@@ -383,7 +299,6 @@ namespace GnollModLoader
                     Logger.Error($"-- {ex}");
                 }
             }
-            attachGnomoriaGlobalTable();
         }
 
         private Script loadAndGetScript(string scriptPath)
@@ -391,28 +306,28 @@ namespace GnollModLoader
             try { 
                 Script script = new Script(DEFAULT_CORE_MODULES);
 
-
+                /*
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Path.GetDirectoryName(scriptPath) + "\\?",
                     Path.GetDirectoryName(scriptPath) + "\\?.lua",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?.lua"
-                };
+                };*/
 
-                /*
+                
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?.lua"
                 };
-                */
+                
                 Logger.Log("Module paths: ");
                 foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
                 {
                     Logger.Log($" -- {path}");
                 }
-                script.Globals[GNOMORIA_GLOBAL_TABLE_NAME] = buildGnomoriaTable();
+                script.Globals[GnomoriaGlobalTable.GNOMORIA_GLOBAL_TABLE_NAME] = new GnomoriaGlobalTable();
                 script.DoFile(scriptPath);
                 return script;
             }
@@ -421,6 +336,34 @@ namespace GnollModLoader
                 Logger.Error($"Init script with path '{scriptPath}' failed");
                 Logger.Error($"-- {ex}");
                 return null;
+            }
+        }
+
+        private void hookInGameHudInit(InGameHUD inGameHUD, Manager manager)
+        {
+            if (GnollMain.Debug)
+            {
+                Logger.Log("Attaching Lua buttons");
+                this.AttachIngameUI(inGameHUD, manager);
+            }
+        }
+
+        private void hookLuaOnGameLoaded()
+        {
+
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnSaveGameLoaded", _saveGameManager.LoaderForMod(entry.Key));
+            }
+        }
+
+        private void hookLuaOnGameSave()
+        {
+            foreach (var entry in this._registry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, "OnGameSave", _saveGameManager.SaverForMod(entry.Key));
             }
         }
 
@@ -455,33 +398,6 @@ namespace GnollModLoader
             string folder = assembly + "\\" + dll + "\\" + subDirectory;
             return folder;
         }
-
-
-    }
-
-    internal class SaverProxy
-    {
-        private Saver _target;
-
-        [MoonSharpHidden]
-        public SaverProxy(Saver target)
-        {
-            this._target = target;
-        }
-
-        public void Save(Dictionary<object, object> obj) => _target.Save(obj);
-    }
-    internal class LoaderProxy
-    {
-        private Loader _target;
-
-        [MoonSharpHidden]
-        public LoaderProxy(Loader target)
-        {
-            this._target = target;
-        }
-
-        public Dictionary<object, object> Load() => _target.Load();
     }
 
 }

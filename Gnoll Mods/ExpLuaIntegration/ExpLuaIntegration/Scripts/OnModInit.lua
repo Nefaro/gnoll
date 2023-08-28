@@ -5,20 +5,20 @@ end
 
 g_valueMapping = {}
 
-if ( _GNOMORIA ~= nil and _GNOMORIA['CurrentSeason']) then
+local _G = _GNOMORIA;
+if ( _G ~= nil and _G.getCurrentSeason()  != null ) then
     local Season = require "Season"
     for season, idx in pairs(Season) do
-        if ( idx == _GNOMORIA['CurrentSeason'] ) then
+        if ( idx == _G.getCurrentSeason()  ) then
             print("Current season " .. season)
         end
     end
-else
+elseif ( _G == nil ) then
     print("_GNOMORIA table is missing")
 end
 
-
 function OnNewGameStarted()
-    gameDefs = _GNOMORIA['GameDefs']
+    gameDefs = _G.getGameDefs()
     if ( gameDefs == nil ) then
         print("GameDefs is null")
     end
@@ -73,12 +73,18 @@ function OnSaveGameLoaded(loader)
         print(" -- Value: " .. v)
         print(" -- Name: " .. k)
     end
-    gameDefs = _GNOMORIA['GameDefs']    
+    gameDefs = _G.getGameDefs()    
     _assignNewValues(gameDefs)    
 end
 
 function OnSeasonChange(season)
     local Season = require "Season"
+    for ses, idx in pairs(Season) do
+        if ( idx == _GNOMORIA.getCurrentSeason() ) then
+            print("Current season " .. ses)
+        end
+    end
+    
     for ses, idx in pairs(Season) do
         if ( idx == season ) then
             print("Season changed to " .. ses)

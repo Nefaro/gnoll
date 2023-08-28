@@ -8,7 +8,7 @@ function OnRunScriptValidation()
         return
     end
     
-    gameDefs = _GNOMORIA['GameDefs']
+    gameDefs = _GNOMORIA.getGameDefs()
     if ( gameDefs == nil ) then
         print("!! Validation failure: GameDefs in _GNOMORIA table is missing; cannot continue")
         return
