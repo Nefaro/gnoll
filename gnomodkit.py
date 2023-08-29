@@ -33,7 +33,7 @@ GNOMORIA_HASH_GOG = '016e623994628aba2a3cb8cd4cfe2412'
 # Gnomoria v1.0 Steam
 GNOMORIA_HASH_STEAM = 'c9f6d4b91b40f08953b0cb48e5dc81f4'
 
-GNOMORIA_DIST_FILE = 'Gnomoria.orig.exe';
+GNOMORIA_DIST_FILE = 'Gnomoria.exe';
 # for SDK
 DEOBFUSCATED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.exe')
 DISASSEMBLED_FILENAME = os.path.join(BUILD_DIR, 'GnomoriaGame.il')
@@ -738,7 +738,7 @@ for target in targets:
         tr.add_dependency(TaskMakeSDK())        
     elif target == 'modloader':
         tr.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))        
-    elif target.startswith('mod:all'):
+    elif target.startswith('mod:all') or target.startswith('mod:*'):
         tr.add_dependency(TaskMakeAllMods())
     elif target.startswith('mod:'):
         tr.add_dependency(TaskMakeMod(target[4:]))
