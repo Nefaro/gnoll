@@ -6,30 +6,35 @@
     "patches": [
         {
         "version": 9,
-        "versionString":"G1.9",
+        "versionString":"1.9",
         "filename": "Gnoll1.0x_016e6239.xdelta"
     },
     {
         "version": 10,
-        "versionString":"G1.10",
+        "versionString":"1.10",
         "filename": "Gnoll1.0x_016e6239.xdelta"
     },
     {
         "version": 11,
-        "versionString":"G1.11",
+        "versionString":"1.11",
         "filename": "Gnoll1.0x_016e6239.xdelta"
     },
     {
         "version": 12,
-        "versionString":"G1.12",
+        "versionString":"1.12",
         "filename": "Gnoll1.0x_016e6239.xdelta"
     },
     {
         "version": 13,
-        "versionString":"G1.13.1",
-        "filename": "Gnoll1.13.1_016e6239.xdelta"
+        "versionString":"1.13.1",
+        "filename": "Gnoll1.1x_016e6239.xdelta"
+    },
+    {
+        "version": 14,
+        "versionString":"1.13.1",
+        "filename": "Gnoll1.1x_016e6239.xdelta"
     }],
-    "latestVersion":"G1.13.1"
+    "latestVersion":"1.14"
   },
   {
     "name": "v1.0 (Steam 2019)",
@@ -68,9 +73,14 @@
     {
         "version": 13,
         "versionString":"G1.13",
-        "filename": "Gnoll1.13_c9f6d4b9.xdelta"
-    }
+        "filename": "Gnoll1.1x_c9f6d4b9.xdelta"
+    },
+    {
+        "version": 14,
+        "versionString":"1.14",
+        "filename": "Gnoll1.1x_c9f6d4b9.xdelta"
+    }    
     ],    
-    "latestVersion":"G1.13"
+    "latestVersion":"G1.14"
   }
 ]
