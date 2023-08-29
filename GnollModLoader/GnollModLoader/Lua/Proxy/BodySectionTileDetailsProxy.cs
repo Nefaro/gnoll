@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using GameLibrary;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
-using System.Runtime.InteropServices;
 
 namespace GnollModLoader.Lua.Proxy
 {

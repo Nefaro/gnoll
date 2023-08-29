@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Game;
-using GameLibrary;
-using Microsoft.Xna.Framework.Content;
+﻿using GameLibrary;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 

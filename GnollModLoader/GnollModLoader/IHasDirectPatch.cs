@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GnollModLoader
+﻿namespace GnollModLoader
 {
     // This mod has a direct harmony patch
     public interface IHasDirectPatch

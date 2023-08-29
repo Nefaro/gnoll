@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using LibNoise.Xna.Operator;
-using Newtonsoft.Json.Linq;
 
 namespace GnollModLoader
 {

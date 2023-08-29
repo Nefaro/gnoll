@@ -1,5 +1,4 @@
-﻿using System;
-using Game.GUI.Controls;
+﻿using Game.GUI.Controls;
 
 namespace GnollModLoader.GUI
 {

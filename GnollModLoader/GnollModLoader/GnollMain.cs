@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
-using Game;
+﻿using Game;
 using Game.GUI;
 using Game.GUI.Controls;
 using GnollModLoader.GUI;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace GnollModLoader
 {
     public class GnollMain
     {
         private const string MAJOR_VERSION = "1";
-        private const string BUGFIX_VERSION = ".1";
+        private const string BUGFIX_VERSION = ".0";
 
         // for easier validation
         public const uint PATCH_VERSION = 14;
@@ -28,7 +20,7 @@ namespace GnollModLoader
 
         public const string MODS_DIR = "Gnoll Mods\\enabled";
 
-        private static bool debug = true;
+        private static bool debug = false;
         public static bool Debug => debug;
         public static string VERSION
         {

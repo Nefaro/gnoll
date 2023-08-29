@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Game;
-using GameLibrary;
+﻿using Game;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua.Proxy

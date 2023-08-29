@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using Game;
-using Game.GUI;
-using Game.GUI.Controls;
 
 
 namespace GnollModLoader

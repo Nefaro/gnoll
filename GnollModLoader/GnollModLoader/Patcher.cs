@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using Game;
-using Game.Common;
 using Game.GUI;
 using Game.GUI.Controls;
-using GameLibrary;
 using HarmonyLib;
-using LibNoise.Xna.Operator;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SevenZip;
-using static HarmonyLib.Code;
 
 namespace GnollModLoader
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MoonSharp.Interpreter;
+﻿using MoonSharp.Interpreter;
 using static GameLibrary.UniformSettings;
 
 namespace GnollModLoader.Lua.Proxy.UniformSettings
