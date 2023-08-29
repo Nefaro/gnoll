@@ -1,4 +1,4 @@
-require "OnScriptValidation"
+require "GnollLuaValidationScript"
 
 function OnEntitySpawn(entity)
 end
@@ -28,19 +28,20 @@ function OnNewGameStarted()
 end
 
 function _generateNewValues(gameDefs) 
-    local idx = 1;
+    require "MaterialType"
+    math.randomseed(os.time());
     for k, v in pairs(gameDefs.Materials) do
-        if ( v.Type == 4 )  then
+        local rndValue = math.random(1, 10);
+        if ( v.Type == MaterialType.Wood )  then
             formatting = k .. " => "            
             if (gameDefs.PlantSettings.MaterialIDToPlantIDs[k] ~= nil) then 
                 -- This is wood
                 print("WOOD: " .. formatting .. tostring(v) .. " (TYPE = " .. v.Type ..")")
                 print(" -- Name: " .. v.Name)
                 print(" -- Current Value: " .. v.Value)
-                print(" -- New Value: " .. v.Value)
-                g_valueMapping[v.Name] = idx
+                print(" -- New Value: " .. rndValue)
+                g_valueMapping[v.Name] = rndValue
             end
-            idx = idx + 1
         end
     end
 end

@@ -18,6 +18,8 @@ namespace GnollModLoader
 {
     public class LuaManager
     {
+        private readonly static string CUSTOM_INIT_SCRIPT_PATH = GnomanEmpire.SaveFolderPath("Gnoll\\Scripts\\");
+        private readonly static string CUSTOM_INIT_SCRIPT_NAME = "CustomInit.lua";
         private readonly static string LUA_SUPPORT_MOD_NAME = "LuaSupport";
         private readonly static string SCRIPT_DIR_NAME = "Scripts";
         private readonly static CoreModules DEFAULT_CORE_MODULES = CoreModules.Preset_HardSandbox |
@@ -143,6 +145,7 @@ namespace GnollModLoader
 
             UserData.RegisterType<GnomoriaGlobalTable>();
 
+            // TODO: Those need to be proxied as well
             //UserData.RegisterType<Game.Character>();
             //UserData.RegisterType<Game.GameEntity>();
 
@@ -152,8 +155,11 @@ namespace GnollModLoader
         }
         internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
         {
-            //var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\OnModInit.lua";
-            var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\OnModInit.lua";
+            var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\ModInit.lua";
+
+            // XXX: DEBUG line for local testing; leaving it in for now
+            //var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\ModInit.lua";
+
             if ( LUA_SUPPORT_MOD_NAME == mod.Name)
             {
                 // LuaSupport mod gets registered only if it's enabled
@@ -171,6 +177,11 @@ namespace GnollModLoader
             {
                 Logger.Log("Lua Support DISABLED");
                 return;
+            }
+
+            if (File.Exists(this.getCustomInitScriptLocation()))
+            {
+                this._registry["CustomInit"] = new Tuple<string, Script>(this.getCustomInitScriptLocation(), null);
             }
 
             foreach (var modName in new List<string>(this._registry.Keys))
@@ -306,21 +317,22 @@ namespace GnollModLoader
             try { 
                 Script script = new Script(DEFAULT_CORE_MODULES);
 
-                /*
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Path.GetDirectoryName(scriptPath) + "\\?",
                     Path.GetDirectoryName(scriptPath) + "\\?.lua",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?.lua"
-                };*/
+                };
 
-                
+                // XXX: DEBUG lines for local testing; leaving them in for now
+                /*
                 ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?.lua"
                 };
+                */
                 
                 Logger.Log("Module paths: ");
                 foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
@@ -397,6 +409,11 @@ namespace GnollModLoader
             string dll = modAssembly.GetName().Name;
             string folder = assembly + "\\" + dll + "\\" + subDirectory;
             return folder;
+        }
+
+        private string getCustomInitScriptLocation()
+        {
+            return CUSTOM_INIT_SCRIPT_PATH + CUSTOM_INIT_SCRIPT_NAME;
         }
     }
 

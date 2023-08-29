@@ -6,7 +6,9 @@ using Game;
 
 namespace GnollModLoader.Lua
 {
-    // Represents the global Gnomoria table
+    /**
+     * Represents the global Gnomoria table in Lua context
+     */
     internal class GnomoriaGlobalTable
     {
         public readonly static string GNOMORIA_GLOBAL_TABLE_NAME = "_GNOMORIA";
@@ -26,6 +28,7 @@ namespace GnollModLoader.Lua
             }
             return null;
         }
+
         // Get current day number
         public uint? getCurrentDay()
         {

@@ -8,6 +8,10 @@ using Game;
 
 namespace GnollModLoader
 {
+    /**
+     * Responsilbe for hooking up the Gnomoria events with Lua callbacks.
+     * Keeping the mapping in a separate class mostly to keep the main Lua integration class smaller
+     */
     internal class LuaHookManager
     {
         private readonly HookManager _hookManager;
@@ -33,6 +37,8 @@ namespace GnollModLoader
 
         private void hookLuaOnEntitySpawned(GameEntity entity)
         {
+            // TODO: Need to map/implement GameEnity support first
+
             //Logger.Log($"Entity type {entity.Name()}");
             /*
             var func = script.Globals["OnEntitySpawn"];
