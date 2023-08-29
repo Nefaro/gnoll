@@ -1,0 +1,3 @@
+Experimental mod showcasing how to mod the game via Lua.
+
+As an example, the mod randomizes the wood material values (between 1 and 10, by default all wood has a value of 1) on start of a new game. Additionally it shows how to save the newly generated values. Since Gnomoria itself only saves strictly Gnomoria stuff, then we need a side-channel to save Gnoll stuff. This is shown as well. There is also some code that show using the _GNOMORIA global table which has a few helpful functions.
