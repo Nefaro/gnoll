@@ -16,7 +16,8 @@ namespace InstallerCore
         private static readonly List<String> _modLoaderDependencies = new List<string>()
         {
             "0Harmony.dll",
-            "Newtonsoft.Json.dll"
+            "Newtonsoft.Json.dll",
+            "MoonSharp.Interpreter.dll"
         };
         private static readonly string _modsDirectory = "Gnoll Mods";
 
