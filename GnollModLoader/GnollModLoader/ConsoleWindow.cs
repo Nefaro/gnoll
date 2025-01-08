@@ -15,6 +15,7 @@ namespace GnollModLoader
             }
             else
             {
+                MoveWindow(handle, 50, 100, 1250, 500, true);
                 ShowWindow(handle, SW_SHOW);
             }
         }
@@ -34,6 +35,9 @@ namespace GnollModLoader
 
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool MoveWindow(IntPtr hwnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
