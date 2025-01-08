@@ -98,11 +98,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IHasLuaScripts.cs" />
     <Compile Include="IHasDirectPatch.cs" />
+    <Compile Include="IHasLuaScripts.cs" />
+    <Compile Include="Integrations\MoonSharp\Loaders\FilesystemScriptLoader.cs" />
     <Compile Include="LuaHookManager.cs" />
-    <Compile Include="Lua\LoaderProxy.cs" />
     <Compile Include="LuaManager.cs" />
+    <Compile Include="Lua\LoaderProxy.cs" />
     <Compile Include="Lua\GnomoriaGlobalTable.cs" />
     <Compile Include="Lua\Proxy\AmmoDefProxy.cs" />
     <Compile Include="Lua\Proxy\AttackDefProxy.cs" />
