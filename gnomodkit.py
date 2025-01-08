@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit v1.14 -- https://github.com/Nefaro/gnoll')
+print('gnomodkit v1.14.1 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse
@@ -738,7 +738,7 @@ for target in targets:
         tr.add_dependency(TaskMakeSDK())        
     elif target == 'modloader':
         tr.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))        
-    elif target.startswith('mod:all') or target.startswith('mod:*'):
+    elif target.startswith('mod:all') or target.startswith('mod:*') or target.startswith('mods:all') or target.startswith('mods:*')
         tr.add_dependency(TaskMakeAllMods())
     elif target.startswith('mod:'):
         tr.add_dependency(TaskMakeMod(target[4:]))
