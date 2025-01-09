@@ -490,8 +490,10 @@ class TaskMakeMod(Task):
         return 'make ' + self.name
 
     def discover_dependencies(self):
-        # make ModLoader (generates patched .dll)
-        self.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))
+        # if the modded .dll is present, skip the dependencies
+        if not os.path.exists(CONFIG_FILENAME):
+            # make ModLoader (generates patched .dll)
+            self.add_dependency(TaskMakeModLoader(GNOMORIA_DIST_FILE))
 
         # build mod
         self.add_dependency(TaskNugetRestore(os.path.join(self.solution_dir, self.name + ".sln")))
