@@ -24,7 +24,7 @@ namespace GnollMods.SeasonalChange
 
         public string BuiltWithLoaderVersion { get { return "1.14.1"; } }
 
-        public int RequireMinPatchVersion { get { return 14; } }
+        public int RequireMinPatchVersion { get { return 13; } }
 
         private IList<string> _modsWithSeasonPaths;
         private ModsLogger _logger;
@@ -120,8 +120,6 @@ namespace GnollMods.SeasonalChange
         {
             // Repopulate the "gamedefs -> sprite" map
             Game.GnomanEmpire.Instance.gameDefs_0.method_12();
-
-            //_logger.Log("-- Switching season sprites to: " + season);
 
             // Load the (default) Sprites contained within our own mod
             loadCustomSprites(Path.Combine(DATA_FOLDER, season), "default.png");

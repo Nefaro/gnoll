@@ -118,8 +118,6 @@ namespace GnollMods.Challenges
 
         internal void HookManager_InGameHUDInit(InGameHUD inGameHUD, Manager manager)
         {
-            ModMain.Logger.Log("Attaching LUA button");
-
             this.AssignActiveChallenge();
             if (this.ActiveChallenge == null)
                 return;
