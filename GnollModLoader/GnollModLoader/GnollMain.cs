@@ -46,6 +46,7 @@ namespace GnollModLoader
                 ConsoleWindow.HideConsoleWindow();
 
             Logger.Log("== {0} {1} == ", NAME, VERSION);
+            Logger.Log($"Using Runtime: {System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()}");
 
             hookManager = new HookManager();
             // Apply patches before mods are loaded
