@@ -9,11 +9,13 @@ using MoonSharp.Interpreter.Loaders;
 using GameLibrary;
 using System.Reflection;
 using System.IO;
-using GnollModLoader.Lua.Proxy;
 using Microsoft.Xna.Framework;
 using static GnollModLoader.SaveGameManager;
 using GnollModLoader.Lua;
 using GnollModLoader.Integration.MoonSharp.Loaders;
+using GnollModLoader.Lua.Proxy.GameDefProxies;
+using GnollModLoader.Lua.Proxy;
+using System.Collections;
 
 namespace GnollModLoader
 {
@@ -33,7 +35,8 @@ namespace GnollModLoader
                 CoreModules.LoadMethods |
                 CoreModules.Metatables;
 
-        private readonly Dictionary<string, Tuple<string, Script>> _registry = new Dictionary<string, Tuple<string, Script>> ();
+        private readonly Dictionary<string, Tuple<string, Script>> _scriptRegistry = new Dictionary<string, Tuple<string, Script>> ();
+        private readonly Dictionary<string, object> _globalTables = new Dictionary<string, object>();
 
         private readonly HookManager _hookManager;
         private readonly SaveGameManager _saveGameManager;
@@ -53,11 +56,7 @@ namespace GnollModLoader
          */
         public void RunLuaFunction(string functionName, params object[] args)
         {
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, functionName, args);
-            }
+            this.findAndRunLuaFunctionWithArguments(functionName, args);
         }
 
         internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
@@ -74,7 +73,7 @@ namespace GnollModLoader
             }
             else
             {
-                this._registry[mod.Name] = new Tuple<string, Script>(initScript, null);
+                this._scriptRegistry[mod.Name] = new Tuple<string, Script>(initScript, null);
             }
         }
 
@@ -88,19 +87,19 @@ namespace GnollModLoader
 
             if (File.Exists(this.getCustomInitScriptLocation()))
             {
-                this._registry["CustomInit"] = new Tuple<string, Script>(this.getCustomInitScriptLocation(), null);
+                this._scriptRegistry["CustomInit"] = new Tuple<string, Script>(this.getCustomInitScriptLocation(), null);
             }
 
-            foreach (var modName in new List<string>(this._registry.Keys))
+            foreach (var modName in new List<string>(this._scriptRegistry.Keys))
             {
-                var initScript = this._registry[modName].Item1;
+                var initScript = this._scriptRegistry[modName].Item1;
                 try
                 {
                     Logger.Log($"-- Trying to load Lua init script: {initScript}");
                     if (File.Exists(initScript))
                     {
                         var script = this.loadAndGetScript(initScript);
-                        this._registry[modName] = new Tuple<string, Script>(initScript, script);
+                        this._scriptRegistry[modName] = new Tuple<string, Script>(initScript, script);
                         if (script != null)
                         {
                             Logger.Log($"-- Init script for '{modName}' loaded successfully");
@@ -128,137 +127,13 @@ namespace GnollModLoader
             try
             {
                 Logger.Log($"-- Unloading mod '{mod.Name}' from script handler");
-                this._registry.Remove(mod.Name);
+                this._scriptRegistry.Remove(mod.Name);
             }
             catch (Exception ex)
             {
                 Logger.Error($"Unloading mod '{mod.Name}' failed");
                 Logger.Error($"-- {ex}");
             }
-        }
-
-        // Init after it's clear if the Lua subsystem is enabled or not
-        private void init()
-        {
-            Logger.Log("Lua Support ENABLED, initializing ...");
-            this.setDefaultOptions();
-            this.registerTypes();
-            Logger.Log("Lua Support initialization ... DONE");
-        }
-
-        private void setDefaultOptions()
-        {   
-            // Insert our own implementation
-            Script.DefaultOptions.ScriptLoader = new FilesystemScriptLoader();
-            // Redirect lua "print" to our log console
-            Script.DefaultOptions.DebugPrint = s => { LuaLogger.Log(Newtonsoft.Json.JsonConvert.ToString(s)); };
-        }
-
-        private void registerTypes()
-        {
-            // Game Defs
-            UserData.RegisterProxyType<GameDefsProxy, GameDefs>(t => new GameDefsProxy(t));
-            UserData.RegisterProxyType<AmmoDefProxy, AmmoDef>(t => new AmmoDefProxy(t));
-            UserData.RegisterProxyType<AttributeDefProxy, AttributeDef>(t => new AttributeDefProxy(t));
-            UserData.RegisterProxyType<AttackDefProxy, AttackDef>(t => new AttackDefProxy(t));
-            UserData.RegisterProxyType<AutomatonSettingsProxy, AutomatonSettings>(t => new AutomatonSettingsProxy(t));
-            UserData.RegisterProxyType<BlueprintDefProxy, BlueprintDef>(t => new BlueprintDefProxy(t));
-            UserData.RegisterProxyType<BodyDefProxy, BodyDef>(t => new BodyDefProxy(t));
-            UserData.RegisterProxyType<BodyPartDefProxy, BodyPartDef>(t => new BodyPartDefProxy(t));
-            UserData.RegisterProxyType<BodySectionDefProxy, BodySectionDef>(t => new BodySectionDefProxy(t));
-            UserData.RegisterProxyType<BodySectionTilesDefProxy, BodySectionTilesDef>(t => new BodySectionTilesDefProxy(t));
-            UserData.RegisterProxyType<BodySectionTileDetailsProxy, BodySectionTileDetails>(t => new BodySectionTileDetailsProxy(t));
-            UserData.RegisterProxyType<BodySectionTileDefProxy, BodySectionTileDef>(t => new BodySectionTileDefProxy(t));
-            UserData.RegisterProxyType<ByproductProxy, Byproduct>(t => new ByproductProxy(t));
-            UserData.RegisterProxyType<CharacterSettingsProxy, CharacterSettings>(t => new CharacterSettingsProxy(t));
-            UserData.RegisterProxyType<ConstructionDefProxy, ConstructionDef>(t => new ConstructionDefProxy(t));
-            UserData.RegisterProxyType<ConstructionPropertiesProxy, ConstructionProperties>(t => new ConstructionPropertiesProxy(t));
-            UserData.RegisterProxyType<CraftableItemProxy, CraftableItem>(t => new CraftableItemProxy(t));
-            UserData.RegisterProxyType<DamagePropertyProxy, DamageProperty>(t => new DamagePropertyProxy(t));
-            UserData.RegisterProxyType<DefendDefProxy, DefendDef>(t => new DefendDefProxy(t));
-            UserData.RegisterProxyType<FactionDefProxy, FactionDef>(t => new FactionDefProxy(t));
-            UserData.RegisterProxyType<FarmedAnimalItemDefProxy, FarmedAnimalItemDef>(t => new FarmedAnimalItemDefProxy(t));
-            UserData.RegisterProxyType<GenderDefProxy, GenderDef>(t => new GenderDefProxy(t));
-            UserData.RegisterProxyType<GoblinSettingsProxy, GoblinSettings>(t => new GoblinSettingsProxy(t));
-            UserData.RegisterProxyType<GolemSettingsProxy, GolemSettings>(t => new GolemSettingsProxy(t));
-            UserData.RegisterProxyType<GolemSpawnDefProxy, GolemSpawnDef>(t => new GolemSpawnDefProxy(t));
-            UserData.RegisterProxyType<GrassSettingsProxy, GrassSettings>(t => new GrassSettingsProxy(t));
-            UserData.RegisterProxyType<ItemComponentProxy, ItemComponent>(t => new ItemComponentProxy(t));
-            UserData.RegisterProxyType<ItemDefProxy, ItemDef>(t => new ItemDefProxy(t));
-            UserData.RegisterProxyType<ItemGroupProxy, ItemGroup>(t => new ItemGroupProxy(t));
-            UserData.RegisterProxyType<ItemSettingsProxy, Game.ItemSettings>(t => new ItemSettingsProxy(t));
-            UserData.RegisterProxyType<JobSettingsProxy, Game.JobSettings>(t => new JobSettingsProxy(t));
-            UserData.RegisterProxyType<JobSettingProxy, GameLibrary.JobSetting>(t => new JobSettingProxy(t));
-            UserData.RegisterProxyType<LiquidDefProxy, LiquidDef>(t => new LiquidDefProxy(t));
-            UserData.RegisterProxyType<LiquidSettingsProxy, LiquidSettings>(t => new LiquidSettingsProxy(t));
-            UserData.RegisterProxyType<MantSettingsProxy, MantSettings>(t => new MantSettingsProxy(t));
-            UserData.RegisterProxyType<MaterialPropertyProxy, MaterialProperty>(t => new MaterialPropertyProxy(t));
-            UserData.RegisterProxyType<MechanismDefProxy, MechanismDef>(t => new MechanismDefProxy(t));
-            UserData.RegisterProxyType<MechanismSettingsProxy, Game.MechanismSettings>(t => new MechanismSettingsProxy(t));
-            UserData.RegisterProxyType<NewGameSettingsProxy, NewGameSettings>(t => new NewGameSettingsProxy(t));
-            UserData.RegisterProxyType<NaturalWeaponDefProxy, NaturalWeaponDef>(t => new NaturalWeaponDefProxy(t));
-            UserData.RegisterProxyType<PlantDefProxy, PlantDef>(t => new PlantDefProxy(t));
-            UserData.RegisterProxyType<PlantSettingsProxy, PlantSettings>(t => new PlantSettingsProxy(t));
-            UserData.RegisterProxyType<ProfessionMenuSettingsProxy, ProfessionMenuSettings>(t => new ProfessionMenuSettingsProxy(t));
-            UserData.RegisterProxyType<ProspectorSettingsProxy, ProspectorSettings>(t => new ProspectorSettingsProxy(t));
-            UserData.RegisterProxyType<RaceClassDefProxy, RaceClassDef>(t => new RaceClassDefProxy(t));
-            UserData.RegisterProxyType<RaceDefProxy, RaceDef>(t => new RaceDefProxy(t));
-            UserData.RegisterProxyType<ResearchDefProxy, ResearchDef>(t => new ResearchDefProxy(t));
-            UserData.RegisterProxyType<ScaledSkillProxy, ScaledSkill>(t => new ScaledSkillProxy(t));
-            UserData.RegisterProxyType<SkillDefProxy, SkillDef>(t => new SkillDefProxy(t));
-            UserData.RegisterProxyType<SquadDefProxy, SquadDef>(t => new SquadDefProxy(t));
-            UserData.RegisterProxyType<StartingItemDefProxy, StartingItemDef>(t => new StartingItemDefProxy(t));
-            UserData.RegisterProxyType<StartingItemProxy, StartingItem>(t => new StartingItemProxy(t));
-            UserData.RegisterProxyType<StartingSkillDefProxy, StartingSkillDef>(t => new StartingSkillDefProxy(t));
-            UserData.RegisterProxyType<StorageDefProxy, StorageDef>(t => new StorageDefProxy(t));
-            UserData.RegisterProxyType<TargetedAttackDefProxy, TargetedAttackDef>(t => new TargetedAttackDefProxy(t));
-            UserData.RegisterProxyType<TerrainSettingsProxy, Game.TerrainSettings>(t => new TerrainSettingsProxy(t));
-            UserData.RegisterProxyType<ToolSettingsProxy, ToolSettings>(t => new ToolSettingsProxy(t));
-            UserData.RegisterProxyType<TradeGoodProxy, TradeGood>(t => new TradeGoodProxy(t));
-            UserData.RegisterProxyType<TradeModifierProxy, TradeModifier>(t => new TradeModifierProxy(t));
-            UserData.RegisterProxyType<TrapDefProxy, TrapDef>(t => new TrapDefProxy(t));
-            UserData.RegisterProxyType<UniformSettingsProxy, Game.UniformSettings>(t => new UniformSettingsProxy(t));
-            UserData.RegisterProxyType<WeightedColorProxy, WeightedColor>(t => new WeightedColorProxy(t));
-            UserData.RegisterProxyType<WeightedItemProxy, WeightedItem>(t => new WeightedItemProxy(t));
-            UserData.RegisterProxyType<WeightedMaterialProxy, WeightedMaterial>(t => new WeightedMaterialProxy(t));
-            UserData.RegisterProxyType<WeaponDefProxy, WeaponDef>(t => new WeaponDefProxy(t));
-            UserData.RegisterProxyType<WornEquipmentDefProxy, WornEquipmentDef>(t => new WornEquipmentDefProxy(t));
-            UserData.RegisterProxyType<WorkshopDefProxy, WorkshopDef>(t => new WorkshopDefProxy(t));
-            UserData.RegisterProxyType<WorkshopSettingsProxy, WorkshopSettings>(t => new WorkshopSettingsProxy(t));
-            UserData.RegisterProxyType<WorkshopTilePartProxy, WorkshopTilePart>(t => new WorkshopTilePartProxy(t));
-            UserData.RegisterProxyType<WorkshopTileProxy, WorkshopTile>(t => new WorkshopTileProxy(t));
-
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ContainerSettingsProxy, NewGameSettings.ContainerGenSettings>(t => new Lua.Proxy.NewGameSettings.ContainerSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.DefaultProfessionProxy, NewGameSettings.DefaultProfession>(t => new Lua.Proxy.NewGameSettings.DefaultProfessionProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.EnemyRaceGroupProxy, NewGameSettings.EnemyRaceGroup>(t => new Lua.Proxy.NewGameSettings.EnemyRaceGroupProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.FarmAnimalProxy, NewGameSettings.FarmAnimal>(t => new Lua.Proxy.NewGameSettings.FarmAnimalProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ItemGenSettingsProxy, NewGameSettings.ItemGenSettings>(t => new Lua.Proxy.NewGameSettings.ItemGenSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.ItemSettingsProxy, NewGameSettings.ItemSettings>(t => new Lua.Proxy.NewGameSettings.ItemSettingsProxy(t));
-            UserData.RegisterProxyType<Lua.Proxy.NewGameSettings.SettlerProxy, NewGameSettings.Settler>(t => new Lua.Proxy.NewGameSettings.SettlerProxy(t));
-
-            UserData.RegisterProxyType<Lua.Proxy.PlantDef.HarvestedItemProxy, PlantDef.HarvestedItem>(t => new Lua.Proxy.PlantDef.HarvestedItemProxy(t));
-
-            UserData.RegisterProxyType<Lua.Proxy.TerraingSettings.GrowthSettingsProxy, GameLibrary.TerrainSettings.GrowthSettings>(t => new Lua.Proxy.TerraingSettings.GrowthSettingsProxy(t));
-
-            UserData.RegisterProxyType<Lua.Proxy.UniformSettings.UniformProxy, GameLibrary.UniformSettings.Uniform>(t => new Lua.Proxy.UniformSettings.UniformProxy(t));
-
-            UserData.RegisterProxyType<CreateWorldOptionsProxy, CreateWorldOptions>(t => new CreateWorldOptionsProxy(t));
-
-            // C# Objects
-            UserData.RegisterType<Vector4>();
-            UserData.RegisterType<Vector3>();
-            UserData.RegisterType<Vector2>();
-
-            // Pseudo Global Table, can contain various "helpers"
-            UserData.RegisterType<GnomoriaGlobalTable>();
-
-            // hiding the internal functionality
-            UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
-            UserData.RegisterProxyType<LoaderProxy, Loader>(t => new LoaderProxy(t));
-
-            // TODO: Those need to be proxied as well
-            //UserData.RegisterType<Game.Character>();
-            //UserData.RegisterType<Game.GameEntity>();
         }
 
         private bool verifyLuaIntegrationEnabled()
@@ -272,16 +147,71 @@ namespace GnollModLoader
             // Lua support is enabled, init the subsystem
             this.init();
 
-            // if debug, hook up Lua debug buttons
+            // Debug hooks
             this._hookManager.InGameHUDInit += this.hookInGameHudInit;
 
+            // Real hooks
             this._luaHookManager.AttachHooks();
 
-            // some special hooks that require to be here
+            // some special hooks that require to be last to initialize
             this._hookManager.AfterGameLoaded += this.hookLuaOnGameLoaded;
             this._hookManager.AfterGameSaved += this.hookLuaOnGameSave;
-
+            
             return true;
+        }
+
+        // Init after it's clear if the Lua subsystem is enabled or not
+        private void init()
+        {
+            Logger.Log("Lua Support ENABLED, initializing ...");
+            this.setDefaultOptions();
+            this.registerTypes();
+
+            // Custom Lua Global Table
+            // Available in every script
+            this._globalTables[GnomoriaGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GnomoriaGlobalTable();
+            this._globalTables[GameHudGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GameHudGlobalTable();
+            this._globalTables[GuiHelperGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GuiHelperGlobalTable();
+
+            Logger.Log("Lua Support initialization ... DONE");
+        }
+
+        private void registerTypes()
+        {
+            // Game Defs
+            GameDefsProxyRegistry.RegisterTypes();
+
+            // Game Entities
+            EntitiesProxyRegistry.RegisterTypes();
+
+            // Game GUI stuff
+            GuiProxyRegistry.RegisterTypes();
+
+            // C# Objects
+            UserData.RegisterType<Vector4>();
+            UserData.RegisterType<Vector3>();
+            UserData.RegisterType<Vector2>();
+
+
+            // Pseudo Global Table, can contain various "helpers"
+            UserData.RegisterType<GnomoriaGlobalTable>();
+            UserData.RegisterType<GameHudGlobalTable>();
+            UserData.RegisterType<GuiHelperGlobalTable>();
+
+            // hiding the internal functionality
+            UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
+            UserData.RegisterProxyType<LoaderProxy, Loader>(t => new LoaderProxy(t));
+
+            // TODO: Those need to be proxied as well
+            //UserData.RegisterType<Game.Character>();
+            //UserData.RegisterType<Game.GameEntity>();
+        }
+        private void setDefaultOptions()
+        {
+            // Insert our own implementation
+            Script.DefaultOptions.ScriptLoader = new FilesystemScriptLoader();
+            // Redirect lua "print" to our log console
+            Script.DefaultOptions.DebugPrint = s => { LuaLogger.Log(Newtonsoft.Json.JsonConvert.ToString(s)); };
         }
 
         private void runLuaFunction(Script script, string functionName, params object[] args)
@@ -308,7 +238,7 @@ namespace GnollModLoader
 
         private void runValidationScripts()
         {
-            foreach (var entry in this._registry)
+            foreach (var entry in this._scriptRegistry)
             {
                 var script = entry.Value.Item2;
                 runLuaFunction(script, "OnRunScriptValidation");
@@ -317,9 +247,9 @@ namespace GnollModLoader
 
         private void reloadAllScripts()
         {
-            foreach (string key in this._registry.Keys.ToList())
+            foreach (string key in this._scriptRegistry.Keys.ToList())
             {
-                var value = this._registry[key];
+                var value = this._scriptRegistry[key];
                 try
                 {
                     var initScriptPath = value.Item1;
@@ -327,12 +257,12 @@ namespace GnollModLoader
                     var script = loadAndGetScript(initScriptPath);
                     if ( script != null )
                     {
-                        this._registry[key] = new Tuple<string, Script>(initScriptPath, script);
+                        this._scriptRegistry[key] = new Tuple<string, Script>(initScriptPath, script);
                     }
                 }
                 catch (Exception ex)
                 {
-                    this._registry[key] = new Tuple<string, Script>(value.Item1, null);
+                    this._scriptRegistry[key] = new Tuple<string, Script>(value.Item1, null);
                     Logger.Error($"Reloading script for '{key}' failed");
                     Logger.Error($"-- {ex}");
                 }
@@ -366,7 +296,12 @@ namespace GnollModLoader
                 {
                     Logger.Log($" -- {path}");
                 }
-                script.Globals[GnomoriaGlobalTable.GNOMORIA_GLOBAL_TABLE_NAME] = new GnomoriaGlobalTable();
+
+                // Add all global tables
+                foreach (KeyValuePair<string, object> entry in _globalTables)
+                {
+                    script.Globals[entry.Key] = entry.Value;
+                }
                 script.DoFile(scriptPath);
                 return script;
             }
@@ -380,6 +315,7 @@ namespace GnollModLoader
 
         private void hookInGameHudInit(InGameHUD inGameHUD, Manager manager)
         {
+            // if debug, hook up Lua debug buttons
             if (GnollMain.Debug)
             {
                 Logger.Log("Attaching Lua buttons");
@@ -389,20 +325,29 @@ namespace GnollModLoader
 
         private void hookLuaOnGameLoaded()
         {
-
-            foreach (var entry in this._registry)
-            {
-                var script = entry.Value.Item2;
-                runLuaFunction(script, "OnSaveGameLoaded", _saveGameManager.LoaderForMod(entry.Key));
-            }
+            this.findAndRunLuaFunctionForEntry("OnSaveGameLoaded", entry => _saveGameManager.LoaderForMod(entry.Key));
         }
 
         private void hookLuaOnGameSave()
         {
-            foreach (var entry in this._registry)
+            this.findAndRunLuaFunctionForEntry("OnGameSave", entry => _saveGameManager.SaverForMod(entry.Key));
+        }
+
+        private void findAndRunLuaFunctionWithArguments(string functionName, params object[] args)
+        {
+            foreach (var entry in this._scriptRegistry)
             {
                 var script = entry.Value.Item2;
-                runLuaFunction(script, "OnGameSave", _saveGameManager.SaverForMod(entry.Key));
+                runLuaFunction(script, functionName, args);
+            }
+        }
+
+        private void findAndRunLuaFunctionForEntry(string functionName, Func<KeyValuePair<string, Tuple<string, Script>>, object> entryProcessor)
+        {
+            foreach (var entry in this._scriptRegistry)
+            {
+                var script = entry.Value.Item2;
+                runLuaFunction(script, functionName, entryProcessor(entry));
             }
         }
 

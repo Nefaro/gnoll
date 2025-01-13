@@ -7,16 +7,26 @@ namespace GnollModLoader.Lua
      */
     internal class GnomoriaGlobalTable
     {
-        public readonly static string GNOMORIA_GLOBAL_TABLE_NAME = "_GNOMORIA";
+        public readonly static string GLOBAL_TABLE_LUA_NAME = "_GNOMORIA";
 
         // Get the game definitions
-        public GameDefs getGameDefs()
+        public GameDefs GetGameDefs()
         {
             return GnomanEmpire.Instance.GameDefs;
         }
 
+        public Military GetMilitary()
+        {
+            return GnomanEmpire.Instance.Fortress.Military;
+        }
+
+        public void Notify(string message)
+        {
+            GnomanEmpire.Instance.World.NotificationManager.AddNotification(message);
+        }
+
         // Get the season index: [0..3] = [spring, summer, fall, winter]
-        public Season? getCurrentSeason()
+        public Season? GetCurrentSeason()
         {
             if ( GnomanEmpire.Instance.World != null ) 
             { 
@@ -26,7 +36,7 @@ namespace GnollModLoader.Lua
         }
 
         // Get current day number
-        public uint? getCurrentDay()
+        public uint? GetCurrentDay()
         {
             if (GnomanEmpire.Instance.World != null)
             {

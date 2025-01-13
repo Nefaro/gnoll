@@ -13,6 +13,7 @@ if ( _G ~= nil and _G.getCurrentSeason()  != null ) then
             print("Current season " .. season)
         end
     end
+    _G.notify(("Current season " .. season)    
 elseif ( _G == nil ) then
     print("_GNOMORIA table is missing")
 end
@@ -76,6 +77,7 @@ function OnSaveGameLoaded(loader)
     end
     gameDefs = _G.getGameDefs()    
     _assignNewValues(gameDefs)    
+    _G.notify("Mod data loaded successfully!")
 end
 
 function OnSeasonChange(season)

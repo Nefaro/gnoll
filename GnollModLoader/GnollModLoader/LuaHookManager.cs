@@ -1,4 +1,6 @@
 ﻿using Game;
+using Game.GUI.Controls;
+using Game.GUI;
 
 namespace GnollModLoader
 {
@@ -27,6 +29,8 @@ namespace GnollModLoader
 
             this._hookManager.BeforeStartNewGameAfterEmbark += this.hookLuaOnNewGameStarted;
             this._hookManager.OnEntitySpawn += this.hookLuaOnEntitySpawned;
+            this._hookManager.InGameShowWindow += this.hookLuaOnShowWindow;
+            this._hookManager.InGameHUDInit += this.hookLuaInGameHudInit;
         }
 
         private void hookLuaOnEntitySpawned(GameEntity entity)
@@ -46,6 +50,22 @@ namespace GnollModLoader
         private void hookLuaOnNewGameStarted()
         {
             this._luaManager.RunLuaFunction("OnNewGameStarted");
+        }
+
+        private void hookLuaInGameHudInit(InGameHUD inGameHUD, Manager manager)
+        {
+            this._luaManager.RunLuaFunction("OnGuiLoaded");
+        }
+
+        public void hookLuaOnShowWindow(Window window)
+        {
+            var manager = window.Manager;
+            var kingdomPanel = window as KingdomUI;
+            // expose a specific event only
+            if (kingdomPanel != null)
+            {
+                this._luaManager.RunLuaFunction("AddPageToKingdomMenu", kingdomPanel);
+            }
         }
 
         private void hookLuaOnSeasonChanged(object sender, System.EventArgs e)
