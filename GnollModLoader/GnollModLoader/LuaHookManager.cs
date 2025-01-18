@@ -1,6 +1,7 @@
 ﻿using Game;
 using Game.GUI.Controls;
 using Game.GUI;
+using System;
 
 namespace GnollModLoader
 {
@@ -31,6 +32,7 @@ namespace GnollModLoader
             this._hookManager.OnEntitySpawn += this.hookLuaOnEntitySpawned;
             this._hookManager.InGameShowWindow += this.hookLuaOnShowWindow;
             this._hookManager.InGameHUDInit += this.hookLuaInGameHudInit;
+            this._hookManager.OnJobComplete += this.hookLuaOnJobComplete;
         }
 
         private void hookLuaOnEntitySpawned(GameEntity entity)
@@ -66,6 +68,10 @@ namespace GnollModLoader
             {
                 this._luaManager.RunLuaFunction("AddPageToKingdomMenu", kingdomPanel);
             }
+        }
+        private void hookLuaOnJobComplete(Job job, Character character)
+        {
+            this._luaManager.RunLuaFunction("OnJobCompleted", job, character);
         }
 
         private void hookLuaOnSeasonChanged(object sender, System.EventArgs e)

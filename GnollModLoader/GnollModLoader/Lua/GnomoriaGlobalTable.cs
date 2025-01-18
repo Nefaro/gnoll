@@ -1,4 +1,6 @@
-﻿using Game;
+﻿using System.Collections.Generic;
+using Game;
+using GameLibrary;
 
 namespace GnollModLoader.Lua
 {
@@ -15,9 +17,49 @@ namespace GnollModLoader.Lua
             return GnomanEmpire.Instance.GameDefs;
         }
 
+        // Expose Game built-in random
+        public int RandomInt(int max)
+        {
+            return GnomanEmpire.Instance.Rand.Next(max);
+        }
+
+        public float RandomFloat(float max)
+        {
+            return (float)GnomanEmpire.Instance.Rand.NextDouble() * max;
+        }
+        public bool RandomBoolean()
+        {
+            return (GnomanEmpire.Instance.Rand.Next(2) == 1);
+        }
+
         public Military GetMilitary()
         {
             return GnomanEmpire.Instance.Fortress.Military;
+        }
+
+        public List<Faction> GetDiplomaticFactions()
+        {
+            var factions = new List<Faction>();
+
+            DifficultySetting difficultySettings = GnomanEmpire.Instance.World.DifficultySettings;
+            foreach (KeyValuePair<uint, Faction> keyValuePair in GnomanEmpire.Instance.World.AIDirector.Factions)
+            {
+                Faction faction = keyValuePair.Value;
+                // Same condition as on the Diplomacy UI 
+                if ((faction.FactionDef.Type == FactionType.FriendlyCiv || faction.FactionDef.Type == FactionType.EnemyCiv) && 
+                    (faction.FactionDef.Type != FactionType.EnemyCiv 
+                        || (difficultySettings.Difficulty != GameMode.Peaceful && faction.IsAnyRaceAllowed() && GnomanEmpire.Instance.Region.Day > 12U)))
+                {
+                    factions.Add(faction);
+                }
+            }
+            return factions;
+        }
+
+        public bool IsRaceAllowedBySettings(string raceID)
+        {
+            var settings = GnomanEmpire.Instance.World.DifficultySettings;
+            return settings.IsRaceAllowed(raceID);
         }
 
         public void Notify(string message)
@@ -28,7 +70,7 @@ namespace GnollModLoader.Lua
         // Get the season index: [0..3] = [spring, summer, fall, winter]
         public Season? GetCurrentSeason()
         {
-            if ( GnomanEmpire.Instance.World != null ) 
+            if ( GnomanEmpire.Instance.World != null )
             { 
                 return GnomanEmpire.Instance.Region.Season();
             }

@@ -6,7 +6,7 @@ namespace GnollModLoader.Lua.Proxy.EntitiesProxies
 {
     internal class TabbedWindowPanelProxy
     {
-        private TabbedWindowPanel _target;
+        private readonly TabbedWindowPanel _target;
 
         [MoonSharpHidden]
         public TabbedWindowPanelProxy(TabbedWindowPanel target)

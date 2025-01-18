@@ -10,7 +10,7 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies
 {
     internal class KingdomUIProxy
     {
-        private KingdomUI _target;
+        private readonly KingdomUI _target;
 
         [MoonSharpHidden]
         public KingdomUIProxy(KingdomUI target)

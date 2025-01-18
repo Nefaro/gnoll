@@ -68,6 +68,7 @@ namespace GnollModLoader
 
         public static void HookInGameHUDInit(Game.GUI.InGameHUD inGameHUD, Game.GUI.Controls.Manager manager)
         {
+            Logger.Log($"++ Using savegame '{GnomanEmpire.Instance.CurrentWorld}'");
             if (instance.InGameHUDInit != null)
             {
                 Logger.Log("-- Hook In Game HUD Init");

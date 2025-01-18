@@ -7,7 +7,7 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
 {
     internal class LabelProxy
     {
-        private Label _target;
+        private readonly Label _target;
 
         [MoonSharpHidden]
         public LabelProxy(Label target)

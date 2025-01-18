@@ -27,7 +27,7 @@ namespace GnollModLoader.Lua
             var label = new Label(manager);
             label.Init();
             label.Text = name;
-            label.Name = name; // Easier to find
+            label.Name = this.generateUniqueName(label); // For uniqueness
 
             var textSize = this.textSize(manager, name);
             label.Width = (int)textSize.X;
@@ -40,7 +40,7 @@ namespace GnollModLoader.Lua
             var button = new Button(manager);
             button.Init();
             button.Text = name;
-            button.Name = name; // Easier to find
+            button.Name = this.generateUniqueName(button); // For uniqueness
 
             var textSize = this.textSize(manager, name);
 
@@ -53,7 +53,7 @@ namespace GnollModLoader.Lua
             var manager = GnomanEmpire.Instance.GuiManager.Manager;
             ComboBox comboBox = new ComboBox(manager);
             comboBox.Init();
-            comboBox.Name = String.Format("{0:X}", comboBox.GetHashCode()); // For uniqueness
+            comboBox.Name = this.generateUniqueName(comboBox); // For uniqueness
 
             foreach (object entity in data)
             {
@@ -61,19 +61,28 @@ namespace GnollModLoader.Lua
             }
             comboBox.ItemIndex = 0;
 
-            comboBox.MinimumWidth = 200;
+            comboBox.MinimumWidth = 400;
             comboBox.Width = comboBox.ClientWidth - comboBox.Left - comboBox.Margins.Right;
 
             return comboBox;
         }
 
         // We want to have a typed version and a general version of the item add
-        private void comboBoxAddItem(ref  ComboBox comboBox, object item )
+        private void comboBoxAddItem(ref ComboBox comboBox, object item )
         {
-            if ( item is Squad ) 
+            if (item is Squad)
                 comboBox.Items.Add((item as Squad).Name);
+            else if (item is Character)
+                comboBox.Items.Add((item as Character).Name());
+            else if (item is Faction)
+                comboBox.Items.Add($"{(item as Faction).Name} - {(item as Faction).SubType()}");
             else
                 comboBox.Items.Add(item.ToString());
+        }
+
+        private string generateUniqueName(Control control)
+        {
+            return String.Format("{0:X}", control.GetHashCode());
         }
 
         private Vector2 textSize(Manager manager, string text)

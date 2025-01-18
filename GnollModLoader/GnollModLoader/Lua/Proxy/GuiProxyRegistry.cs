@@ -11,13 +11,13 @@ namespace GnollModLoader.Lua.Proxy
     {
         internal static void RegisterTypes()
         {
-            UserData.RegisterProxyType<MouseEventArgsProxy, MouseEventArgs>(t => new MouseEventArgsProxy(t));
             UserData.RegisterProxyType<EventArgsProxy, EventArgs>(t => new EventArgsProxy(t));
+            UserData.RegisterProxyType<MouseEventArgsProxy, MouseEventArgs>(t => new MouseEventArgsProxy(t));
 
-            UserData.RegisterProxyType<TabbedWindowPanelProxy, TabbedWindowPanel>(t => new TabbedWindowPanelProxy(t));
-            UserData.RegisterProxyType<LabelProxy, Label>(t => new LabelProxy(t));
             UserData.RegisterProxyType<ButtonProxy, Button>(t => new ButtonProxy(t));
             UserData.RegisterProxyType<ComboBoxProxy, ComboBox>(t => new ComboBoxProxy(t));
+            UserData.RegisterProxyType<LabelProxy, Label>(t => new LabelProxy(t));
+            UserData.RegisterProxyType<TabbedWindowPanelProxy, TabbedWindowPanel>(t => new TabbedWindowPanelProxy(t));
 
             UserData.RegisterProxyType<KingdomUIProxy, KingdomUI>(t => new KingdomUIProxy(t));
         }

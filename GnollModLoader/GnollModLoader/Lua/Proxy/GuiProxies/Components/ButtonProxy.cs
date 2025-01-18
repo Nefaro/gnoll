@@ -5,7 +5,7 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
 {
     internal class ButtonProxy
     {
-        private Button _target;
+        private readonly Button _target;
 
         [MoonSharpHidden]
         public ButtonProxy(Button target)
@@ -24,5 +24,13 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
                 _target.Click -= value;
             }
         }
+
+        public void Disable() => _target.Enabled = false;
+
+        public void Enable() => _target.Enabled = true;
+        
+        public bool IsEnabled() => _target.Enabled;
+
+        public string Name => _target.Name;
     }
 }

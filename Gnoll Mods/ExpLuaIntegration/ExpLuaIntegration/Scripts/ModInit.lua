@@ -1,38 +1,34 @@
-require "GnollLuaValidationScript"
-
-function OnEntitySpawn(entity)
-end
-
 g_valueMapping = {}
 
-local _G = _GNOMORIA;
-if ( _G ~= nil and _G.getCurrentSeason()  != null ) then
+local _GN = _GNOMORIA;
+
+if ( _GN ~= nil and _GN.getCurrentSeason()  != null ) then
     local Season = require "Season"
     for season, idx in pairs(Season) do
-        if ( idx == _G.getCurrentSeason()  ) then
+        if ( idx == _GN.getCurrentSeason()  ) then
             print("Current season " .. season)
+            _GN.notify("Current season: " .. season)    
         end
     end
-    _G.notify(("Current season " .. season)    
-elseif ( _G == nil ) then
+    
+elseif ( _GN == nil ) then
     print("_GNOMORIA table is missing")
 end
 
 function OnNewGameStarted()
-    gameDefs = _G.getGameDefs()
+    local gameDefs = _GN.getGameDefs()
     if ( gameDefs == nil ) then
         print("GameDefs is null")
     end
     
-    _generateNewValues(gameDefs)
+    _GenerateNewValues(gameDefs)
     _assignNewValues(gameDefs)    
 end
 
-function _generateNewValues(gameDefs) 
+function _GenerateNewValues(gameDefs) 
     require "MaterialType"
-    math.randomseed(os.time());
     for k, v in pairs(gameDefs.Materials) do
-        local rndValue = math.random(1, 10);
+        local rndValue = _GN.RandomInt(10);
         if ( v.Type == MaterialType.Wood )  then
             formatting = k .. " => "            
             if (gameDefs.PlantSettings.MaterialIDToPlantIDs[k] ~= nil) then 
@@ -75,15 +71,14 @@ function OnSaveGameLoaded(loader)
         print(" -- Value: " .. v)
         print(" -- Name: " .. k)
     end
-    gameDefs = _G.getGameDefs()    
+    gameDefs = _GN.getGameDefs()    
     _assignNewValues(gameDefs)    
-    _G.notify("Mod data loaded successfully!")
 end
 
 function OnSeasonChange(season)
     local Season = require "Season"
     for ses, idx in pairs(Season) do
-        if ( idx == _GNOMORIA.getCurrentSeason() ) then
+        if ( idx == _GN.getCurrentSeason() ) then
             print("Current season " .. ses)
         end
     end

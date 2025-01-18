@@ -1,13 +1,11 @@
 ﻿using Game.GUI.Controls;
-using Game.GUI;
 using MoonSharp.Interpreter;
-using GnollModLoader.Lua.Proxy.EntitiesProxies;
 
 namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
 {
     internal class ComboBoxProxy
     {
-        private ComboBox _target;
+        private readonly ComboBox _target;
 
         [MoonSharpHidden]
         public ComboBoxProxy(ComboBox target)
@@ -22,6 +20,8 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
 
             return null;
         }
+
+        public int SelectedItemIndex() => _target.ItemIndex;
 
         public event EventHandler ItemIndexChanged
         {

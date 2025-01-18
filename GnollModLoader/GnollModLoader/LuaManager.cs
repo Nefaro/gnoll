@@ -170,9 +170,9 @@ namespace GnollModLoader
             // Custom Lua Global Table
             // Available in every script
             this._globalTables[GnomoriaGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GnomoriaGlobalTable();
-            this._globalTables[GameHudGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GameHudGlobalTable();
+            this._globalTables[JobBoardGlobalTable.GLOBAL_TABLE_LUA_NAME] = new JobBoardGlobalTable();
             this._globalTables[GuiHelperGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GuiHelperGlobalTable();
-
+            
             Logger.Log("Lua Support initialization ... DONE");
         }
 
@@ -182,10 +182,11 @@ namespace GnollModLoader
             GameDefsProxyRegistry.RegisterTypes();
 
             // Game Entities
-            EntitiesProxyRegistry.RegisterTypes();
-
+            EntityProxyRegistry.RegisterTypes();
             // Game GUI stuff
             GuiProxyRegistry.RegisterTypes();
+            // Jobs
+            JobsProxyRegistry.RegisterTypes();
 
             // C# Objects
             UserData.RegisterType<Vector4>();
@@ -195,7 +196,7 @@ namespace GnollModLoader
 
             // Pseudo Global Table, can contain various "helpers"
             UserData.RegisterType<GnomoriaGlobalTable>();
-            UserData.RegisterType<GameHudGlobalTable>();
+            UserData.RegisterType<JobBoardGlobalTable>();
             UserData.RegisterType<GuiHelperGlobalTable>();
 
             // hiding the internal functionality
@@ -302,6 +303,7 @@ namespace GnollModLoader
                 {
                     script.Globals[entry.Key] = entry.Value;
                 }
+
                 script.DoFile(scriptPath);
                 return script;
             }
