@@ -61,8 +61,9 @@ namespace GnollModLoader.GUI
 
             foreach (var mod in this._listOfMods)
             {
+                var isLuaMod = mod is IHasLuaScripts;
                 Label label = new Label(this.Manager);
-                label.Text = mod.Name;
+                label.Text = $"{(isLuaMod?"(L)":"")}{mod.Name}";
                 if ( this._modManager.IsWaitingRestart(mod))
                 {
                     label.TextColor = STATUS_COLOR_RESTART_REQUIRED;
@@ -102,6 +103,11 @@ namespace GnollModLoader.GUI
             modNameLabel.Width = 400;
             modNameLabel.Text = "";
 
+            Label modLuaDependencyLabel = new Label(this.Manager);
+            modLuaDependencyLabel.Init();
+            modLuaDependencyLabel.Width = 400;
+            modLuaDependencyLabel.Text = "";
+
             Label separatorLabel = new Label(this.Manager);
             separatorLabel.Init();
             separatorLabel.Width = 400;
@@ -114,7 +120,6 @@ namespace GnollModLoader.GUI
             modDescLabel.Text = "";
             size = Manager.Skin.Controls["Label"].Layers[0].Text.Font.Resource.MeasureString(modDescLabel.Text);
             modDescLabel.Height = (int)size.Y;
-            modDescLabel.Top = modNameLabel.Height;
 
             descriptionPanel.Add(modStatusLabel);
             descriptionPanel.Add(modNameLabel);
@@ -124,7 +129,10 @@ namespace GnollModLoader.GUI
             listBox.ItemIndexChanged += (object sender, Game.GUI.Controls.EventArgs e) =>
             {
                 IGnollMod mod = this._listOfMods[listBox.ItemIndex];
+                var isLuaMod = mod is IHasLuaScripts;
                 Label item = (Label)listBox.Prop_0[listBox.ItemIndex];
+
+
                 if (this._modManager.IsWaitingRestart(mod))
                 {
                     modStatusLabel.Text = "(Restart Required)";
@@ -155,14 +163,27 @@ namespace GnollModLoader.GUI
 
                 modNameLabel.Text = mod.Name;
                 modNameLabel.Left = modStatusLabel.Width;
-                string multiline = this.SpliceText(mod.Description, 47);
+                size = disableButton.Skin.Layers["Control"].Text.Font.Resource.MeasureString(modNameLabel.Text);
+                modNameLabel.Width = (int)size.X + modNameLabel.Margins.Right;
 
+                string multiline = this.SpliceText(mod.Description, 47);
                 modDescLabel.Text = multiline;
+
                 size = Manager.Skin.Controls["Label"].Layers[0].Text.Font.Resource.MeasureString(modDescLabel.Text);
                 modDescLabel.Height = (int)size.Y;
-                modDescLabel.Top = modNameLabel.Height + modDescLabel.Margins.Top;
+                modDescLabel.Top = modNameLabel.Height + modDescLabel.Margins.Top*2;
 
-                separatorLabel.Text = "===== ===== ===== ===== =====";
+                if (isLuaMod)
+                {
+                    separatorLabel.Text = "===== Requires LuaSupport =====";
+                    separatorLabel.TextColor = Color.Orange;
+                }
+                else
+                {
+                    separatorLabel.Text = "===== ===== ===== ===== =====";
+                    separatorLabel.TextColor = Color.White;
+                }
+
             };
 
             if (this._listOfMods.Count > 0)
