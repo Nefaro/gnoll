@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace GnollModLoader
 {
@@ -34,20 +35,15 @@ namespace GnollModLoader
 
     internal class LuaLogger
     {
-        private static readonly string PREFIX = "[LUA] ";
-        private static readonly string ERROR = "[ERROR] ";
+        private static readonly string PREFIX = "[LUA::";
 
-        public static void Log(string message, params object[] args)
+        public static void Log(string mod, string message, params object[] args)
         {
-            System.Console.Write($"({DateTime.Now}) " + PREFIX, args);
-            System.Console.WriteLine( message );
+            System.Console.Write($"({DateTime.Now}) {PREFIX}{mod}] ", args);
+            System.Console.WriteLine( process(message) );
         }
 
-        public static void Error(string message, params object[] args)
-        {
-            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + ERROR + "!! " + message, args);
-        }
-
+        private static string process(string message) => Newtonsoft.Json.JsonConvert.ToString(message);
     }
 
     public class ModsLogger
@@ -65,9 +61,10 @@ namespace GnollModLoader
 
         public static ModsLogger getLogger(IGnollMod forMod)
         {
-            if (forMod == null)
-                return null;
-            var key = forMod.Name;
+            var key = "Default";
+            if (forMod != null) {
+                key = forMod.Name;
+            }
             ModsLogger logger = null;
             if (_registry.TryGetValue(key, out logger) )
             {
