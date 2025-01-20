@@ -15,5 +15,7 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
             this._target = target;
         }
 
+        public EnvoyType EnvoyType => _target.envoyType_0;
+
     }
 }

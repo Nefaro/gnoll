@@ -30,6 +30,8 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
 
         public string Name => _target.Name();
 
+        public Job Job => _target.Job;
+
         public void TakeJob(Job job) => _target.TakeJob(job);
 
         public int AttributeLevel(string characterAttributeType) //=> _target.RawAttributeLevel(type);

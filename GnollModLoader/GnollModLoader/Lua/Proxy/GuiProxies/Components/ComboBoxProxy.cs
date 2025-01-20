@@ -13,6 +13,13 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
             this._target = target;
         }
 
+        public void Disable() => _target.Enabled = false;
+
+        public void Enable() => _target.Enabled = true;
+        public bool IsEnabled() => _target.Enabled;
+
+        public int ItemIndex { get => _target.ItemIndex; set => _target.ItemIndex = value; }
+
         public object SelectedItem()
         {
             if (this._target.ItemIndex >= 0 && this._target.Items.Count > this._target.ItemIndex)

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaidingParty", "RaidingParty\RaidingParty.csproj", "{5BC4D36C-7E29-4EA3-A963-15C0AA27EC03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BC4D36C-7E29-4EA3-A963-15C0AA27EC03}.Debug|x86.ActiveCfg = Release|x86
+		{5BC4D36C-7E29-4EA3-A963-15C0AA27EC03}.Debug|x86.Build.0 = Release|x86
+		{5BC4D36C-7E29-4EA3-A963-15C0AA27EC03}.Release|x86.ActiveCfg = Release|x86
+		{5BC4D36C-7E29-4EA3-A963-15C0AA27EC03}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

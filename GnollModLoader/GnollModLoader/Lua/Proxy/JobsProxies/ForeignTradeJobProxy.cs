@@ -15,6 +15,18 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
             this._target = target;
         }
 
+        public Envoy Envoy => _target.envoy_0;
 
+        public string ClassName => typeof(ForeignTradeJob).Name;
+
+        public Faction? GetTargetFaction()
+        {
+            var data = _target.Data as ForeignTradeJobData;
+            if (data == null)
+            {
+                return null;
+            }
+            return GnomanEmpire.Instance.World.AIDirector.Factions[data.FactionID];
+        }
     }
 }

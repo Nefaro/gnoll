@@ -67,6 +67,11 @@ namespace GnollModLoader.Lua
             return comboBox;
         }
 
+        public void CloseCurrentWindow()
+        {
+            GnomanEmpire.Instance.GuiManager.InGameHUD_0.PopActiveWindow();
+        }
+
         // We want to have a typed version and a general version of the item add
         private void comboBoxAddItem(ref ComboBox comboBox, object item )
         {

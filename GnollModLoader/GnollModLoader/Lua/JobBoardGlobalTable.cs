@@ -23,8 +23,7 @@ namespace GnollModLoader.Lua
                 return null;
             }
 
-            var leader = squad.Members[0];
-            var egress = faction.FindRegionExitPosition(leader);
+            var egress = faction.FindRegionExitPosition(squad.Members[0]);
             if (egress == -Vector3.One)
             {
                 Logger.Warn("Squad cannot find exit position");
@@ -32,17 +31,30 @@ namespace GnollModLoader.Lua
                 return null;
             }
 
-            var job = new CustomRaidJob(egress, new ForeignTradeJobData(faction.UInt32_0));
-            var arrival = GnomanEmpire.Instance.Region.TotalTime() + 0.007f;
-            // var arrival = GnomanEmpire.Instance.Region.TotalTime() + faction.Distance
-            leader.TakeJob(job);
-            faction.PlayerEnvoy = leader;
-            leader.TravelOffMap();
-            job.envoy_0 = new Envoy(EnvoyType.Raid, arrival, 0f, EnvoyState.Departing);
-            job.envoy_0.AddMember(leader.UInt32_0);
+            ForeignTradeJob leaderJob = null;
+            foreach (Character member in squad.Members)
+            {
+                // each member gets it's own job object
+                var job = new ForeignTradeJob(egress, new ForeignTradeJobData(faction.UInt32_0));
+                var arrival = GnomanEmpire.Instance.Region.TotalTime() + faction.Distance;
+                member.TakeJob(job);
+                // A bit cruel but ...
+                member.Body.WakeUp();
 
-            return job;
+                faction.PlayerEnvoy = member;
+                member.TravelOffMap();
+                job.envoy_0 = new Envoy(EnvoyType.Raid, arrival, 0f, EnvoyState.Departing);
+                job.envoy_0.AddMember(member.UInt32_0);
+                if ( leaderJob == null )
+                {
+                    // First member is leader
+                    leaderJob = job;
+                }
+            }
+            // We are intereste only in the leader job, since this is the one we will operate with
+            return leaderJob;
         }
+
         public void AddSpawningItems(Job job, string materialID, string itemID, int value = 1, int quantity = 1)
         {
             Logger.Log($"Adding item {materialID} {itemID} with value {value} and quantity {quantity}");
@@ -81,40 +93,5 @@ namespace GnollModLoader.Lua
                 Logger.Error("{0}", e);
             }
         }
-
     }
-
-    internal class CustomRaidJob : ForeignTradeJob
-    {
-        public CustomRaidJob(BinaryReader reader) : base(reader)
-        {
-        }
-
-        public CustomRaidJob(Vector3 position, ForeignTradeJobData data) : base(position, data)
-        {
-        }
-        private bool returning = false;
-        public override bool Progress(Character character, float dt)
-        {
-            //Logger.Log($"Job status: {this.envoy_0.State} ");
-
-            //float num = GnomanEmpire.Instance.Region.TotalTime();
-            //Logger.Log($"Envoy num: {num} > float {this.envoy_0.float_0} ");
-
-            switch (this.envoy_0.State)
-            {
-                case EnvoyState.OnLocation:
-                    this.mDifficulty = 0.007f;
-                    break;
-            }
-
-            if (!returning && this.envoy_0.State == EnvoyState.Returning)
-            {
-                envoy_0.float_0 = 0.007F + GnomanEmpire.Instance.Region.TotalTime();
-                returning = true;
-            }
-            return base.Progress(character, dt);
-        }
-    }
-
 }

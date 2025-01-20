@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using System.Collections.Generic;
+using Game;
 using GameLibrary;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
@@ -20,6 +21,7 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
         public FactionDef FactionDef => _target.FactionDef;
         public FactionType FactionType => _target.FactionDef.Type;
         public MerchantGoods FactionGoods => _target.FactionGoods;
+        public Dictionary<uint, Character> Members => _target.Members;
         public string SubType => _target.SubType();
         public Character PlayerEnvoy { get => _target.PlayerEnvoy; set => _target.PlayerEnvoy = value; }
 

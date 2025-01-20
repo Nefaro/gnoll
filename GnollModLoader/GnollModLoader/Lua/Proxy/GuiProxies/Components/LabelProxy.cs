@@ -2,6 +2,7 @@
 using Game.GUI;
 using MoonSharp.Interpreter;
 using GnollModLoader.Lua.Proxy.EntitiesProxies;
+using Microsoft.Xna.Framework;
 
 namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
 {
@@ -14,5 +15,7 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
         {
             this._target = target;
         }
+
+        public Color TextColor { get => _target.TextColor; set => _target.TextColor = value; }
     }
 }

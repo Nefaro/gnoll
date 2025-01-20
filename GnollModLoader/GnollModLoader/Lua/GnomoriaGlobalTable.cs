@@ -56,6 +56,8 @@ namespace GnollModLoader.Lua
             return factions;
         }
 
+        public Faction GetPlayerFaction() => GnomanEmpire.Instance.World.AIDirector.PlayerFaction;
+
         public bool IsRaceAllowedBySettings(string raceID)
         {
             var settings = GnomanEmpire.Instance.World.DifficultySettings;

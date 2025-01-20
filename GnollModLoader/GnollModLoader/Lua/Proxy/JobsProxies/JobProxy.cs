@@ -14,5 +14,7 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
         {
             this._target = target;
         }
+
+        public string ClassName => _target.GetType().Name;
     }
 }

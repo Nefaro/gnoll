@@ -66,7 +66,7 @@ end
 
 function OnSaveGameLoaded(loader)
     g_valueMapping = loader.load()
-    print(" -- Loaded save game data ")
+    print(" -- Loaded save game data")
     for k, v in pairs(g_valueMapping) do
         print(" -- Value: " .. v)
         print(" -- Name: " .. k)

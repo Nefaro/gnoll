@@ -1,4 +1,5 @@
 ﻿using Game.GUI.Controls;
+using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 
 namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
@@ -31,6 +32,8 @@ namespace GnollModLoader.Lua.Proxy.GuiProxies.Components
         
         public bool IsEnabled() => _target.Enabled;
 
-        public string Name => _target.Name;
+        public Color TextColor { get => _target.TextColor; set => _target.TextColor = value; }
+        public string Name { get => _target.Name; set => _target.Name = value; }
+    
     }
 }
