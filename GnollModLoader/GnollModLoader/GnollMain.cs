@@ -8,7 +8,7 @@ namespace GnollModLoader
     public class GnollMain
     {
         private const string MAJOR_VERSION = "1";
-        private const string BUGFIX_VERSION = ".2";
+        private const string BUGFIX_VERSION = ".2a";
 
         // for easier validation
         public const uint PATCH_VERSION = 14;
@@ -47,7 +47,6 @@ namespace GnollModLoader
 
             Logger.Log("== {0} {1} == ", NAME, VERSION);
             Logger.Log($"Using Runtime: {System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()}");
-
             hookManager = new HookManager();
             // Apply patches before mods are loaded
             var patcher = new Patcher(hookManager);

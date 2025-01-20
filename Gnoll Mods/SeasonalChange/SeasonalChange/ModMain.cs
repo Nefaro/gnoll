@@ -76,14 +76,24 @@ namespace GnollMods.SeasonalChange
         {
             _logger.Log("Scanning mods for seasonal graphics");
             var modList = new List<ModFolder>(GnomanEmpire.Instance.GameDefs.ModFolders).Select(mod => mod.Folder).ToList();
-            foreach ( var mod in modList )
+            foreach (var mod in modList)
             {
-                var dataDirectory = Path.Combine(mod, WORKSHOP_PATH_PREFIX, DLL, DATA_PATH_PREFIX);
-                if (Directory.Exists(dataDirectory))
+                this.scanForSprites(mod);
+                // Gog has a different format
+                if (!Path.IsPathRooted(mod)) 
                 {
-                    _logger.Log($"++ Found seasonal graphics directory: {dataDirectory}");
-                    this._modsWithSeasonPaths.Add(dataDirectory);
+                    this.scanForSprites(Path.Combine("Mods", mod)); 
                 }
+            }
+        }
+
+        private void scanForSprites(string mod)
+        {
+            var dataDirectory = Path.Combine(mod, WORKSHOP_PATH_PREFIX, DLL, DATA_PATH_PREFIX);
+            if (Directory.Exists(dataDirectory))
+            {
+                _logger.Log($"++ Found seasonal graphics directory: {dataDirectory}");
+                this._modsWithSeasonPaths.Add(dataDirectory);
             }
         }
 

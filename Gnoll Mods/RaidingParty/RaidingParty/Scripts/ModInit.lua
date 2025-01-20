@@ -270,10 +270,8 @@ function itemsFromDictionary(picksCountMetal, picksCountGems)
     
     for _, matDef in pairs(gameDefs.Materials) do
         if ( matDef.Type == MaterialType.Metal )  then      
-            print("Metal: " .. matDef.ID)
             table.insert(metalSelection, matDef)
         elseif ( matDef.Type == MaterialType.Gem ) then
-            print("Gem: " .. matDef.ID)
             table.insert(gemSelection, matDef)        
         end
     end
