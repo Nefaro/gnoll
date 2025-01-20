@@ -23,20 +23,7 @@ function AddPageToKingdomMenu(kingdomMenu)
         return
     end
     
-    local hasExistingRaidParty = false
-    -- Figure out, if there is already an existing party en route
-    -- "ForeignTradeJob" is the Gnomoria object we are (ab)using for this particular functionality
-    if ( leader ~= nil and leader.Job ~= nil and leader.Job.ClassName == "ForeignTradeJob") then
-        if ( leader.Job.Envoy ~= nil ) then
-            require "EnvoyType"
-            if ( leader.Job.Envoy.EnvoyType == EnvoyType.Raid ) then
-                hasExistingRaidParty = true
-            end
-        end
-    else 
-        -- If any of the checks fails, assume... nothing. Release the leader
-        leader = nil
-    end    
+    local hasExistingRaidParty = hasExistingRaidParty()
     
     -- New Panel added to the Kingdom Menu
     local tabbedPanel = _U.CreateTabbedWindowPanel()
@@ -46,14 +33,16 @@ function AddPageToKingdomMenu(kingdomMenu)
     
     local squadSelection
     local canSend = true
+    
     if ( #_GN.GetMilitary().Squads == 0 ) then
         squadSelection = _U.CreateLabel("No Squads to select from")
         tabbedPanel.AddDownFrom(squadSelection, squadLabel)
         canSend = false
+
     else
         squadSelection = _U.CreateSelect(_GN.GetMilitary().Squads)
-        -- Add change handler, defined in Lua
-        squadSelection.ItemIndexChanged.Add(squadSelectionHandler)
+        -- Add change handler, defined in Lua (needs to be lower-case "add")
+        squadSelection.ItemIndexChanged.add(squadSelectionHandler)
         tabbedPanel.AddDownFrom(squadSelection, squadLabel)
         
         if ( hasExistingRaidParty ) then 
@@ -66,7 +55,7 @@ function AddPageToKingdomMenu(kingdomMenu)
             end
         end        
     end
-    
+       
     local kingdomLabel = _U.CreateLabel("Select Kingdom to raid")
     tabbedPanel.AddDownFrom(kingdomLabel, squadSelection)        
     
@@ -77,8 +66,8 @@ function AddPageToKingdomMenu(kingdomMenu)
         canSend = false
     else
         kingdomSelect = _U.CreateSelect(_GN.GetDiplomaticFactions())
-        -- Add change handler, defined in Lua
-        kingdomSelect.ItemIndexChanged.Add(kingdomSelectionHandler)
+        -- Add change handler, defined in Lua (needs to be lower-case "add")
+        kingdomSelect.ItemIndexChanged.add(kingdomSelectionHandler)
         tabbedPanel.AddDownFrom(kingdomSelect, kingdomLabel)
         
         if ( hasExistingRaidParty ) then 
@@ -106,17 +95,33 @@ function AddPageToKingdomMenu(kingdomMenu)
         kingdomSelect.Disable()
         button.Disable()
     elseif ( canSend ) then
-        -- Add Click handler defined in Lua
-        button.Click.Add(buttonHandler)
+        -- Add Click handler defined in Lua (needs to be lower-case "add")
+        button.Click.add(buttonHandler)
     else  
         button.Disable()
     end    
 end
 
+-- Figure out, if there is already an existing party en route
+function hasExistingRaidParty() 
+    -- "ForeignTradeJob" is the Gnomoria object we are (ab)using for this particular functionality
+    if ( leader ~= nil and leader.Job ~= nil and leader.Job.ClassName == "ForeignTradeJob") then
+        if ( leader.Job.Envoy ~= nil ) then
+            require "EnvoyType"
+            if ( leader.Job.Envoy.EnvoyType == EnvoyType.Raid ) then
+                return true
+            end
+        end
+    else 
+        -- If any of the checks fails, assume... nothing. Release the leader
+        leader = nil
+    end
+    return false
+end
+
 -- Squad selection handler, need to know the index of the selection
 -- Selected object would be better, but index is easier
 function squadSelectionHandler(control)
-    print("Squad selection changed! : '".. control.SelectedItemIndex() .."'")
     selectedSquadIdx = control.SelectedItemIndex()
     if (selectedSquadIdx ~= nil and selectedSquadIdx ~= -1) then
         -- Adjust for Lua indexing starting from 1
@@ -126,7 +131,6 @@ end
 
 -- Kingdom selection handler
 function kingdomSelectionHandler(control) 
-    print("Kingdom selection changed! : '".. control.SelectedItemIndex() .."'")
     selectedKingdomIdx = control.SelectedItemIndex()
     if (selectedKingdomIdx ~= nil and selectedKingdomIdx ~= -1) then
         -- Adjust for Lua indexing starting from 1
@@ -166,6 +170,10 @@ function buttonHandler(button)
     print("Selected Kingdom! " .. kingdom.Name)
     -- Prepare the raid
     sendSquadToRaid(squad, kingdom)
+    -- Prevent any other manipulation
+    if ( hasExistingRaidParty ) then
+        _U.CloseCurrentWindow()
+    end
 end
 
 function sendSquadToRaid(squad, kingdom) 
