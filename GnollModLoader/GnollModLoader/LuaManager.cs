@@ -6,16 +6,12 @@ using Game.GUI.Controls;
 using Game.GUI;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
-using GameLibrary;
 using System.Reflection;
 using System.IO;
 using Microsoft.Xna.Framework;
-using static GnollModLoader.SaveGameManager;
 using GnollModLoader.Lua;
 using GnollModLoader.Integration.MoonSharp.Loaders;
-using GnollModLoader.Lua.Proxy.GameDefProxies;
 using GnollModLoader.Lua.Proxy;
-using System.Collections;
 
 namespace GnollModLoader
 {
@@ -34,7 +30,7 @@ namespace GnollModLoader
                 CoreModules.OS_Time |
                 CoreModules.LoadMethods |
                 CoreModules.Metatables;
-
+        // {mod.Name -> {script.path, script}
         private readonly Dictionary<string, Tuple<string, Script>> _scriptRegistry = new Dictionary<string, Tuple<string, Script>> ();
         private readonly Dictionary<string, object> _globalTables = new Dictionary<string, object>();
 
@@ -95,10 +91,10 @@ namespace GnollModLoader
                 var initScript = this._scriptRegistry[modName].Item1;
                 try
                 {
-                    Logger.Log($"-- Trying to load Lua init script: {initScript}");
+                    Logger.Log($"Trying to load Lua init script: {initScript}");
                     if (File.Exists(initScript))
                     {
-                        var script = this.loadAndGetScript(initScript);
+                        var script = this.loadAndGetScript(modName, initScript);
                         this._scriptRegistry[modName] = new Tuple<string, Script>(initScript, script);
                         if (script != null)
                         {
@@ -192,7 +188,7 @@ namespace GnollModLoader
             UserData.RegisterType<Vector4>();
             UserData.RegisterType<Vector3>();
             UserData.RegisterType<Vector2>();
-
+            UserData.RegisterType<Color>();
 
             // Pseudo Global Table, can contain various "helpers"
             UserData.RegisterType<GnomoriaGlobalTable>();
@@ -200,8 +196,8 @@ namespace GnollModLoader
             UserData.RegisterType<GuiHelperGlobalTable>();
 
             // hiding the internal functionality
-            UserData.RegisterProxyType<SaverProxy, Saver>(t => new SaverProxy(t));
-            UserData.RegisterProxyType<LoaderProxy, Loader>(t => new LoaderProxy(t));
+            UserData.RegisterProxyType<SaverProxy, SaveGameManager.Saver>(t => new SaverProxy(t));
+            UserData.RegisterProxyType<LoaderProxy, SaveGameManager.Loader>(t => new LoaderProxy(t));
 
             // TODO: Those need to be proxied as well
             //UserData.RegisterType<Game.Character>();
@@ -212,10 +208,10 @@ namespace GnollModLoader
             // Insert our own implementation
             Script.DefaultOptions.ScriptLoader = new FilesystemScriptLoader();
             // Redirect lua "print" to our log console
-            Script.DefaultOptions.DebugPrint = s => { LuaLogger.Log(Newtonsoft.Json.JsonConvert.ToString(s)); };
+            Script.DefaultOptions.DebugPrint = s => { LuaLogger.Log("", s ); };
         }
 
-        private void runLuaFunction(Script script, string functionName, params object[] args)
+        private void runLuaFunction(string modName, Script script, string functionName, params object[] args)
         {
             if (script == null)
             {
@@ -227,7 +223,7 @@ namespace GnollModLoader
                 var func = script.Globals[functionName];
                 if (func != null)
                 {
-                    Logger.Log($"Calling Lua function: {functionName}");
+                    Logger.Log($"-- Calling Lua function: [{modName}] {functionName}");
                     script.Call(func, args);
                 }
             }
@@ -242,7 +238,7 @@ namespace GnollModLoader
             foreach (var entry in this._scriptRegistry)
             {
                 var script = entry.Value.Item2;
-                runLuaFunction(script, "OnRunScriptValidation");
+                runLuaFunction(entry.Key, script, "OnRunScriptValidation");
             }
         }
 
@@ -255,7 +251,7 @@ namespace GnollModLoader
                 {
                     var initScriptPath = value.Item1;
                     Logger.Log($"-- Trying to reload Lua script: {initScriptPath}");
-                    var script = loadAndGetScript(initScriptPath);
+                    var script = loadAndGetScript(key, initScriptPath);
                     if ( script != null )
                     {
                         this._scriptRegistry[key] = new Tuple<string, Script>(initScriptPath, script);
@@ -270,32 +266,35 @@ namespace GnollModLoader
             }
         }
 
-        private Script loadAndGetScript(string scriptPath)
+        private Script loadAndGetScript(string modName, string scriptPath)
         {
             try { 
                 Script script = new Script(DEFAULT_CORE_MODULES);
 
-                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                script.Options.DebugPrint = s => { LuaLogger.Log(modName, s); };
+                script.Globals["Color"] = UserData.CreateStatic<Color>();
+
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = [
                     Path.GetDirectoryName(scriptPath) + "\\?",
                     Path.GetDirectoryName(scriptPath) + "\\?.lua",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?.lua"
-                };
+                ];
 
                 // XXX: DEBUG lines for local testing; leaving them in for now
                 /*
-                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = [
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?.lua"
-                };
+                ];
                 */
-                
+
                 Logger.Log("Module paths: ");
                 foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
                 {
-                    Logger.Log($" -- {path}");
+                    Logger.Log($"-- {path}");
                 }
 
                 // Add all global tables
@@ -303,7 +302,6 @@ namespace GnollModLoader
                 {
                     script.Globals[entry.Key] = entry.Value;
                 }
-
                 script.DoFile(scriptPath);
                 return script;
             }
@@ -340,7 +338,7 @@ namespace GnollModLoader
             foreach (var entry in this._scriptRegistry)
             {
                 var script = entry.Value.Item2;
-                runLuaFunction(script, functionName, args);
+                runLuaFunction(entry.Key, script, functionName, args);
             }
         }
 
@@ -349,7 +347,7 @@ namespace GnollModLoader
             foreach (var entry in this._scriptRegistry)
             {
                 var script = entry.Value.Item2;
-                runLuaFunction(script, functionName, entryProcessor(entry));
+                runLuaFunction(entry.Key, script, functionName, entryProcessor(entry));
             }
         }
 
