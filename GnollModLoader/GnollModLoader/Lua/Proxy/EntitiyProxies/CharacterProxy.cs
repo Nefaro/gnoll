@@ -38,7 +38,6 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
         {
             if (Enum.TryParse(characterAttributeType, out CharacterAttributeType attrType))
             {
-                Logger.Log($"Char attributes for: {attrType}");
                 return _target.RawAttributeLevel(attrType);
             }
             return 0;

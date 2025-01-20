@@ -57,7 +57,6 @@ namespace GnollModLoader.Lua
 
         public void AddSpawningItems(Job job, string materialID, string itemID, int value = 1, int quantity = 1)
         {
-            Logger.Log($"Adding item {materialID} {itemID} with value {value} and quantity {quantity}");
             this.AddSpawningGoods(job, new AvailableGood(itemID, materialID, ItemQuality.Average, quantity, (uint)value), quantity);
          }
 
