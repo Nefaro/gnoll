@@ -16,10 +16,11 @@ Currently those mods are:
 - MantRaidFpsBoost - Helps in situations where Mants cannot get into your fortress, gives FPS boost
 - MarketStallFasterScroll - Makes the trade window scroll faster / more lines
 - MarketStallSellFilters - Player can now filter own inventory by value and name
+- (Lua Mod) RaidingParty - Can send a Squad to raid an enemy or friendly faction. Lua based mod
 - SeasonalChange - Switches the environment graphics according to current season 
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
 - VeinMiner - Enhances mining in a way that gnomes digg out the mineral/gem veins by themselves
 
 And a few that are experimental or otherwise different
 - LuaSupport - Enables/Disables Gnoll's Lua integration. Enable this mod to enable Lua integration
-- ExpLuaIntegration - Experimental Lua mod. More-or-less meant to show how to mod the game via Lua
+- (Lua Mod)  ExpLuaIntegration - Experimental Lua mod. More-or-less meant to show how to mod the game via Lua
