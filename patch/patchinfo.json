@@ -6,11 +6,11 @@
     "patches": [
     {
         "version": 14,
-        "versionString":"1.14.2a",
+        "versionString":"1.14.2b",
         "filename": "Gnoll1.1x_016e6239.xdelta"
     }
     ],
-    "latestVersion":"1.14.2a"
+    "latestVersion":"1.14.2b"
   },
   {
     "name": "v1.0 (Steam 2019)",
@@ -19,10 +19,10 @@
     "patches": [
     {
         "version": 14,
-        "versionString":"1.14.2a",
-        "filename": "Gnoll1.1x_016e6239.xdelta"
+        "versionString":"1.14.2b",
+        "filename": "Gnoll1.1x_c9f6d4b9.xdelta"
     }
     ],    
-    "latestVersion":"1.14.2a"
+    "latestVersion":"1.14.2b"
   }
 ]
