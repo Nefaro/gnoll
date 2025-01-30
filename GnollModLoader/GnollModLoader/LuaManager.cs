@@ -274,21 +274,21 @@ namespace GnollModLoader
                 script.Options.DebugPrint = s => { LuaLogger.Log(modName, s); };
                 script.Globals["Color"] = UserData.CreateStatic<Color>();
 
-                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = [
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Path.GetDirectoryName(scriptPath) + "\\?",
                     Path.GetDirectoryName(scriptPath) + "\\?.lua",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?",
                     Path.GetDirectoryName(_luaSupportInitScript) + "\\?.lua"
-                ];
+                };
 
                 // XXX: DEBUG lines for local testing; leaving them in for now
                 /*
-                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = [
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\?.lua",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?",
                     Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\LuaSupport\\LuaSupport\\Scripts\\?.lua"
-                ];
+                };
                 */
 
                 Logger.Log("Module paths: ");
