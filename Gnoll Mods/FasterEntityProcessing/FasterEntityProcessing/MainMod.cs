@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Game;
 using Game.GUI;
 using Game.GUI.Controls;
 using GnollModLoader;
@@ -123,6 +124,12 @@ namespace GnollMods.FasterEntityProcessing
 
         private void HookManager_InGameHUDInit(InGameHUD inGameHUD, Manager manager)
         {
+            if (Game.GnomanEmpire.Instance.EntityManager.list_1.GetType() == typeof(DictionaryList) )
+            {
+                // The entity list has already been patched, move on
+                return;
+            }
+
             List<Game.GameEntity> copy = new List<Game.GameEntity>(Game.GnomanEmpire.Instance.EntityManager.list_1);
 
             // Replace the main entity collection with out custom implmenetation
