@@ -8,10 +8,10 @@ namespace GnollModLoader
     public class GnollMain
     {
         private const string MAJOR_VERSION = "1";
-        private const string BUGFIX_VERSION = ".2b";
+        private const string BUGFIX_VERSION = ".0";
 
         // for easier validation
-        public const uint PATCH_VERSION = 14;
+        public const uint PATCH_VERSION = 15;
 
         public const string NAME = "Gnoll Mod Loader";
         public const string SHORT_NAME = "Gnoll";
@@ -28,10 +28,7 @@ namespace GnollModLoader
         }
 
         static HookManager hookManager;
-        static ModLoader modLoader;
         static ModManager modManager;
-        static LuaManager luaManager;
-        static SaveGameManager saveGameManager;
 
         private GnollMain()
         {
@@ -55,7 +52,7 @@ namespace GnollModLoader
             // Attach debug hooks before mods are loaded
             tryAttachDebugHooks(hookManager);
 
-            saveGameManager = new SaveGameManager();
+            SaveGameManager saveGameManager = new SaveGameManager();
 
             // hook save game load event
             // NOTE: SaveGameManager needs to be first one on the "load" path, 
@@ -63,12 +60,14 @@ namespace GnollModLoader
             // Needs to be before Lua manager, since that also has its own hooks
             hookManager.AfterGameLoaded += saveGameManager.HookAfterGameLoaded;
 
-            luaManager = new LuaManager(hookManager, saveGameManager);
+            LuaManager luaManager = new LuaManager(hookManager, saveGameManager);
 
             // Mod manager runs AFTER patches have been applied
             modManager = new ModManager(hookManager, patcher, luaManager);
-            modLoader = new ModLoader(modManager);
+            ModLoader modLoader = new ModLoader(modManager);
             modLoader.LoadModsFrom(MODS_DIR);
+            LuaModLoader luaModLoader = new LuaModLoader(modManager, luaManager);
+            luaModLoader.LoadModsFrom(MODS_DIR);
             luaManager.RunInitScripts();
 
             // hook up Gnoll main menu

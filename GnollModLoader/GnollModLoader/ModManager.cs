@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Game;
 using GnollModLoader.Model;
@@ -20,7 +21,7 @@ namespace GnollModLoader
         private readonly ISet<String> _waitingRestart;
         private readonly Patcher _patcher;
         private readonly LuaManager _luaManager;
-        public List<IGnollMod> Mods { get { return _modsList; } }
+        public List<IGnollMod> Mods { get { return _modsList.OrderBy(m => m.Name).ToList(); } }
 
         public ModManager(HookManager hookManager, Patcher patcher, LuaManager luaManager)
         {
@@ -31,9 +32,10 @@ namespace GnollModLoader
             this._luaManager = luaManager;
         }
 
-        public void RegisterMod(IGnollMod mod, Assembly modAssembly)
+        public void RegisterMod(IGnollMod mod, string modAbsolutePath)
         {
             _modsList.Add(mod);
+            Logger.Log($"-- Mod type {mod.GetType()}");
             if ( this.IsModEnabled(mod) )
             {
                 mod.OnEnable(this._hookManager);
@@ -46,7 +48,7 @@ namespace GnollModLoader
                 if ( mod is IHasLuaScripts )
                 {
                     Logger.Log("-- Mod has scripts");
-                    this._luaManager.RegisterMod(mod, modAssembly);
+                    this._luaManager.RegisterMod(mod, modAbsolutePath);
                 }
             }
             Assembly.GetAssembly(mod.GetType());

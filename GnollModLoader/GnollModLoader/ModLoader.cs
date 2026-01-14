@@ -21,20 +21,21 @@ namespace GnollModLoader
 
         public void LoadModsFrom(string dir)
         {
-            String mask = "*.dll";
+            Logger.Log("Loading DLL mods ...");
+            string mask = "*.dll";
             if (!Directory.Exists(dir))
             {
                 Logger.Error("Mod directory missing; no mods loaded");
                 return;
             }
-            foreach (String filename in Directory.EnumerateFiles(dir, mask, SearchOption.AllDirectories))
+            foreach (string filename in Directory.EnumerateFiles(dir, mask, SearchOption.AllDirectories))
             {
-                LoadMod(filename);
+                loadMod(filename);
             }
             Logger.Log("Loading mods ... DONE");
         }
 
-        public bool LoadMod(string path)
+        private bool loadMod(string path)
         {
             Logger.Log("Checking '{0}' for mods ... ", path);
             Assembly assembly = Assembly.LoadFrom(path);
@@ -52,7 +53,7 @@ namespace GnollModLoader
                         if ( GnollMain.PATCH_VERSION >= mod.RequireMinPatchVersion )
                         {
                             Logger.Log("++ Instantiating mod: " + mod.Name);
-                            this._modManager.RegisterMod(mod, assembly);
+                            this._modManager.RegisterMod(mod, generatePathForMod(assembly));
                             return true;
                         }
                         else
@@ -66,7 +67,7 @@ namespace GnollModLoader
             }
             catch (System.TypeLoadException e)
             {
-                Logger.Error("Trying to load mod from '{0}' failed with exception");
+                Logger.Error("Trying to load mod from '{0}' failed with exception", path);
                 Logger.Error("{0}", e);
                 return false;
             }
@@ -85,6 +86,12 @@ namespace GnollModLoader
             {
                 return e.Types.Where(t => t != null);
             }
+        }
+        private string generatePathForMod(Assembly modAssembly)
+        {
+            string assembly = Path.GetDirectoryName(modAssembly.Location);
+            string dll = modAssembly.GetName().Name;
+            return assembly + "\\" + dll;
         }
     }
 }

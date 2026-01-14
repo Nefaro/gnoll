@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-print('gnomodkit v1.14.2 -- https://github.com/Nefaro/gnoll')
+print('gnomodkit v1.15.0 -- https://github.com/Nefaro/gnoll')
 print()
 
 import argparse
@@ -21,6 +21,7 @@ DATA_DIR = 'Data'
 SCRIPTS_DIR = 'Scripts'
 
 CONFIG_FILENAME = '.config.json'
+LUA_MODINFO_FILENAME = 'ModInfo.lua'
 
 DOTNETFX_DEFAULT_DIR = 'C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319'
 
@@ -477,7 +478,26 @@ class TaskMakeAllFieldsPublic(Task):
                 line = line.replace('.method family', '.method public')
                 print(line, end='', file=output)
 
-class TaskMakeMod(Task):
+class TaskSelectModBuilder(Task):
+    def __init__(self, solution_dir):
+        super().__init__()
+        
+        self.orig_solution_dir = solution_dir
+        self.solution_dir = os.path.join(MODS_DIR, solution_dir)
+        self.name = os.path.basename(os.path.normpath(self.solution_dir))
+        self.project_dir = os.path.join(self.solution_dir, self.name)
+        self.dll_name = self.name + ".dll"
+
+    def __str__(self):
+        return 'make ' + self.name
+
+    def discover_dependencies(self):
+        if os.path.exists(os.path.join(self.solution_dir, self.name + ".sln")):
+            self.add_dependency(TaskBuildDllMod(self.orig_solution_dir))
+        elif os.path.exists(os.path.join(self.project_dir, LUA_MODINFO_FILENAME)):
+            self.add_dependency(TaskBuildLuaMod(self.orig_solution_dir))
+
+class TaskBuildDllMod(Task):
     def __init__(self, solution_dir):
         super().__init__()
         
@@ -512,6 +532,36 @@ class TaskMakeMod(Task):
             # if mod has Scripts directory, install that as well
             self.add_dependency(TaskCopyFile(script_data_dir, os.path.join(get_game_mod_dir(), self.name, SCRIPTS_DIR)))            
 
+class TaskBuildLuaMod(Task):
+    def __init__(self, solution_dir):
+        super().__init__()
+        
+        self.solution_dir = os.path.join(MODS_DIR, solution_dir)
+        self.name = os.path.basename(os.path.normpath(self.solution_dir))
+        self.project_dir = os.path.join(self.solution_dir, self.name)
+        self.dll_name = self.name + ".dll"
+
+    def __str__(self):
+        return 'make ' + self.name
+
+    def discover_dependencies(self):
+        # Copy modinfo
+        modinfo_file = os.path.join(self.project_dir, LUA_MODINFO_FILENAME)
+        self.add_dependency(TaskCopyFile(modinfo_file, os.path.join(get_game_mod_dir(), self.name, LUA_MODINFO_FILENAME)))
+        
+        #Need to build target dir before the files can be copied
+        os.makedirs(os.path.join(get_game_mod_dir(), self.name), exist_ok=True)
+        
+        mod_data_dir = os.path.join(self.project_dir, DATA_DIR);
+        if os.path.exists(mod_data_dir):
+            # if mod has Data directory, install that as well
+            self.add_dependency(TaskCopyFile(mod_data_dir, os.path.join(get_game_mod_dir(), self.name, DATA_DIR)))
+            
+        script_data_dir = os.path.join(self.project_dir, SCRIPTS_DIR);
+        if os.path.exists(script_data_dir):
+            # if mod has Scripts directory, install that as well
+            self.add_dependency(TaskCopyFile(script_data_dir, os.path.join(get_game_mod_dir(), self.name, SCRIPTS_DIR))) 
+
 class TaskMakeAllMods(Task):
     def __init__(self):
         super().__init__()
@@ -522,7 +572,7 @@ class TaskMakeAllMods(Task):
     def discover_dependencies(self):        
         dirs = next(os.walk(MODS_DIR))[1]
         for dir in dirs:
-            self.add_dependency(TaskMakeMod(dir))
+            self.add_dependency(TaskSelectModBuilder(dir))
 
 class TaskMakeModLoader(Task):
     def __init__(self, relative_dist_path):
@@ -743,7 +793,7 @@ for target in targets:
     elif target.startswith('mod:all') or target.startswith('mod:*') or target.startswith('mods:all') or target.startswith('mods:*'):
         tr.add_dependency(TaskMakeAllMods())
     elif target.startswith('mod:'):
-        tr.add_dependency(TaskMakeMod(target[4:]))
+        tr.add_dependency(TaskSelectModBuilder(target[4:]))
     elif target == 'run':
         tr.add_dependency(TaskRunModdedGame())
     elif target == 'steam':

@@ -18,10 +18,10 @@
         // when toggling enable/disable
         bool NeedsRestartOnToggle();
 
-        // Name of the mod, 1-liner, visible from the ui
+        // Name of the mod, 1-liner, visible from the UI
         string Name { get; }
 
-        // Short description, will be cut into pieces in the ui
+        // Short description, will be cut into pieces in the UI
         string Description { get; }
 
         // Version of the loader when the mod was built.

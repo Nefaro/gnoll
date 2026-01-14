@@ -30,6 +30,10 @@ namespace GnollModLoader
                 CoreModules.OS_Time |
                 CoreModules.LoadMethods |
                 CoreModules.Metatables;
+        // Stricter rule, we need nothing more than to read the file and verify it's a mod
+        private readonly static CoreModules MODINFO_CORE_MODULES = CoreModules.Preset_HardSandbox |
+                CoreModules.LoadMethods;
+
         // {mod.Name -> {script.path, script}
         private readonly Dictionary<string, Tuple<string, Script>> _scriptRegistry = new Dictionary<string, Tuple<string, Script>> ();
         private readonly Dictionary<string, object> _globalTables = new Dictionary<string, object>();
@@ -39,6 +43,8 @@ namespace GnollModLoader
         private readonly LuaHookManager _luaHookManager;
 
         private string _luaSupportInitScript;
+        private bool _initDone = false;
+
         public LuaManager(HookManager hookManager, SaveGameManager saveGameManager) 
         {
             this._hookManager = hookManager;
@@ -55,9 +61,9 @@ namespace GnollModLoader
             this.findAndRunLuaFunctionWithArguments(functionName, args);
         }
 
-        internal void RegisterMod(IGnollMod mod, Assembly modAssembly)
+        internal void RegisterMod(IGnollMod mod, string modAbsolutePath)
         {
-            var initScript = this.generatePathForMod(modAssembly, SCRIPT_DIR_NAME) + "\\ModInit.lua";
+            var initScript = this.generatePathForMod(modAbsolutePath, SCRIPT_DIR_NAME) + "\\ModInit.lua";
 
             // XXX: DEBUG line for local testing; leaving it in for now
             //var initScript = Environment.GetEnvironmentVariable("GNOLL_WORKSPACE") + "\\Gnoll Mods\\ExpLuaIntegration\\ExpLuaIntegration\\Scripts\\ModInit.lua";
@@ -75,7 +81,7 @@ namespace GnollModLoader
 
         internal void RunInitScripts()
         {
-            if (!verifyLuaIntegrationEnabled())
+            if (!VerifyLuaIntegrationEnabled())
             {
                 Logger.Log("Lua Support DISABLED");
                 return;
@@ -131,14 +137,59 @@ namespace GnollModLoader
                 Logger.Error($"-- {ex}");
             }
         }
+        internal IGnollMod LoadModInfo(string filePath)
+        {
+            if (!VerifyLuaIntegrationEnabled())
+            {
+                Logger.Log("Lua Support DISABLED");
+                return null;
+            }
+            var modInfoFilename = Path.GetFullPath(filePath);
+            UserData.RegisterType<IGnollMod>();
+            try
+            {
+                Script script = new Script(DEFAULT_CORE_MODULES);
 
-        private bool verifyLuaIntegrationEnabled()
+                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                    Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?",
+                    Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?.lua",
+                };
+
+                Logger.Log("Module paths: ");
+                foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
+                {
+                    Logger.Log($"-- {path}");
+                }
+
+                // Add all global tables
+                foreach (KeyValuePair<string, object> entry in _globalTables)
+                {
+                    script.Globals[entry.Key] = entry.Value;
+                }
+                Table modinfoTable = script.DoFile(modInfoFilename).Table;
+                LuaModInfo modInfo = this.mapFromTable(script, modinfoTable);
+
+                return modInfo;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ModInfo script with path '{modInfoFilename}' failed");
+                Logger.Error($"-- {ex}");
+                return null;
+            }
+        }
+
+        public bool VerifyLuaIntegrationEnabled()
         {
             // verify that the Lua ingeration should be enabled
             // for this check if "LuaSuppot" mod is enabled
             if ( _luaSupportInitScript == null )
             {
                 return false;
+            }
+            if ( _initDone ) 
+            {
+                return true;
             }
             // Lua support is enabled, init the subsystem
             this.init();
@@ -170,6 +221,7 @@ namespace GnollModLoader
             this._globalTables[GuiHelperGlobalTable.GLOBAL_TABLE_LUA_NAME] = new GuiHelperGlobalTable();
             
             Logger.Log("Lua Support initialization ... DONE");
+            this._initDone = true;
         }
 
         private void registerTypes()
@@ -319,7 +371,7 @@ namespace GnollModLoader
             if (GnollMain.Debug)
             {
                 Logger.Log("Attaching Lua buttons");
-                this.AttachIngameUI(inGameHUD, manager);
+                this.attachIngameUI(inGameHUD, manager);
             }
         }
 
@@ -351,7 +403,7 @@ namespace GnollModLoader
             }
         }
 
-        private void AttachIngameUI(InGameHUD inGameHUD, Manager manager)
+        private void attachIngameUI(InGameHUD inGameHUD, Manager manager)
         {
             GClass0 glass = inGameHUD.GClass0_0;
             Button button7 = glass.method_40("Lua Reload", "Reload Lua scripts", new Game.GUI.Controls.EventHandler((sender, events) =>
@@ -375,17 +427,99 @@ namespace GnollModLoader
             glass.panel_0.Left = (glass.Width - glass.panel_0.Width) / 2;
         }
 
-        private string generatePathForMod(Assembly modAssembly, string subDirectory)
+        private string generatePathForMod(string modAbsolutePath, string subDirectory)
         {
-            string assembly = Path.GetDirectoryName(modAssembly.Location);
-            string dll = modAssembly.GetName().Name;
-            string folder = assembly + "\\" + dll + "\\" + subDirectory;
-            return folder;
+            return modAbsolutePath + "\\" + subDirectory;
         }
 
         private string getCustomInitScriptLocation()
         {
             return CUSTOM_INIT_SCRIPT_PATH + CUSTOM_INIT_SCRIPT_NAME;
+        }
+
+        private LuaModInfo mapFromTable(Script script, Table table) 
+        { 
+            LuaModInfo modInfo = new LuaModInfo();
+
+            foreach (var prop in typeof(LuaModInfo).GetProperties())
+            {
+                bool isRequired = Attribute.IsDefined(prop, typeof(RequiredAttribute));
+                var luaVal = table.Get(prop.Name);
+                if (luaVal.IsNil() && isRequired)
+                    throw new ArgumentNullException($"Excpected required property '{prop.Name}', got null value");
+
+                if (prop.PropertyType == typeof(string) && luaVal.Type == DataType.String)
+                    prop.SetValue(modInfo, luaVal.IsNil() ? "" : luaVal.String, null);
+                else if (prop.PropertyType == typeof(int) && luaVal.Type == DataType.Number)
+                    prop.SetValue(modInfo, luaVal.IsNil() ? -1 : (int)luaVal.Number, null);
+                else if (prop.PropertyType == typeof(bool) && luaVal.Type == DataType.Boolean)
+                    prop.SetValue(modInfo, !luaVal.IsNil() && luaVal.Boolean, null);
+            }
+
+            DynValue onEnable = table.Get("OnEnable");
+            if (onEnable.Type == DataType.Function)
+            {
+                // Map the Lua function to a C# delegate
+                modInfo.OnEnableDelegate = () =>
+                {
+                    // Call the Lua function; pass the table as 'self' + argument
+                    script.Call(onEnable, table);
+                };
+            }
+
+            DynValue onDisable = table.Get("OnDisable");
+            if (onEnable.Type == DataType.Function)
+            {
+                // Map the Lua function to a C# delegate
+                modInfo.OnDisableDelegate = () =>
+                {
+                    // Call the Lua function; pass the table as 'self' + argument
+                    script.Call(onDisable, table);
+                };
+            }
+
+            return modInfo;
+        }
+
+        // Lua ModInfo support
+        [AttributeUsage(AttributeTargets.Property)]
+        private class RequiredAttribute : Attribute { }
+
+        private class LuaModInfo : IGnollMod, IHasLuaScripts
+        {
+            [RequiredAttribute] public string Name { get; set; }
+
+            [RequiredAttribute] public string Description { get; set; }
+            [RequiredAttribute] public int RequireMinPatchVersion { get; set; }
+
+            public string BuiltWithLoaderVersion { get; set; } = string.Empty;
+
+            public bool IsDefaultEnabled { get; set; } = false;
+
+            public bool NeedsRestartOnToggle { get; set; } = false;
+
+            public Action OnEnableDelegate { get; set; }
+
+            public Action OnDisableDelegate { get; set; }
+            public void OnEnable(HookManager hookManager)
+            {
+                OnEnableDelegate?.Invoke();
+            }
+
+            public void OnDisable(HookManager hookManager)
+            {
+                OnDisableDelegate?.Invoke();
+            }
+
+            bool IGnollMod.IsDefaultEnabled()
+            {
+                return IsDefaultEnabled;
+            }
+
+            bool IGnollMod.NeedsRestartOnToggle()
+            {
+                return NeedsRestartOnToggle;
+            }
         }
     }
 

@@ -103,6 +103,7 @@
     <Compile Include="Integrations\MoonSharp\Loaders\FilesystemScriptLoader.cs" />
     <Compile Include="LuaHookManager.cs" />
     <Compile Include="LuaManager.cs" />
+    <Compile Include="LuaModLoader.cs" />
     <Compile Include="Lua\GuiHelperGlobalTable.cs" />
     <Compile Include="Lua\JobBoardGlobalTable.cs" />
     <Compile Include="Lua\LoaderProxy.cs" />
