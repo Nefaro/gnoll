@@ -7,7 +7,7 @@ using GnollModLoader;
 
 namespace GnollMods.BuildListCache
 {
-    class ModsMain : IGnollMod
+    class ModMain : IGnollMod
     {
         private BuildConstructionUI buildWindow;
         private Panel cachePanel;

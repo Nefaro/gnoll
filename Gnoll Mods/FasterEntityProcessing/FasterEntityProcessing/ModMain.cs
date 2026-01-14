@@ -93,7 +93,7 @@ namespace GnollMods.FasterEntityProcessing
         }
     }
 
-    class MainMod : IGnollMod
+    class ModMain : IGnollMod
     {
         public string Name { get { return "FasterEntityProcessing"; } }
         public string Description { get { return "Replaces some of the internal structures for the game update to run faster"; } }

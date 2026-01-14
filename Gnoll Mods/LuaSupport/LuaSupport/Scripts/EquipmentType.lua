@@ -12,4 +12,4 @@ EquipmentType = {
     None=10,
     Count=11
 }
-retrun EquipmentType;
+return EquipmentType;
