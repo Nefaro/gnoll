@@ -145,38 +145,31 @@ namespace GnollModLoader
                 return null;
             }
             var modInfoFilename = Path.GetFullPath(filePath);
-            UserData.RegisterType<IGnollMod>();
-            try
+
+            Script script = new Script(MODINFO_CORE_MODULES);
+
+            ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
+                Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?",
+                Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?.lua",
+            };
+
+            Logger.Log("Module paths: ");
+            foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
             {
-                Script script = new Script(DEFAULT_CORE_MODULES);
-
-                ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] {
-                    Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?",
-                    Path.GetDirectoryName(modInfoFilename) + $"\\{SCRIPT_DIR_NAME}\\?.lua",
-                };
-
-                Logger.Log("Module paths: ");
-                foreach (string path in ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths)
-                {
-                    Logger.Log($"-- {path}");
-                }
-
-                // Add all global tables
-                foreach (KeyValuePair<string, object> entry in _globalTables)
-                {
-                    script.Globals[entry.Key] = entry.Value;
-                }
-                Table modinfoTable = script.DoFile(modInfoFilename).Table;
-                LuaModInfo modInfo = this.mapFromTable(script, modinfoTable);
-
-                return modInfo;
+                Logger.Log($"-- {path}");
             }
-            catch (Exception ex)
+
+            // Add all global tables
+            foreach (KeyValuePair<string, object> entry in _globalTables)
             {
-                Logger.Error($"ModInfo script with path '{modInfoFilename}' failed");
-                Logger.Error($"-- {ex}");
-                return null;
+                script.Globals[entry.Key] = entry.Value;
             }
+            Table modinfoTable = script.DoFile(modInfoFilename).Table;
+            LuaModInfo modInfo = this.mapFromTable(script, modinfoTable);
+
+            script.Options.DebugPrint = s => { LuaLogger.Log(modInfo.Name, s); };
+
+            return modInfo;
         }
 
         public bool VerifyLuaIntegrationEnabled()
@@ -443,13 +436,21 @@ namespace GnollModLoader
 
             foreach (var prop in typeof(LuaModInfo).GetProperties())
             {
-                bool isRequired = Attribute.IsDefined(prop, typeof(RequiredAttribute));
-                var luaVal = table.Get(prop.Name);
-                if (luaVal.IsNil() && isRequired)
-                    throw new ArgumentNullException($"Excpected required property '{prop.Name}', got null value");
+                var attr = prop.GetCustomAttributes(typeof(RequiredAttribute), false).FirstOrDefault() as RequiredAttribute;
 
-                if (prop.PropertyType == typeof(string) && luaVal.Type == DataType.String)
-                    prop.SetValue(modInfo, luaVal.IsNil() ? "" : luaVal.String, null);
+                var luaVal = table.Get(prop.Name);
+                if (luaVal.IsNil() && attr != null)
+                    throw new ArgumentNullException($"Expected mandatory property '{prop.Name}', got null value");
+
+                if (prop.PropertyType == typeof(string) && luaVal.Type == DataType.String) {
+                    string value = (luaVal.IsNil() ? "" : luaVal.String);
+                    // Limit the string length
+                    if ( attr != null && attr.MaxLength != -1 && attr.MaxLength < value.Length)
+                    {
+                        value = value.Substring(0, attr.MaxLength);
+                    }
+                    prop.SetValue(modInfo, value, null);
+                }
                 else if (prop.PropertyType == typeof(int) && luaVal.Type == DataType.Number)
                     prop.SetValue(modInfo, luaVal.IsNil() ? -1 : (int)luaVal.Number, null);
                 else if (prop.PropertyType == typeof(bool) && luaVal.Type == DataType.Boolean)
@@ -483,16 +484,21 @@ namespace GnollModLoader
 
         // Lua ModInfo support
         [AttributeUsage(AttributeTargets.Property)]
-        private class RequiredAttribute : Attribute { }
+        private class RequiredAttribute : Attribute 
+        {
+            public int MaxLength { get; set; }
+            public RequiredAttribute() { }
+        }
 
         private class LuaModInfo : IGnollMod, IHasLuaScripts
         {
-            [RequiredAttribute] public string Name { get; set; }
-
-            [RequiredAttribute] public string Description { get; set; }
+            // 36 chars max
+            [RequiredAttribute(MaxLength=36)] public string Name { get; set; }
+            // 134 chars max
+            [RequiredAttribute(MaxLength=134)] public string Description { get; set; }
             [RequiredAttribute] public int RequireMinPatchVersion { get; set; }
 
-            public string BuiltWithLoaderVersion { get; set; } = string.Empty;
+            [RequiredAttribute(MaxLength = 12)] public string BuiltWithLoaderVersion { get; set; }
 
             public bool IsDefaultEnabled { get; set; } = false;
 

@@ -9,37 +9,37 @@ namespace GnollModLoader
     internal class Logger
     {
         private static readonly string PREFIX = "[Gnoll]";
-        private static readonly string ERROR = "[ERROR] ";
-        private static readonly string WARN = "[WARN] ";
+        private static readonly string ERROR = "[ERROR]";
+        private static readonly string WARN = "[WARN]";
 
         public static void Log(string message, params object[] args)
         {
-            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + " " + message, args);
+            System.Console.WriteLine($"({DateTime.Now}) {PREFIX} {message}", args);
         }
         public static void Log(string message, object arg)
         {
-            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + " " + message, arg);
+            System.Console.WriteLine($"({DateTime.Now}) {PREFIX} {message}", arg);
         }
 
         public static void Warn(string message, params object[] args)
         {
-            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + WARN + "?? " + message, args);
+            System.Console.WriteLine($"({DateTime.Now}) {PREFIX} ?? {WARN} {message}", args);
         }
 
         public static void Error(string message, params object[] args)
         {
-            System.Console.WriteLine($"({DateTime.Now}) " + PREFIX + ERROR + "!! " + message, args);
+            System.Console.WriteLine($"({DateTime.Now}) {PREFIX} !! {ERROR} {message}", args);
         }
 
     }
 
     internal class LuaLogger
     {
-        private static readonly string PREFIX = "[LUA::";
+        private static readonly string PREFIX = "LUA";
 
         public static void Log(string mod, string message, params object[] args)
         {
-            System.Console.Write($"({DateTime.Now}) {PREFIX}{mod}] ", args);
+            System.Console.Write($"({DateTime.Now}) [{PREFIX}::{mod}] ", args);
             System.Console.WriteLine( process(message) );
         }
 
@@ -48,8 +48,8 @@ namespace GnollModLoader
 
     public class ModsLogger
     {
-        private static readonly string ERROR = "[ERROR] ";
-        private static readonly string WARN = "[WARN] ";
+        private static readonly string ERROR = "[ERROR]";
+        private static readonly string WARN = "[WARN]";
 
         private static Dictionary<string, ModsLogger> _registry = new Dictionary<string, ModsLogger>();
 
@@ -82,11 +82,11 @@ namespace GnollModLoader
 
         public void Error(string message, params object[] args)
         {
-            System.Console.WriteLine($"({DateTime.Now}) [{this.prefix()}] {ERROR} !! {message}", args);
+            System.Console.WriteLine($"({DateTime.Now}) [{this.prefix()}] !! {ERROR} {message}", args);
         }
         public void Warn(string message, params object[] args)
         {
-            System.Console.WriteLine($"({DateTime.Now}) [{this.prefix()}] {WARN} ?? {message}", args);
+            System.Console.WriteLine($"({DateTime.Now}) [{this.prefix()}] ?? {WARN} {message}", args);
         }
 
         private string prefix()

@@ -221,7 +221,7 @@
     <Compile Include="GnollMain.cs" />
     <Compile Include="ConsoleWindow.cs" />
     <Compile Include="Model\Modlist.cs" />
-    <Compile Include="ModLoader.cs" />
+    <Compile Include="DllModLoader.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

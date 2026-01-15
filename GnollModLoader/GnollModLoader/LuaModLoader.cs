@@ -59,7 +59,7 @@ namespace GnollModLoader
                 Logger.Error("Trying to load mod from '{0}' failed with exception", path);
                 Logger.Error("{0}", e);
             }
-            Logger.Log("-- No mods found from '{0}'", path);
+            Logger.Log("-- Cannot load mods from '{0}'", path);
         }
     }
 }

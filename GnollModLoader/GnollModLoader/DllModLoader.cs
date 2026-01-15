@@ -10,11 +10,11 @@ namespace GnollModLoader
     /**
      * Responsible for finding, validating and loading the mods from .dll files
      */
-    public class ModLoader
+    public class DllModLoader
     {
         private readonly ModManager _modManager;
 
-        public ModLoader(ModManager modManager)
+        public DllModLoader(ModManager modManager)
         {
             this._modManager = modManager;
         }

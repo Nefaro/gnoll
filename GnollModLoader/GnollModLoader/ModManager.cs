@@ -35,7 +35,6 @@ namespace GnollModLoader
         public void RegisterMod(IGnollMod mod, string modAbsolutePath)
         {
             _modsList.Add(mod);
-            Logger.Log($"-- Mod type {mod.GetType()}");
             if ( this.IsModEnabled(mod) )
             {
                 mod.OnEnable(this._hookManager);

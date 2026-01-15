@@ -64,7 +64,7 @@ namespace GnollModLoader
 
             // Mod manager runs AFTER patches have been applied
             modManager = new ModManager(hookManager, patcher, luaManager);
-            ModLoader modLoader = new ModLoader(modManager);
+            DllModLoader modLoader = new DllModLoader(modManager);
             modLoader.LoadModsFrom(MODS_DIR);
             LuaModLoader luaModLoader = new LuaModLoader(modManager, luaManager);
             luaModLoader.LoadModsFrom(MODS_DIR);
