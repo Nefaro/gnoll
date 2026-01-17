@@ -1,5 +1,4 @@
 ﻿using Game;
-using GnollModLoader.Lua.Proxy.EntitiesProxies;
 using MoonSharp.Interpreter;
 using GnollModLoader.Lua.Proxy.EntitiyProxies;
 
