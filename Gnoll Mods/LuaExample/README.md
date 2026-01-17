@@ -1,0 +1,1 @@
+Example how to register a mod via Lua. After registration is done the processing continues like with other mods.

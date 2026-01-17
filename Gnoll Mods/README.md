@@ -5,6 +5,7 @@ Currently those mods are:
 - BuildListCache - Build dialogs show the last items used in buiding, for faster access
 - Challenges - Adds a game type with a specific task or objective
 - FasterEntityProcessing - An enhancement on entity processing, gives FPS boost
+- FixAudioCrash - Trying to prevent Audio manager crashing sometimes when a save game is loaded
 - FixDisableNewGameModdedMobs - This fixes situation where new game start would only disable vanilla enemis and leave modded enemies enabled
 - FixFullscreenAltTab - Trying to fix the crash that happens when alt-tabbing out of fullscreen
 - FixStuckWheelbarrow - A fix for when a gnomes/automata gets stuck, because the wheelbarrow is full
@@ -23,4 +24,5 @@ Currently those mods are:
 
 And a few that are experimental or otherwise different
 - LuaSupport - Enables/Disables Gnoll's Lua integration. Enable this mod to enable Lua integration
-- (Lua Mod)  ExpLuaIntegration - Experimental Lua mod. More-or-less meant to show how to mod the game via Lua
+- (Lua Mod) ExpLuaIntegration - Experimental Lua mod. More-or-less meant to show how to mod the game via Lua
+- (Lua Mod) LuaExample - An example of registering a mod purely in Lua.
