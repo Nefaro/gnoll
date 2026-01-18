@@ -1,2 +1,4 @@
 There is an issue where loading a world causes the Audio Manager to crash. I do not know why it happens and it's kind of hard to debug, since it doesn't happen on my system.
 Instead I built a workaround: we will catch the error and pretend it didn't happen. This mod catches the error, logs it into the console and the continues processing. This should at least allow the game to load the world.
+Additionally, if the fix is triggered 500 times (that means the game has thrown an audio error 500times), the mod will ignore further Audio Manager update calls, in effect disabling audio. The music is not playing, but at least the game is.
+Disable this mod, if you have no issues with audio.
