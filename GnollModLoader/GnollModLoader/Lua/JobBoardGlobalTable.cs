@@ -11,48 +11,56 @@ namespace GnollModLoader.Lua
         public readonly static string GLOBAL_TABLE_LUA_NAME = "_JOBS";
         public Job? CreateCustomRaidingJobForSquad(Faction faction, Squad squad)
         {
-            if (faction == null)
+            try
             {
-                Logger.Error($"Cannot create raiding job, faction is null");
-                return null;
-            }
-
-            if (squad == null)
-            {
-                Logger.Error($"Cannot create raiding job, squad is null");
-                return null;
-            }
-
-            var egress = faction.FindRegionExitPosition(squad.Members[0]);
-            if (egress == -Vector3.One)
-            {
-                Logger.Warn("Squad cannot find exit position");
-                GnomanEmpire.Instance.World.NotificationManager.AddNotification("Squad cannot find a way out to offworld");
-                return null;
-            }
-
-            ForeignTradeJob leaderJob = null;
-            foreach (Character member in squad.Members)
-            {
-                // each member gets it's own job object
-                var job = new ForeignTradeJob(egress, new ForeignTradeJobData(faction.UInt32_0));
-                var arrival = GnomanEmpire.Instance.Region.TotalTime() + faction.Distance;
-                member.TakeJob(job);
-                // A bit cruel but ...
-                member.Body.WakeUp();
-
-                faction.PlayerEnvoy = member;
-                member.TravelOffMap();
-                job.envoy_0 = new Envoy(EnvoyType.Raid, arrival, 0f, EnvoyState.Departing);
-                job.envoy_0.AddMember(member.UInt32_0);
-                if ( leaderJob == null )
+                if (faction == null)
                 {
-                    // First member is leader
-                    leaderJob = job;
+                    Logger.Error($"Cannot create raiding job, faction is null");
+                    return null;
                 }
+
+                if (squad == null)
+                {
+                    Logger.Error($"Cannot create raiding job, squad is null");
+                    return null;
+                }
+
+                var egress = faction.FindRegionExitPosition(squad.Members[0]);
+                if (egress == -Vector3.One)
+                {
+                    Logger.Warn("Squad cannot find exit position");
+                    GnomanEmpire.Instance.World.NotificationManager.AddNotification("Squad cannot find a way out to offworld");
+                    return null;
+                }
+
+                ForeignTradeJob leaderJob = null;
+                foreach (Character member in squad.Members)
+                {
+                    // each member gets it's own job object
+                    var job = new ForeignTradeJob(egress, new ForeignTradeJobData(faction.UInt32_0));
+                    var arrival = GnomanEmpire.Instance.Region.TotalTime() + faction.Distance;
+                    member.TakeJob(job);
+                    // A bit cruel but ...
+                    member.Body.WakeUp();
+
+                    faction.PlayerEnvoy = member;
+                    member.TravelOffMap();
+                    job.envoy_0 = new Envoy(EnvoyType.Raid, arrival, 0f, EnvoyState.Departing);
+                    job.envoy_0.AddMember(member.UInt32_0);
+                    if (leaderJob == null)
+                    {
+                        // First member is leader
+                        leaderJob = job;
+                    }
+                }
+                // We are intereste only in the leader job, since this is the one we will operate with
+                return leaderJob;
             }
-            // We are intereste only in the leader job, since this is the one we will operate with
-            return leaderJob;
+            catch (Exception ex)
+            {
+                Logger.Error("Cannot create Job posting: " + ex.ToString());
+            }
+            return null;
         }
 
         public void AddSpawningItems(Job job, string materialID, string itemID, int value = 1, int quantity = 1)
