@@ -9,7 +9,6 @@ EquipmentType = {
     RightHand=7,
     Back=8,
     Belt=9,
-    None=10,
-    Count=11
+    None=10
 }
 return EquipmentType;

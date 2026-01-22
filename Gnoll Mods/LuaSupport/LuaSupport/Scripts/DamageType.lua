@@ -4,7 +4,6 @@ DamageType = {
     Blunt=3,
     Heat=4,
     Cold=5,
-    Poison=6,
-    Count=7
+    Poison=6
 }
 return DamageType

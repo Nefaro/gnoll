@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Game;
+using Newtonsoft.Json;
 
 namespace GnollModLoader
 {
@@ -16,7 +18,7 @@ namespace GnollModLoader
         private readonly static string SAVEFILE_NAME_FORMAT = "{0}.gnoll.json";
 
         private static Dictionary<string, Saver> _modSavers = new Dictionary<string, Saver>();
-        private static Dictionary<string, Dictionary<object, object>> _saveData = new Dictionary<string, Dictionary<object, object>>();
+        private static Dictionary<string, Dictionary<string, Dictionary<object, object>>> _saveData = new Dictionary<string, Dictionary<string, Dictionary<object, object>>>();
 
         public Saver SaverForMod(string modName)
         {
@@ -63,9 +65,9 @@ namespace GnollModLoader
                     }
                     return;
                 }
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(_saveData, Newtonsoft.Json.Formatting.Indented);
+                string json = JsonConvert.SerializeObject(_saveData, Formatting.Indented);
                 Logger.Log("Creating Gnoll save: {0}", fileName);
-                System.IO.File.WriteAllText(fileName, json);
+                File.WriteAllText(fileName, json);
             }
             catch (Exception e)
             {
@@ -83,12 +85,12 @@ namespace GnollModLoader
                 {
                     Logger.Log("Loading mod data from {0}", fileName);
                     string json = File.ReadAllText(fileName);
-                    _saveData = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, Dictionary<object, object>>>(json);
+                    _saveData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<object, object>>>>(json);
                 }
                 else
                 {
                     // if no data to load, reset
-                    _saveData = new Dictionary<string, Dictionary<object, object>>();
+                    _saveData = new Dictionary<string, Dictionary<string, Dictionary<object, object>>>();
                 }
             }
             catch (Exception e)
@@ -111,7 +113,7 @@ namespace GnollModLoader
                 _modName = forMod;
             }
 
-            public void Save(Dictionary<object, object> saveData)
+            public void Save(Dictionary<string, Dictionary<object, object>> saveData)
             {
                 _saveData[this._modName] = saveData;
             }
@@ -124,14 +126,14 @@ namespace GnollModLoader
             {
                 _modName = forMod;
             }
-            public Dictionary<object, object> Load()
+            public Dictionary<string, Dictionary<object, object>> Load()
             {
-                Dictionary<object, object> loadedData;
+                Dictionary<string, Dictionary<object, object>> loadedData;
                 if (_saveData.TryGetValue(this._modName, out loadedData))
                 {
                     return loadedData;
                 }
-                return new Dictionary<object, object>();
+                return new Dictionary<string, Dictionary<object, object>>();
             }
         }
     }

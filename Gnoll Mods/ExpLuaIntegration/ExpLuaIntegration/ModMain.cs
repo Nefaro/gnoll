@@ -27,13 +27,14 @@ namespace ExpLuaIntegration
         }
 
         public void OnDisable(HookManager hookManager)
-        {
-            
+        {            
         }
 
         public void OnEnable(HookManager hookManager)
         {
-            
+        }
+        public void AttachScriptRunner(LuaScriptRunner scriptRunner)
+        {
         }
     }
 }

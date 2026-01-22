@@ -13,6 +13,11 @@ namespace LuaSupport
         public string BuiltWithLoaderVersion => "1.14";
         public int RequireMinPatchVersion => 14;
 
+        public void AttachScriptRunner(LuaScriptRunner scriptRunner)
+        {
+            // no-op
+        }
+
         public bool IsDefaultEnabled()
         {
             return false;

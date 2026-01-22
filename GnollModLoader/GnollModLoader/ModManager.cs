@@ -50,7 +50,6 @@ namespace GnollModLoader
                     this._luaManager.RegisterMod(mod, modAbsolutePath);
                 }
             }
-            Assembly.GetAssembly(mod.GetType());
         }
 
         public bool IsModEnabled(IGnollMod mod)

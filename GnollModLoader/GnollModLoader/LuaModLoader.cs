@@ -44,7 +44,7 @@ namespace GnollModLoader
                 if (GnollMain.PATCH_VERSION >= mod.RequireMinPatchVersion)
                 {
                     Logger.Log("++ Instantiating mod: " + mod.Name);
-                    this._modManager.RegisterMod(mod, Path.GetDirectoryName(path));
+                    this._modManager.RegisterMod(mod, Path.GetFullPath(Path.GetDirectoryName(path)));
                     return;
                 }
                 else

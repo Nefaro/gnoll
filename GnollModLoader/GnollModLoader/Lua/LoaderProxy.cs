@@ -14,7 +14,7 @@ namespace GnollModLoader.Lua
             _target = target;
         }
 
-        public Dictionary<object, object> Load() => _target.Load();
+        public Dictionary<string, Dictionary<object, object>> Load() => _target.Load();
     }
 
 }

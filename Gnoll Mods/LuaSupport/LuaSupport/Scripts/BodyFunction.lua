@@ -10,7 +10,6 @@ BodyFunction = {
 		Motor = 8,
 		Grip = 9,
 		Stand = 10,
-		Wing = 11,
-		Count = 12,
+		Wing = 11
 }
 return BodyFunction

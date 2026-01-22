@@ -8,7 +8,6 @@ FactionType = {
 		EnemySmall=6,
 		Mant=7,
 		Beetle=8,
-		Undead=9,
-		Count=10
+		Undead=9
 	}
 return FactionType;

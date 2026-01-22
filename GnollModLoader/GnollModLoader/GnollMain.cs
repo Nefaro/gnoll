@@ -18,7 +18,8 @@ namespace GnollModLoader
         public const string APP_URL = "https://github.com/Nefaro/gnoll";
         public const string ORIGINAL_URL = "https://github.com/minexew/gnomodkit";
 
-        public const string MODS_DIR = "Gnoll Mods\\enabled";
+        public const string MODS_DIR = "Gnoll Mods";
+        public const string ENABLED_MODS_DIR = MODS_DIR +"\\enabled";
 
         private static bool debug = false;
         public static bool Debug => debug;
@@ -65,9 +66,9 @@ namespace GnollModLoader
             // Mod manager runs AFTER patches have been applied
             modManager = new ModManager(hookManager, patcher, luaManager);
             DllModLoader modLoader = new DllModLoader(modManager);
-            modLoader.LoadModsFrom(MODS_DIR);
+            modLoader.LoadModsFrom(ENABLED_MODS_DIR);
             LuaModLoader luaModLoader = new LuaModLoader(modManager, luaManager);
-            luaModLoader.LoadModsFrom(MODS_DIR);
+            luaModLoader.LoadModsFrom(ENABLED_MODS_DIR);
             luaManager.RunInitScripts();
 
             // hook up Gnoll main menu

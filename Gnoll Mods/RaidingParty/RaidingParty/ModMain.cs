@@ -32,5 +32,9 @@ namespace RaidingParty
         {
 
         }
+        public void AttachScriptRunner(LuaScriptRunner scriptRunner)
+        {
+
+        }
     }
 }
