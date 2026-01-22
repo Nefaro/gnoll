@@ -30,7 +30,9 @@ namespace GnollModLoader.Lua.Proxy.GameDefProxies
         public Dictionary<string, StorageDef> StorageDefs => _target.dictionary_8;
         public Dictionary<string, TrapDef> TrapDefs => _target.dictionary_11;
         public Dictionary<string, WorkshopDef> WorkshopDefs => _target.WorkshopDefs;
-                
+
+
+        public GameLibrary.PlantDef PlantDefFromMaterial(string materialID) => _target.PlantDefFromMaterial(materialID);
 
         public Dictionary<string, MaterialProperty> Materials => _target.Materials;
 
@@ -50,6 +52,7 @@ namespace GnollModLoader.Lua.Proxy.GameDefProxies
         public Game.TerrainSettings TerrainSettings => _target.TerrainSettings;
         public Game.UniformSettings UniformSettings => _target.UniformSettings;
         public WorkshopSettings WorkshopSettings => _target.WorkshopSettings;
+
 
         // Ignoring the following membes, since it doesn't seem useful to expose them
 

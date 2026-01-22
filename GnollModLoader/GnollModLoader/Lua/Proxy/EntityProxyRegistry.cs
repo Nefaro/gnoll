@@ -16,6 +16,7 @@ namespace GnollModLoader.Lua.Proxy
             UserData.RegisterProxyType<MerchantGoodsProxy, MerchantGoods>(t => new MerchantGoodsProxy(t));
             UserData.RegisterProxyType<MilitaryProxy, Military>(t => new MilitaryProxy(t));
             UserData.RegisterProxyType<SquadProxy, Squad>(t => new SquadProxy(t));
+            UserData.RegisterProxyType<TreeProxy, Tree>(t => new TreeProxy(t));
             UserData.RegisterProxyType<WorldProxy, World>(t => new WorldProxy(t));
         }
     }

@@ -16,6 +16,10 @@ namespace GnollModLoader.Lua
         {
             return GnomanEmpire.Instance.GameDefs;
         }
+        public GameEntityManager GetEntityManager()
+        {
+            return GnomanEmpire.Instance.EntityManager;
+        }
 
         // Expose Game built-in random
         public int RandomInt(int max)
@@ -27,6 +31,11 @@ namespace GnollModLoader.Lua
         {
             return (float)GnomanEmpire.Instance.Rand.NextDouble() * max;
         }
+        public float RandomIntInRange(float max, float min)
+        {
+            return GnomanEmpire.Instance.RandomInRange(max, min);
+        }
+
         public bool RandomBoolean()
         {
             return (GnomanEmpire.Instance.Rand.Next(2) == 1);
@@ -87,6 +96,14 @@ namespace GnollModLoader.Lua
                 return GnomanEmpire.Instance.Region.Day;
             }
             return null;
+        }
+        public float? GetOutsideLightLevel()
+        {
+            if (GnomanEmpire.Instance.World != null)
+            {
+                return GnomanEmpire.Instance.Region.OutsideLight;
+            }
+            return -1;
         }
     }
 }
