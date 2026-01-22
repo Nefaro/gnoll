@@ -21,11 +21,11 @@ function OnNewGameStarted()
         print("GameDefs is null")
     end
     
-    _GenerateNewValues(gameDefs)
+    _generateNewValues(gameDefs)
     _assignNewValues(gameDefs)    
 end
 
-function _GenerateNewValues(gameDefs) 
+function _generateNewValues(gameDefs) 
     require "MaterialType"
     for k, v in pairs(gameDefs.Materials) do
         local rndValue = _GN.RandomInt(10);
