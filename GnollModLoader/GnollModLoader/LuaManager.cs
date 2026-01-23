@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Game;
-using Game.GUI.Controls;
 using Game.GUI;
+using Game.GUI.Controls;
+using GnollModLoader.Integration.MoonSharp.Loaders;
+using GnollModLoader.Lua;
+using GnollModLoader.Lua.Proxy;
+using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
-using System.Reflection;
-using System.IO;
-using Microsoft.Xna.Framework;
-using GnollModLoader.Lua;
-using GnollModLoader.Integration.MoonSharp.Loaders;
-using GnollModLoader.Lua.Proxy;
 
 namespace GnollModLoader
 {
@@ -244,6 +243,7 @@ namespace GnollModLoader
                     }
                     return dict;
                 });
+
             Logger.Log("Lua Support initialization ... DONE");
             this._initDone = true;
         }

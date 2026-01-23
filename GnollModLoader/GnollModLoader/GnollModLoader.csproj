@@ -101,6 +101,7 @@
     <Compile Include="IHasDirectPatch.cs" />
     <Compile Include="IHasLuaScripts.cs" />
     <Compile Include="Integrations\MoonSharp\Loaders\FilesystemScriptLoader.cs" />
+    <Compile Include="Integrations\Newtonsoft\Converter\NestedDictionaryConverter.cs" />
     <Compile Include="LuaHookManager.cs" />
     <Compile Include="LuaManager.cs" />
     <Compile Include="LuaModLoader.cs" />

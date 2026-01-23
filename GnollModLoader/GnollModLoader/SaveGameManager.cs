@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Game;
+using GnollModLoader.Integrations.Newtonsoft.Converter;
 using Newtonsoft.Json;
 
 namespace GnollModLoader
@@ -85,7 +85,7 @@ namespace GnollModLoader
                 {
                     Logger.Log("Loading mod data from {0}", fileName);
                     string json = File.ReadAllText(fileName);
-                    _saveData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<object, object>>>>(json);
+                    _saveData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<object, object>>>>(json, new JsonConverter[] { new NestedDictionaryConverter() });
                 }
                 else
                 {
