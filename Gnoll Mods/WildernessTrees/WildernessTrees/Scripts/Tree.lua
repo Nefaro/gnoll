@@ -1,23 +1,32 @@
 local Season = require "Season"
+local SeasonHelper = require "SeasonHelper"
 local MaterialType = require "MaterialType"
 
-local Tree = {}
-g_gameData = {}
+local Tree = {
+    g_gameData = {}
+}
+
 local KEY_SEASON_BONUSES = "seasonBonuses"
 local KEY_WOOD_VALUE_MAP = "woodValues"
 
 -- These global tables are provided by Gnoll
 local _GN  = _GNOMORIA
 
-local WILDERNESS_COEF = 5
-local FAVORITE_COEF = 3
-local DISLIKE_COEF = 0.1
-local BONUS_BASE = 0.125
-local VALUE_ROLL_COEF = 3
+local WILDERNESS_COEF = 5 -- How wild
+local FAVORITE_COEF = 3 -- Bonus for favorite season is multiplied by this
+local DISLIKE_COEF = 0.1 -- Bonus for disliked season is multiploied by this
+local BONUS_BASE = 0.125 -- The base bonus coef, currently 12.5%
+local VALUE_ROLL_COEF = 5 -- For material value calculation, WILDERNESS_COEF sided die is rolled this amount
+local SHIFT_COEF = 3 -- WILDERNESS_COEF times SHIFT_COEF is removed from the material value, shifting towards 0
 -- Spring, Summer, Fall, Winter
 local SEASON_WEIGHTS = {5, 8, 5, 1} -- sum = 19
 
-function Tree.update(_treeInstance, delta) 
+function Tree:update(_treeInstance, delta)
+    if ( _GN.IsGamePaused() ) then
+        -- Nothing to process when the game is paused
+        return
+    end
+
     if (not _treeInstance.IsOutside) then
         -- If the tree has migrated inside, don't update it anymore
         _GN.GetEntityManager.RemoveFromUpdateList(_treeInstance)
@@ -26,13 +35,18 @@ function Tree.update(_treeInstance, delta)
         
 		if (_treeInstance.TimeToGrow == -1.0) then
 			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID)
+
 			if (not _treeInstance.HasClipping) then
-				_treeInstance.TimeToGrow = _GN.RandomInRange(plantDef.GrowTimeMin, plantDef.GrowTimeMax) * 600 * 0.5
+				_treeInstance.TimeToGrow = _GN.RandomInRange(plantDef.GrowTimeMin, plantDef.GrowTimeMax) * 600 * 0.5 *  WILDERNESS_COEF
 			elseif (not _treeInstance.HasFruit and plantDef.HasFruit) then
-				_treeInstance.TimeToGrow = _GN.RandomInRange(plantDef.FruitGrowTimeMin, plantDef.FruitGrowTimeMax) * 600
+				_treeInstance.TimeToGrow = _GN.RandomInRange(plantDef.FruitGrowTimeMin, plantDef.FruitGrowTimeMax) * 600 *  WILDERNESS_COEF
 			end
 		end
-		_treeInstance.TimeToGrow = _treeInstance.TimeToGrow - delta
+        local season = SeasonHelper.currentSeason()
+        local seasonBonus = self.g_gameData[KEY_SEASON_BONUSES][_treeInstance.MaterialID][season]
+
+        -- Apply the bobus growth
+		_treeInstance.TimeToGrow = _treeInstance.TimeToGrow - ( delta * seasonBonus )
         
 		if (_treeInstance.TimeToGrow < 0.0) then
 			if (not _treeInstance.HasClipping) then
@@ -49,39 +63,45 @@ function Tree.update(_treeInstance, delta)
     end
 end
 
--- Generate season specific growth data
-function Tree.generateGrowthMap()
-    g_gameData[KEY_SEASON_BONUSES] = {}
-    g_gameData[KEY_WOOD_VALUE_MAP] = {}
+-- Generate season specific growth data and material values
+function Tree:generateNewData()
+    self.g_gameData[KEY_SEASON_BONUSES] = {}
+    self.g_gameData[KEY_WOOD_VALUE_MAP] = {}
 
     local gameDefs = _GN.GetGameDefs()
+    print("Generating new growth bonuses and material values ...")
     for materialID, materialProperty in pairs(gameDefs.Materials) do
         if ( materialProperty.Type == MaterialType.Wood ) then
             if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil) then 
                 -- This is wood
-                print("WOOD: " .. materialID)
+                print("++ " .. materialID)
 
                 local favorite = _findSeason()
                 local disliked = _findSeason(favorite)
                 local bonusMap = _calculateBonusGrowthForSeason(favorite, disliked)
                 local newValue = _generateNewMaterialValue()
 
-                g_gameData[KEY_WOOD_VALUE_MAP][materialID] = newValue
-                g_gameData[KEY_SEASON_BONUSES][materialID] = bonusMap
+                self.g_gameData[KEY_WOOD_VALUE_MAP][materialID] = newValue
+                self.g_gameData[KEY_SEASON_BONUSES][materialID] = bonusMap
 
                 print(" -- Current Value: " .. materialProperty.Value)
                 print(" -- New Value: " .. newValue)
             end
         end
     end
+    print("Generating new growth bonuses and material values ... DONE")
 end
 
-function Tree.SaveData(saver)
-    saver.Save(g_gameData)
+function Tree:SaveData(saver)
+    saver.Save(self.g_gameData)
 end
 
-function Tree.LoadData(loader)
-    g_gameData = loader.load()
+function Tree:LoadData(loader)
+    self.g_gameData = loader.load()
+    local seasonData = self.g_gameData[KEY_SEASON_BONUSES]
+    if ( seasonData == nil ) then
+        print("seasonData from load are null")
+    end
     _assignNewValues()
 end
 
@@ -146,8 +166,8 @@ function _generateNewMaterialValue()
         -- rnd starts from 0, we want from 1, adjust
         newValue = newValue + _GN.RandomInt(WILDERNESS_COEF) + 1
     end
-    -- Shift towards 0
-    newValue = newValue - WILDERNESS_COEF;
+    -- Shift towards 0; more likely to have value=1 than the higher values
+    newValue = newValue - WILDERNESS_COEF * SHIFT_COEF;
     -- Normalize to be at least 1
     if ( newValue < 1 ) then
         newValue = 1
@@ -157,22 +177,21 @@ end
 
 function _assignNewValues()
     local gameDefs = _GN.GetGameDefs()
-    if ( g_gameData == nil or g_gameData[KEY_WOOD_VALUE_MAP] == null ) then
+    if ( Tree.g_gameData == nil or Tree.g_gameData[KEY_WOOD_VALUE_MAP] == null ) then
         return
     end
-
-    for materialID, v in pairs(gameDefs.Materials) do
-        if ( v.Type == MaterialType.Wood )  then
-            formatting = materialID .. " => "
-            if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil and g_gameData[KEY_WOOD_VALUE_MAP][materialID] ~= nil) then 
-                print("WOOD: " .. formatting .. tostring(v) .. " (TYPE = " .. v.Type ..")")
-                print(" -- Name: " .. materialID)
-                print(" -- Current Value: " .. v.Value)
-                v.Value = g_gameData[KEY_WOOD_VALUE_MAP][materialID]                
-                print(" -- New Value: " .. v.Value)                
+    print("Applying material values from save file ...")
+    for materialID, materialProps in pairs(gameDefs.Materials) do
+        if ( materialProps.Type == MaterialType.Wood )  then
+            if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil and Tree.g_gameData[KEY_WOOD_VALUE_MAP][materialID] ~= nil) then 
+                print("++ " .. materialID)
+                print(" -- Current Value: " .. materialProps.Value)
+                materialProps.Value = Tree.g_gameData[KEY_WOOD_VALUE_MAP][materialID]                
+                print(" -- New Value: " .. materialProps.Value)                
             end
         end
     end
+    print("Applying material values from save file ... DONE")
 end
 
 return Tree

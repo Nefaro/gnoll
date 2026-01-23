@@ -21,6 +21,11 @@ namespace GnollModLoader.Lua
             return GnomanEmpire.Instance.EntityManager;
         }
 
+        public bool IsGamePaused()
+        {
+            return GnomanEmpire.Instance.World.Paused;
+        }
+
         // Expose Game built-in random
         public int RandomInt(int max)
         {
