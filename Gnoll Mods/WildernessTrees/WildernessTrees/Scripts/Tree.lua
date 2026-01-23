@@ -25,7 +25,7 @@ function Tree.update(_treeInstance, delta)
 		local gameDefs = _GN.GetGameDefs()
         
 		if (_treeInstance.TimeToGrow == -1.0) then
-			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID())
+			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID)
 			if (not _treeInstance.HasClipping) then
 				_treeInstance.TimeToGrow = _GN.RandomInRange(plantDef.GrowTimeMin, plantDef.GrowTimeMax) * 600 * 0.5
 			elseif (not _treeInstance.HasFruit and plantDef.HasFruit) then
@@ -41,7 +41,7 @@ function Tree.update(_treeInstance, delta)
 				_treeInstance.GrowFruit()
 			end
 			_treeInstance.TimeToGrow = -1.0
-			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID())
+			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID)
 			if (_treeInstance.HasFruit or not plantDef.HasFruit) then
                 _GN.GetEntityManage.RemoveFromUpdateList(_treeInstance)
             end
