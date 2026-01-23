@@ -9,7 +9,6 @@ local _J     = _JOBS
 -- g_RaidParty is for saving/loading this mod specific stuff
 local g_RaidParty = {}
 local KEY_LEADER = "leader"
-local KEY_LEADER_ID = "leader.ID"
 -- Leader of the current squad
 local leader
 
@@ -183,7 +182,7 @@ function sendSquadToRaid(squad, kingdom)
     -- Remember, Lua indexing starts from 1    
     leader = squad.Members[1]
     -- Store the Character.ID for saving/loading (needs to be a table)
-    g_RaidParty[KEY_LEADER][KEY_LEADER_ID] = leader.ID
+    g_RaidParty[KEY_LEADER] = leader.ID
     print("Promoted to leader! " .. leader.Name)
     
     if ( kingdom == nil ) then 
@@ -383,7 +382,7 @@ function OnSaveGameLoaded(loader)
     if ( g_RaidParty == nil or g_RaidParty[KEY_LEADER] == nil ) then
     return
     end
-    local leaderID = g_RaidParty[KEY_LEADER][KEY_LEADER_ID]
+    local leaderID = g_RaidParty[KEY_LEADER]
     if ( leaderID ~= nil ) then 
         print(" -- Loaded raid party leader " .. leaderID)
         -- Find the actual character

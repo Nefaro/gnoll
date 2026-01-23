@@ -14,7 +14,7 @@ namespace GnollModLoader.Lua
             _target = target;
         }
 
-        public void Save(Dictionary<string, Dictionary<object, object>> obj) => _target.Save(obj);
+        public void Save(Dictionary<object, object> obj) => _target.Save(obj);
     }
 
 }

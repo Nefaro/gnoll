@@ -18,7 +18,7 @@ namespace GnollModLoader
         private readonly static string SAVEFILE_NAME_FORMAT = "{0}.gnoll.json";
 
         private static Dictionary<string, Saver> _modSavers = new Dictionary<string, Saver>();
-        private static Dictionary<string, Dictionary<string, Dictionary<object, object>>> _saveData = new Dictionary<string, Dictionary<string, Dictionary<object, object>>>();
+        private static Dictionary<string, Dictionary<object, object>> _saveData = new Dictionary<string, Dictionary<object, object>>();
 
         public Saver SaverForMod(string modName)
         {
@@ -85,12 +85,12 @@ namespace GnollModLoader
                 {
                     Logger.Log("Loading mod data from {0}", fileName);
                     string json = File.ReadAllText(fileName);
-                    _saveData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, Dictionary<object, object>>>>(json, new JsonConverter[] { new NestedDictionaryConverter() });
+                    _saveData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<object, object>>>(json, new JsonConverter[] { new NestedDictionaryConverter() });
                 }
                 else
                 {
                     // if no data to load, reset
-                    _saveData = new Dictionary<string, Dictionary<string, Dictionary<object, object>>>();
+                    _saveData = new Dictionary<string,  Dictionary<object, object>>();
                 }
             }
             catch (Exception e)
@@ -113,7 +113,7 @@ namespace GnollModLoader
                 _modName = forMod;
             }
 
-            public void Save(Dictionary<string, Dictionary<object, object>> saveData)
+            public void Save(Dictionary<object, object> saveData)
             {
                 _saveData[this._modName] = saveData;
             }
@@ -126,14 +126,14 @@ namespace GnollModLoader
             {
                 _modName = forMod;
             }
-            public Dictionary<string, Dictionary<object, object>> Load()
+            public Dictionary<object, object> Load()
             {
-                Dictionary<string, Dictionary<object, object>> loadedData;
+                Dictionary<object, object> loadedData;
                 if (_saveData.TryGetValue(this._modName, out loadedData))
                 {
                     return loadedData;
                 }
-                return new Dictionary<string, Dictionary<object, object>>();
+                return new Dictionary<object, object>();
             }
         }
     }
