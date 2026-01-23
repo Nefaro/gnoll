@@ -31,7 +31,7 @@ namespace GnollModLoader.Lua
         {
             return (float)GnomanEmpire.Instance.Rand.NextDouble() * max;
         }
-        public float RandomIntInRange(float max, float min)
+        public float RandomInRange(float max, float min)
         {
             return GnomanEmpire.Instance.RandomInRange(max, min);
         }
