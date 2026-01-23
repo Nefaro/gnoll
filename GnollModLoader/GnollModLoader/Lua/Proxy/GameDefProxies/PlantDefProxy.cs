@@ -22,5 +22,6 @@ namespace GnollModLoader.Lua.Proxy.GameDefProxies
         public string PlantID { get => _target.PlantID; set => _target.PlantID = value; }
         public string SeedItemID { get => _target.SeedItemID; set => _target.SeedItemID = value; }
         public bool Underground { get => _target.Underground; set => _target.Underground = value; }
+        public bool HasFruit() => _target.HasFruit();
     }
 }
