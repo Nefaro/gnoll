@@ -20,7 +20,7 @@ local SEASON_WEIGHTS = {5, 8, 5, 1} -- sum = 19
 function Tree.update(_treeInstance, delta) 
     if (not _treeInstance.IsOutside) then
         -- If the tree has migrated inside, don't update it anymore
-        _GN.GetEntityManage.RemoveFromUpdateList(_treeInstance)
+        _GN.GetEntityManager.RemoveFromUpdateList(_treeInstance)
     elseif(_GN.GetOutsideLightLevel() > 0.75) then
 		local gameDefs = _GN.GetGameDefs()
         
@@ -43,7 +43,7 @@ function Tree.update(_treeInstance, delta)
 			_treeInstance.TimeToGrow = -1.0
 			local plantDef = gameDefs.PlantDefFromMaterial(_treeInstance.MaterialID)
 			if (_treeInstance.HasFruit or not plantDef.HasFruit) then
-                _GN.GetEntityManage.RemoveFromUpdateList(_treeInstance)
+                _GN.GetEntityManager.RemoveFromUpdateList(_treeInstance)
             end
 		end 
     end
