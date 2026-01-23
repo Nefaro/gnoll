@@ -43,7 +43,8 @@ function Tree:update(_treeInstance, delta)
 			end
 		end
         local season = SeasonHelper.currentSeason()
-        local seasonBonus = self.g_gameData[KEY_SEASON_BONUSES][_treeInstance.MaterialID][season]
+        local plantID = gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID]
+        local seasonBonus = self.g_gameData[KEY_SEASON_BONUSES][plantID][season]
 
         -- Apply the bobus growth
 		_treeInstance.TimeToGrow = _treeInstance.TimeToGrow - ( delta * seasonBonus )
@@ -74,15 +75,16 @@ function Tree:generateNewData()
         if ( materialProperty.Type == MaterialType.Wood ) then
             if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil) then 
                 -- This is wood
-                print("++ " .. materialID)
+                local plantID = gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID]
+                print("++ " .. plantID)
 
                 local favorite = _findSeason()
                 local disliked = _findSeason(favorite)
                 local bonusMap = _calculateBonusGrowthForSeason(favorite, disliked)
                 local newValue = _generateNewMaterialValue()
 
-                self.g_gameData[KEY_WOOD_VALUE_MAP][materialID] = newValue
-                self.g_gameData[KEY_SEASON_BONUSES][materialID] = bonusMap
+                self.g_gameData[KEY_WOOD_VALUE_MAP][plantID] = newValue
+                self.g_gameData[KEY_SEASON_BONUSES][plantID] = bonusMap
 
                 print(" -- Current Value: " .. materialProperty.Value)
                 print(" -- New Value: " .. newValue)
@@ -182,12 +184,15 @@ function _assignNewValues()
     end
     print("Applying material values from save file ...")
     for materialID, materialProps in pairs(gameDefs.Materials) do
-        if ( materialProps.Type == MaterialType.Wood )  then
-            if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil and Tree.g_gameData[KEY_WOOD_VALUE_MAP][materialID] ~= nil) then 
-                print("++ " .. materialID)
-                print(" -- Current Value: " .. materialProps.Value)
-                materialProps.Value = Tree.g_gameData[KEY_WOOD_VALUE_MAP][materialID]                
-                print(" -- New Value: " .. materialProps.Value)                
+        if (materialProps.Type == MaterialType.Wood)  then
+            if (gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID] ~= nil) then 
+                local plantID = gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID]
+                if (Tree.g_gameData[KEY_WOOD_VALUE_MAP][plantID] ~= nil) then 
+                    print("++ " .. plantID)
+                    print(" -- Current Value: " .. materialProps.Value)
+                    materialProps.Value = Tree.g_gameData[KEY_WOOD_VALUE_MAP][plantID]                
+                    print(" -- New Value: " .. materialProps.Value)                
+                end
             end
         end
     end

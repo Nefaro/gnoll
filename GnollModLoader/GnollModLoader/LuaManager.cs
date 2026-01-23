@@ -330,7 +330,7 @@ namespace GnollModLoader
                 try
                 {
                     var initScriptPath = value.Item1;
-                    Logger.Log($"-- Trying to reload Lua script: {initScriptPath}");
+                    Logger.Log($"Trying to reload Lua script: {initScriptPath}");
                     var script = loadAndGetScript(key, initScriptPath);
                     if ( script != null )
                     {
@@ -344,6 +344,10 @@ namespace GnollModLoader
                     Logger.Error($"-- {ex}");
                 }
             }
+            // since we reloaded the script, Gnoll save game data is lost as well
+            // manually reload
+            Logger.Log($"Manually loading save game data");
+            this.hookLuaOnGameLoaded();
         }
 
         private Script loadAndGetScript(string modName, string scriptPath)
