@@ -18,6 +18,7 @@ local DISLIKE_COEF = 0.1 -- Bonus for disliked season is multiploied by this
 local BONUS_BASE = 0.125 -- The base bonus coef, currently 12.5%
 local VALUE_ROLL_COEF = 5 -- For material value calculation, WILDERNESS_COEF sided die is rolled this amount
 local SHIFT_COEF = 3 -- WILDERNESS_COEF times SHIFT_COEF is removed from the material value, shifting towards 0
+local RAIN_BONUS = 1 + BONUS_BASE
 -- Spring, Summer, Fall, Winter
 local SEASON_WEIGHTS = {5, 8, 5, 1} -- sum = 19
 
@@ -43,12 +44,19 @@ function Tree:update(_treeInstance, delta)
 			end
 		end
         local season = SeasonHelper.currentSeason()
-        local plantID = gameDefs.PlantSettings.MaterialIDToPlantIDs[materialID]
+        local plantID = gameDefs.PlantSettings.MaterialIDToPlantIDs[_treeInstance.MaterialID]
         local seasonBonus = self.g_gameData[KEY_SEASON_BONUSES][plantID][season]
 
+        if ( _GN.IsRaining() ) then
+            -- Rain good, except Winter
+            if ( season ~= Season.Winter) then
+                seasonBonus = seasonBonus * RAIN_BONUS
+            end
+        end
         -- Apply the bobus growth
 		_treeInstance.TimeToGrow = _treeInstance.TimeToGrow - ( delta * seasonBonus )
-        
+
+
 		if (_treeInstance.TimeToGrow < 0.0) then
 			if (not _treeInstance.HasClipping) then
 				_treeInstance.GrowClipping()

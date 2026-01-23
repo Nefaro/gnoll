@@ -26,6 +26,10 @@ namespace GnollModLoader.Lua
             return GnomanEmpire.Instance.World.Paused;
         }
 
+        public bool IsRaining()
+        {
+            return GnomanEmpire.Instance.World.Region.Rain;
+        }
         // Expose Game built-in random
         public int RandomInt(int max)
         {
