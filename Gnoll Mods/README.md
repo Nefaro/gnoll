@@ -21,6 +21,7 @@ Currently those mods are:
 - SeasonalChange - Switches the environment graphics according to current season 
 - TrackedItemsSizeLimitMod - Removes the limit on how many items can be tracked in the main HUD
 - VeinMiner - Enhances mining in a way that gnomes digg out the mineral/gem veins by themselves
+- (Lua Mod) WildernessTrees - Modifies the Tree gowth to me unpredictable. Additionally modifies the wood material value as well. More info in the mod's README file.
 
 And a few that are experimental or otherwise different
 - LuaSupport - Enables/Disables Gnoll's Lua integration. Enable this mod to enable Lua integration
