@@ -36,6 +36,12 @@ namespace GnollModLoader.Lua
                 ForeignTradeJob leaderJob = null;
                 foreach (Character member in squad.Members)
                 {
+                    if ( member == null )
+                    {
+                        // Not all squad spots are taken
+                        continue;
+                    }
+
                     // each member gets it's own job object
                     var job = new ForeignTradeJob(egress, new ForeignTradeJobData(faction.UInt32_0));
                     var arrival = GnomanEmpire.Instance.Region.TotalTime() + faction.Distance;
