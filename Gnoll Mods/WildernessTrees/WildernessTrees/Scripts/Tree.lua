@@ -53,9 +53,8 @@ function Tree:update(_treeInstance, delta)
                 seasonBonus = seasonBonus * RAIN_BONUS
             end
         end
-        -- Apply the bobus growth
+        -- Apply the bonus growth
 		_treeInstance.TimeToGrow = _treeInstance.TimeToGrow - ( delta * seasonBonus )
-
 
 		if (_treeInstance.TimeToGrow < 0.0) then
 			if (not _treeInstance.HasClipping) then

@@ -24,7 +24,7 @@ namespace GnollModLoader.Lua.Proxy.EntitiyProxies
 
         public float TimeToGrow { get => _target.float_0; set => _target.float_0 = value; }
 
-        public void GrowClippings() => _target.method_1();
+        public void GrowClipping() => _target.method_1();
 
         public void GrowFruit() => _target.method_2();
     }

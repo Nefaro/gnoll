@@ -9,7 +9,7 @@ namespace InstallerCore
 {
     public class InstallerCore
     {
-        public static readonly String GNOLL_VERSION = "v1.15.1";
+        public static readonly String GNOLL_VERSION = "v1.15.2";
 
         private static readonly Logger _log = Logger.GetLogger;
         private static readonly string _modLoaderFile = "GnollModLoader.dll";
