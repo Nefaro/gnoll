@@ -8,7 +8,7 @@ namespace GnollModLoader
     public class GnollMain
     {
         private const string MAJOR_VERSION = "1";
-        private const string BUGFIX_VERSION = ".0";
+        private const string BUGFIX_VERSION = ".1";
 
         // for easier validation
         public const uint PATCH_VERSION = 15;

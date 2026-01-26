@@ -119,6 +119,7 @@
     <Compile Include="Lua\Proxy\EntityProxies\EnvoyProxy.cs" />
     <Compile Include="Lua\Proxy\EntityProxies\MerchantGoodsProxy.cs" />
     <Compile Include="Lua\Proxy\EntityProxies\WorldProxy.cs" />
+    <Compile Include="Lua\Proxy\EntityProxies\GameEntityManagerProxy.cs" />
     <Compile Include="Lua\Proxy\JobsProxies\ForeignTradeJobDataProxy.cs" />
     <Compile Include="Lua\Proxy\JobsProxies\JobProxy.cs" />
     <Compile Include="Lua\Proxy\JobsProxyRegistry.cs" />

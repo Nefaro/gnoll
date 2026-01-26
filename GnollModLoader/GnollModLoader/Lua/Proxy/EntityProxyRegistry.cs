@@ -1,6 +1,7 @@
 ﻿using Game;
 using MoonSharp.Interpreter;
 using GnollModLoader.Lua.Proxy.EntitiyProxies;
+using GnollModLoader.Lua.Proxy.EntityProxies;
 
 namespace GnollModLoader.Lua.Proxy
 {
@@ -8,8 +9,9 @@ namespace GnollModLoader.Lua.Proxy
     {
         internal static void RegisterTypes()
         {
+            UserData.RegisterProxyType<GameEntityManagerProxy, GameEntityManager>(t => new GameEntityManagerProxy(t));
 
-            UserData.RegisterProxyType< AvailableGoodProxy, AvailableGood >(t => new AvailableGoodProxy(t));
+            UserData.RegisterProxyType<AvailableGoodProxy, AvailableGood>(t => new AvailableGoodProxy(t));
             UserData.RegisterProxyType<CharacterProxy, Character>(t => new CharacterProxy(t));
             UserData.RegisterProxyType<EnvoyProxy, Envoy>(t => new EnvoyProxy(t));
             UserData.RegisterProxyType<FactionProxy, Faction>(t => new FactionProxy(t));
