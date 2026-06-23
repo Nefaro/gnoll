@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Game;
 using Game.GUI;
 using Game.GUI.Controls;
@@ -10,7 +8,7 @@ using GnollModLoader;
 
 namespace GnollMods.MarketStallSellFilters
 {
-    internal class ModMain: IGnollMod
+    internal class ModMain : IGnollMod
     {
         public string Name { get { return "MarketStallSellFilters"; } }
         public string Description { get { return "Market stall gets value and name filters for player items"; } }
@@ -84,7 +82,7 @@ namespace GnollMods.MarketStallSellFilters
                         labelFilterValue.Init();
                         labelFilterValue.Top = stallTraderUI.tradePanelUI_2.Top + stallTraderUI.tradePanelUI_2.Height + stallTraderUI.tradePanelUI_2.Margins.Bottom + labelFilterValue.Margins.Top; ;
                         labelFilterValue.Left = stallTraderUI.tradePanelUI_2.Left;
-                        labelFilterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width/3);
+                        labelFilterValue.Width = (int)(stallTraderUI.tradePanelUI_2.Width / 3);
                         labelFilterValue.Text = string.Format("Hide cheaper than:");
                         stallTraderUI.Add(labelFilterValue);
 

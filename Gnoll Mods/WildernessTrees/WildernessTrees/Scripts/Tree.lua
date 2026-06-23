@@ -3,7 +3,8 @@ local SeasonHelper = require "SeasonHelper"
 local MaterialType = require "MaterialType"
 
 local Tree = {
-    g_gameData = {}
+    g_gameData = {},
+    g_isInited = nil
 }
 
 local KEY_SEASON_BONUSES = "seasonBonuses"
@@ -23,6 +24,16 @@ local RAIN_BONUS = 1 + BONUS_BASE
 local SEASON_WEIGHTS = {5, 8, 5, 1} -- sum = 19
 
 function Tree:update(_treeInstance, delta)
+    local next = next;
+    if next(self.g_gameData) == nil then 
+        -- we don't have game data, meaning no need to process
+        return
+    end
+    
+    if not self.g_isInited then
+        -- Not in use
+        return
+    end
     if ( _GN.IsGamePaused() ) then
         -- Nothing to process when the game is paused
         return
@@ -75,7 +86,7 @@ end
 function Tree:generateNewData()
     self.g_gameData[KEY_SEASON_BONUSES] = {}
     self.g_gameData[KEY_WOOD_VALUE_MAP] = {}
-
+    
     local gameDefs = _GN.GetGameDefs()
     print("Generating new growth bonuses and material values ...")
     for materialID, materialProperty in pairs(gameDefs.Materials) do
