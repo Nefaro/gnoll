@@ -6,8 +6,6 @@ namespace GnollMods.FixResourcePileDeath
 {
     public class ModMain : IGnollMod, IHasDirectPatch
     {
-        public static ModsLogger Logger { get; set; }
-
         public string Name => "FixResourcePileDeath";
 
         public string Description => "Fixes a game crash caused by resource pile dying";
@@ -41,11 +39,6 @@ namespace GnollMods.FixResourcePileDeath
             var orig = typeof(GameEntityManager).GetMethod(nameof(GameEntityManager.method_7));
             var prefixPatch = typeof(Patch_GameEntityManager).GetMethod(nameof(Patch_GameEntityManager.Method7_Prefix));
             patcher.ApplyDirectPatch(orig, prefixPatch: prefixPatch);
-        }
-
-        public ModMain()
-        {
-            Logger = ModsLogger.getLogger(this);
         }
     }
 
