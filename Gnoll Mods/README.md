@@ -8,6 +8,7 @@ Currently those mods are:
 - FixAudioCrash - Trying to prevent Audio manager crashing sometimes when a save game is loaded
 - FixDisableNewGameModdedMobs - This fixes situation where new game start would only disable vanilla enemis and leave modded enemies enabled
 - FixFullscreenAltTab - Trying to fix the crash that happens when alt-tabbing out of fullscreen
+- FixResourcePileDeath - Fixes an issue, where a resource pile dropped during a death event causes the game to crash
 - FixStuckWheelbarrow - A fix for when a gnomes/automata gets stuck, because the wheelbarrow is full
 - FreezeEntitiesOnPause - Pauses the thinking process for characters when the game itself is paused, gives FPS boost during game pause
 - GoblinRaidsFpsBoost - Slows down the thinking process for goblins who are outside of the gates or otherwise stuck and cannot reach their target, gives FPS boost
