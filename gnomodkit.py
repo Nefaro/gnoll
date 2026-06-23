@@ -238,7 +238,7 @@ class TaskAssemble(Task):
 
     def run(self):
         with open(self.output_filename + '.log', 'wt') as log:
-            check_call([self.ilasm_path, '/out=' + self.output_filename, self.filename], stdout=log)
+            check_call([self.ilasm_path, '/debug=OPT /out=' + self.output_filename, self.filename], stdout=log)
 
 class TaskCheckDistFile(Task):
     def __init__(self, path, required_hash_list):
