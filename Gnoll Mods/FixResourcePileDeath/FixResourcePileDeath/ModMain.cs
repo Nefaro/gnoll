@@ -21,7 +21,7 @@ namespace GnollMods.FixResourcePileDeath
 
         public bool NeedsRestartOnToggle()
         {
-            return false;
+            return true;
         }
 
         public void OnDisable(HookManager hookManager)
