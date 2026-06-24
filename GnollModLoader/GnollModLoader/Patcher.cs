@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Game;
 using Game.GUI;
 using Game.GUI.Controls;
+using GameLibrary;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -38,16 +38,15 @@ namespace GnollModLoader
                 // Debug
                 //ApplyPatch_Camera_method_0,
                 //ApplyPatch_Camera_method_1,
-                //ApplyPatch_GnomanEmpire_FinishLoading,
-                //ApplyPatch_Region_LoadRegion,
-                //ApplyPatch_World_LoadWorld,
+
                 // Real patches
                 ApplyPatch_GnomanEmpire_PlayGame,
                 ApplyPatch_GnomanEmpire_LoadGame,
                 ApplyPatch_GnomanEmpire_SaveGame,
                 ApplyPatch_GameSettings_ApplyDisplayChanges,
                 ApplyPatch_MainMenuWindow,
-                ApplyPatch_AIDirector_Embark
+                ApplyPatch_AIDirector_Embark,
+                ApplyPatch_Item_OnSerializationComplete
             };
 
             foreach (Action d in patches)
@@ -101,6 +100,12 @@ namespace GnollModLoader
             var postfixPatch = typeof(Patch_MainMenuWindow).GetMethod(nameof(Patch_MainMenuWindow.Ctor_Postfix));
             this.ApplyPatchImpl(orig, postfixPatch: postfixPatch);
         }
+        private void ApplyPatch_Item_OnSerializationComplete()
+        {
+            var orig = typeof(Item).GetMethod(nameof(Item.OnSerializationComplete));
+            var prefixPatch = typeof(Patch_Item_OnSerializationComplete).GetMethod(nameof(Patch_Item_OnSerializationComplete.Prefix_OnSerializationComplete));
+            this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
+        }
 
         /*
         private void ApplyPatch_Button()
@@ -138,20 +143,6 @@ namespace GnollModLoader
             this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
         }
 
-        private void ApplyPatch_World_LoadWorld()
-        {
-            var orig = typeof(World).GetMethod(nameof(World.LoadWorld));
-            var prefixPatch = typeof(Patch_World_LoadWorld).GetMethod(nameof(Patch_World_LoadWorld.Prefix));
-            this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
-        }
-
-        private void ApplyPatch_GnomanEmpire_FinishLoading()
-        {
-            var orig = typeof(GnomanEmpire).GetMethod(nameof(GnomanEmpire.FinishLoadingGame));
-            var prefixPatch = typeof(Patch_GnomanEmpire_FinishLoading).GetMethod(nameof(Patch_GnomanEmpire_FinishLoading.Prefix));
-            this.ApplyPatchImpl(orig, prefixPatch: prefixPatch);
-        }
-
         public void ApplyDirectPatch(System.Reflection.MethodBase original,
             System.Reflection.MethodInfo prefixPatch = null,
             System.Reflection.MethodInfo postfixPatch = null,
@@ -162,8 +153,8 @@ namespace GnollModLoader
             this.ApplyPatchImpl(original, prefixPatch, postfixPatch, finalizer);
         }
 
-        private void ApplyPatchImpl(System.Reflection.MethodBase original, 
-            System.Reflection.MethodInfo prefixPatch = null, 
+        private void ApplyPatchImpl(System.Reflection.MethodBase original,
+            System.Reflection.MethodInfo prefixPatch = null,
             System.Reflection.MethodInfo postfixPatch = null,
             System.Reflection.MethodInfo finalizer = null)
         {
@@ -178,11 +169,11 @@ namespace GnollModLoader
                 {
                     Logger.Error($"!! Failed to apply patch '{patchName}': Cannot find original method");
                 }
-                harmony.Patch(original, 
-                    (prefixPatch != null ? new HarmonyMethod(prefixPatch) : null), 
+                harmony.Patch(original,
+                    (prefixPatch != null ? new HarmonyMethod(prefixPatch) : null),
                     (postfixPatch != null ? new HarmonyMethod(postfixPatch) : null),
                     null,
-                    (finalizer != null ?  new HarmonyMethod(finalizer) : null)
+                    (finalizer != null ? new HarmonyMethod(finalizer) : null)
                     );
 
                 Logger.Log($"-- Patched {original.FullDescription()}");
@@ -216,7 +207,7 @@ namespace GnollModLoader
 
         public static bool Prefix(ref GnomanEmpire __instance, string fileName, bool fallenKingdom = false)
         {
-            /* 
+            /*
             // XXX: DEBUG STUFF
             Logger.Log($"Load Game");
             __instance.string_0 = fileName;
@@ -272,6 +263,7 @@ namespace GnollModLoader
             Logger.Log($"Region TileSelectionManager {GnomanEmpire.Instance.Region.TileSelectionManager}");
             return Patcher.SKIP_CHAIN;
             */
+
             return Patcher.CONTINUE_CHAIN;
         }
 
@@ -299,47 +291,6 @@ namespace GnollModLoader
         public static void Ctor_Postfix(ref MainMenuWindow __instance)
         {
             GnollMain.HookGnollMainMenu_after(__instance);
-        }
-    } 
-    internal class Patch_World_LoadWorld
-    {
-        public static bool Prefix(ref World __instance, BinaryReader reader)
-        {
-            Logger.Log($"LoadWorld patch");
-            try { 
-                __instance.aidirector_0 = new AIDirector(reader);
-                __instance.region_0 = new Region();
-                __instance.region_0.LoadRegion(reader, new TileSet(GnomanEmpire.Instance.GameDefs.Tilesheet, new Vector2(32f, 16f)));
-
-                Logger.Log($"Region {__instance.region_0}");
-                Logger.Log($"LW Instance {GnomanEmpire.Instance.GetHashCode()}");
-                Logger.Log($"LW Region {GnomanEmpire.Instance.Region.GetHashCode()}");
-                Logger.Log($"Region TileSelectionManager {GnomanEmpire.Instance.Region.TileSelectionManager}");
-
-                __instance.notificationManager_0 = new NotificationManager(reader);
-            if (GnomanEmpire.Instance.LoadingSaveVersion < 21U)
-            {
-                GameMode gameMode;
-                if (GnomanEmpire.Instance.LoadingSaveVersion >= 2U)
-                {
-                    gameMode = (GameMode)reader.ReadInt32();
-                }
-                else
-                {
-                    gameMode = GameMode.Normal;
-                }
-                __instance.difficultySetting_0 = new DifficultySetting(gameMode);
-                return Patcher.SKIP_CHAIN;
-            }
-            __instance.difficultySetting_0 = new DifficultySetting(reader);
-
-            return Patcher.SKIP_CHAIN;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"{ex}");
-            }
-            return Patcher.SKIP_CHAIN;
         }
     }
 
@@ -534,34 +485,16 @@ namespace GnollModLoader
         }
     }
 
-    internal class Patch_GnomanEmpire_FinishLoading
+    internal class Patch_Item_OnSerializationComplete
     {
-        public static void Prefix()
+        public static bool Prefix_OnSerializationComplete(ref Item __instance)
         {
-            Logger.Log($"FinihsLoading patch");
-            Logger.Log($"FIN Instance {GnomanEmpire.Instance.GetHashCode()}");
-            Logger.Log($"FIN Region {GnomanEmpire.Instance.Region.GetHashCode()}");
-            Logger.Log($"Region TileSelectionManager {GnomanEmpire.Instance.Region.TileSelectionManager}");
-        }
-    }
-
-    // Experimental population amount override
-    // Leaving in for future work ...
-    internal class Patch_Faction_PlayerSpawnStrength
-    {
-        public static void Prefix()
-        {
-
-        }
-
-        public static void Postfix(ref float __result, bool modified, bool applyVariance)
-        {
-            if (modified)
+            ItemDef itemDef = GnomanEmpire.Instance.GameDefs.ItemDef(__instance.ItemID);
+            if (itemDef == null)
             {
-                Logger.Log($"-- Original strength {__result}");
-                __result = 81;
-                Logger.Log($"-- Calculated strength {__result}");
+                Logger.Error($"!! Item validation FAILED; ItemDef not found for itemID = {__instance.ItemID}, materialID = {__instance.MaterialID}");
             }
+            return Patcher.CONTINUE_CHAIN;
         }
     }
 
