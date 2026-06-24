@@ -62,7 +62,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="GnomoriaSDK-patched">
-      <HintPath>..\..\..\sdk\GnomoriaSDK-patched.dll</HintPath>
+      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnomoriaSDK-patched.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

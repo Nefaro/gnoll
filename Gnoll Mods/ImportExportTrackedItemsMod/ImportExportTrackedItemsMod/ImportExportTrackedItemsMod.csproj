@@ -60,8 +60,8 @@
       <HintPath>..\..\..\sdk\gnomorialib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="GnomoriaSDK">
-      <HintPath>..\..\..\sdk\GnomoriaSDK.dll</HintPath>
+    <Reference Include="GnomoriaSDK-patched">
+      <HintPath>..\..\..\GnollModLoader\GnollModLoader\bin\x86\Release\GnomoriaSDK-patched.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
